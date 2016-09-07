@@ -1,8 +1,10 @@
 using UnityEngine;
 using System.Collections;
 
-public abstract class DatabaseService : Service {
-	
+namespace Atto.Services
+{
+	public abstract class DatabaseService : Service
+	{
 
-
+	}
 }

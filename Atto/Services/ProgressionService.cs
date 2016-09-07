@@ -1,6 +1,10 @@
 using UnityEngine;
 using System.Collections;
 
-public abstract class ProgressionService : Service {
+namespace Atto.Services
+{
+	public abstract class ProgressionService : Service
+	{
 
+	}
 }

@@ -3,41 +3,36 @@ using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using Atto;
 
-public class StandardSceneService : SceneService
+namespace Atto.Services
 {
-	public SceneParams sceneParams;
-
-	override public SceneParams GetSceneParams()
+	public class StandardSceneService : SceneService
 	{
-		if (sceneParams != null)
-		{
-			return sceneParams;
-		}
-		else
-		{
-			SceneParams newParams = new SceneParams();
-			newParams.UseMockValues();
-			sceneParams = newParams;
-			return sceneParams;
-		}
-	}
+		public SceneParams sceneParams;
 
-	override public void LoadScene(object sceneToLoad, SceneParams sceneParams)
-	{
-		this.sceneParams = sceneParams;
-		SceneManager.LoadScene(sceneToLoad.ToString() + "Scene");
-	}
+		override public SceneParams GetSceneParams()
+		{
+			if (sceneParams != null)
+			{
+				return sceneParams;
+			}
+			else
+			{
+				SceneParams newParams = new SceneParams();
+				newParams.UseMockValues();
+				sceneParams = newParams;
+				return sceneParams;
+			}
+		}
 
+		override public void LoadScene(object sceneToLoad, SceneParams sceneParams)
+		{
+			this.sceneParams = sceneParams;
+			SceneManager.LoadScene(sceneToLoad.ToString() + "Scene");
+		}
+
+	}
 }
 
 
-public class SceneParams : SerializableDictionary<string, object> {
-
-	public SceneParams() { }
-
-	public virtual void UseMockValues() {
-
-	}
-
-}

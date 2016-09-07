@@ -1,113 +1,185 @@
-using System.Collections;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using Identifier = System.String;
 
-public static partial class Core
+namespace Atto
 {
-	private const Identifier DEFAULT_SERVICE_ID = "base";
+	public delegate void CoreClassReplaced(Type type, Identifier id);
 
-	private static Dictionary<Type, Dictionary<Identifier, Func<Service>>> serviceConstructors = null;
-	private static Dictionary<Type, Dictionary<Identifier, Service>> serviceContainer = null;
-	
-	public static T Get<T>(Identifier id = DEFAULT_SERVICE_ID)
+	public static partial class Core
 	{
-		return (T)(Get(typeof(T), id));
-	}
+		public static event CoreClassReplaced OnClassReplaced;
 
-	public static void Provide<T>(Func<T> serviceConstructor) where T : Service
-	{
-		Provide(DEFAULT_SERVICE_ID, serviceConstructor);
-	}
+		private static Dictionary<Type, Dictionary<Identifier, Func<object>>> classConstructors = null;
+		private static Dictionary<Type, Dictionary<Identifier, Func<object>>> classFactories = null;
+		private static Dictionary<Type, Dictionary<Identifier, object>> instanceContainer = null;
 
-	public static void Provide<T>(Identifier id, Func<T> serviceConstructor) where T : Service
-	{
-		Provide(typeof(T), id, () =>
+		public static T Get<T>(Identifier id)
 		{
-			return serviceConstructor();
-		});
-	}
+			return (T)(Get(typeof(T), id));
+		}
 
-	private static object Get(Type type, Identifier id)
-	{
-		Service service = null;
-
-		InitializeDictionaries();
-
-		if (serviceConstructors.ContainsKey(type))
+		public static void Provide<T>(Identifier id, Func<T> classConstructor)
 		{
-			if (serviceConstructors[type].ContainsKey(id))
+			Provide(typeof(T), id, () =>
 			{
-				if (!serviceContainer.ContainsKey(type))
-				{
-					serviceContainer.Add(type, new Dictionary<Identifier, Service>());
-				}
+				return classConstructor();
+			});
+		}
 
-				if (serviceContainer[type].ContainsKey(id))
-				{
-					service = serviceContainer[type][id];
-				}
-				else
-				{
-					service = serviceConstructors[type][id]();
+		public static void ProvideFactory<T>(Identifier id, Func<T> classConstructor)
+		{
+			ProvideFactory(typeof(T), id, () =>
+			{
+				return classConstructor();
+			});
+		}
 
-					serviceContainer[type].Add(id, service);
+		private static object Get(Type type, Identifier id)
+		{
+			InitializeDictionaries();
+
+			object instance = null;
+
+			if(classFactories.ContainsKey(type) && classFactories[type].ContainsKey(id))
+			{
+				instance = classFactories[type][id]();
+			}
+			else
+			{
+				if(classConstructors.ContainsKey(type) && classConstructors[type].ContainsKey(id))
+				{
+					if(instanceContainer.ContainsKey(type) && instanceContainer[type].ContainsKey(id))
+					{
+						instance = instanceContainer[type][id];
+					}
+					else
+					{
+						instance = classConstructors[type][id]();
+
+						instanceContainer[type].Add(id, instance);
+					}
+				}
+			}
+
+			if(instance == null)
+			{
+				throw new NullReferenceException(string.Format("Warning: Core.Get: No class of type '{0}' with id '{1}' found", type.ToString(), id));
+			}
+
+			return instance;
+		}
+
+		private static void Provide(Type type, Identifier id, Func<object> classConstructor)
+		{
+			InitializeDictionaries();
+
+			if(CheckDuplicatedClass(type, id))
+			{
+				OnClassReplaced(type, id);
+			}
+
+			SetClassConstructor(type, id, classConstructor);
+		}
+
+		private static void ProvideFactory(Type type, Identifier id, Func<object> classConstructor)
+		{
+			InitializeDictionaries();
+
+			if(CheckDuplicatedClass(type, id))
+			{
+				OnClassReplaced(type, id);
+			}
+
+			SetClassFactory(type, id, classConstructor);
+		}
+
+		private static void InitializeDictionaries()
+		{
+			if(classConstructors == null)
+			{
+				classConstructors = new Dictionary<Type, Dictionary<Identifier, Func<object>>>();
+			}
+
+			if(classFactories == null)
+			{
+				classFactories = new Dictionary<Type, Dictionary<Identifier, Func<object>>>();
+			}
+
+			if(instanceContainer == null)
+			{
+				instanceContainer = new Dictionary<Type, Dictionary<Identifier, object>>();
+			}
+		}
+
+		private static bool CheckDuplicatedClass(Type type, Identifier id)
+		{
+			bool duplicated = false;
+
+			if(classConstructors.ContainsKey(type))
+			{
+				duplicated |= classConstructors[type].ContainsKey(id);
+			}
+
+			if(classFactories.ContainsKey(type))
+			{
+				duplicated |= classFactories[type].ContainsKey(id);
+			}
+
+			return duplicated;
+		}
+
+		private static void SetClassConstructor(Type type, Identifier id, Func<object> classConstructor)
+		{
+			RemoveClassFactory(type, id);
+
+			if(classConstructors.ContainsKey(type))
+			{
+				RemoveClassConstructor(type, id);
+			}
+			else
+			{
+				classConstructors.Add(type, new Dictionary<Identifier, Func<object>>());
+			}
+			
+			classConstructors[type].Add(id, classConstructor);
+		}
+
+		private static void RemoveClassConstructor(Type type, Identifier id)
+		{
+			if(classConstructors.ContainsKey(type))
+			{
+				classConstructors[type].Remove(id);
+
+				if(instanceContainer.ContainsKey(type))
+				{
+					instanceContainer[type].Remove(id);
 				}
 			}
 		}
 
-		if (service == null)
+		private static void SetClassFactory(Type type, Identifier id, Func<object> classConstructor)
 		{
-			UnityEngine.Debug.LogWarning(string.Format("Warning: App.Get: No service of type '{0}' with id '{1}' found", type.ToString(), id));
-		}
+			RemoveClassConstructor(type, id);
 
-		return service;
-	}
-
-	private static void Provide(Type type, Identifier id, Func<Service> serviceConstructor)
-	{
-		InitializeDictionaries();
-
-		if (serviceConstructors.ContainsKey(type))
-		{
-			if (serviceConstructors[type].ContainsKey(id))
+			if(classFactories.ContainsKey(type))
 			{
-				Core.Log.Warning("Warning, provided an existing service of type '{0}' with id '{1}'. The previous service has been unloaded.", type.ToString(), id);
+				RemoveClassFactory(type, id);
 			}
-		}
-		else
-		{
-			serviceConstructors.Add(type, new Dictionary<Identifier, Func<Service>>());
-		}
-
-		if (serviceConstructors[type].ContainsKey(id))
-		{
-			serviceConstructors[type][id] = serviceConstructor;
-
-			if (serviceContainer.ContainsKey(type))
+			else
 			{
-				if (serviceContainer[type].ContainsKey(id))
-				{
-					serviceContainer[type].Remove(id);
-				}
+				classFactories.Add(type, new Dictionary<Identifier, Func<object>>());
 			}
-		}
-		else
-		{
-			serviceConstructors[type].Add(id, serviceConstructor);
-		}
-	}
 
-	private static void InitializeDictionaries()
-	{
-		if (serviceConstructors == null)
-		{
-			serviceConstructors = new Dictionary<Type, Dictionary<Identifier, Func<Service>>>();
+			classFactories[type].Add(id, classConstructor);
 		}
 
-		if (serviceContainer == null)
+		private static void RemoveClassFactory(Type type, Identifier id)
 		{
-			serviceContainer = new Dictionary<Type, Dictionary<Identifier, Service>>();
+			if(classFactories.ContainsKey(type))
+			{
+				classFactories[type].Remove(id);
+			}
 		}
 	}
 }

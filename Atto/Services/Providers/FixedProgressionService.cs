@@ -2,8 +2,11 @@ using UnityEngine;
 using System.Collections;
 using System;
 
-public class FixedProgressionService : ProgressionService
-{
-	
 
+namespace Atto.Services
+{
+	public class FixedProgressionService : ProgressionService
+	{
+
+	}
 }
