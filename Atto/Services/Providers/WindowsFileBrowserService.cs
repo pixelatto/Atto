@@ -3,9 +3,8 @@ using System.Diagnostics;
 using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
-using Atto.Services;
 
-namespace Atto.Managers
+namespace Atto.Services
 {
 	public class WindowsFileBrowserService : FileBrowserService
 	{

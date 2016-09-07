@@ -1,8 +1,7 @@
 using System;
 using System.Text;
-using Atto.Services;
 
-namespace Atto.Managers
+namespace Atto.Services
 {
 	public enum LogLevel
 	{
