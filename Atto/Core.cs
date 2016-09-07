@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 using Identifier = System.String;
 
-public static partial class Services
+public static partial class Core
 {
 	private const Identifier DEFAULT_SERVICE_ID = "base";
 
@@ -72,7 +72,7 @@ public static partial class Services
 		{
 			if (serviceConstructors[type].ContainsKey(id))
 			{
-				Services.Log.Warning("Warning, provided an existing service of type '{0}' with id '{1}'. The previous service has been unloaded.", type.ToString(), id);
+				Core.Log.Warning("Warning, provided an existing service of type '{0}' with id '{1}'. The previous service has been unloaded.", type.ToString(), id);
 			}
 		}
 		else

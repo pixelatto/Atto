@@ -5,7 +5,7 @@
 
 using UnityEngine;
 
-public static class RectExtensionMethods
+public static class RectExtensions
 {
 	public static Rect Margin(this Rect inputRect, float margin)
 	{

@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 
-public static class MonoBehaviourExtensionMethods
+public static class MonoBehaviourExtensions
 {
     public static T GetOrAddComponent<T>(this MonoBehaviour target) where T : Component
     {
