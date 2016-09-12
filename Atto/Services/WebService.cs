@@ -1,21 +1,24 @@
 
-// TODO: Reimplement this as a service (without exposing coroutines, only using callback functions)
-/*
-IEnumerator LoadTextureFromWeb(string url)
+namespace Atto.Services
 {
-	WWW www = new WWW(url);
-
-	while (!www.isDone)
+	// TODO: Reimplement this as a service (without exposing coroutines, only using callback functions)
+	/*
+	IEnumerator LoadTextureFromWeb(string url)
 	{
-		yield return www;
+		WWW www = new WWW(url);
 
-		www.LoadImageIntoTexture(value);
-
-		if (www.error != null)
+		while (!www.isDone)
 		{
-			Debug.Log(www.error);
-			break;
+			yield return www;
+
+			www.LoadImageIntoTexture(value);
+
+			if (www.error != null)
+			{
+				Debug.Log(www.error);
+				break;
+			}
 		}
 	}
+	*/
 }
-*/

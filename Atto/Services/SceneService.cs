@@ -1,5 +1,3 @@
-using UnityEngine;
-using System.Collections;
 
 namespace Atto.Services
 {
@@ -7,6 +5,5 @@ namespace Atto.Services
 	{
 		public abstract SceneParams GetSceneParams();
 		public abstract void LoadScene(object sceneToLoad, SceneParams newSceneParams);
-
 	}
 }

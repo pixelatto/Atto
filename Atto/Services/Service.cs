@@ -1,8 +1,7 @@
 
-namespace Atto.Services {
-
-	public abstract class Service {
-	
+namespace Atto.Services
+{
+	public abstract class Service
+	{
 	}
-
 }

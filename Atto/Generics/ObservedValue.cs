@@ -1,78 +1,46 @@
-using UnityEngine;
-using System.Collections;
 using System;
 
-/// <summary>
-/// Wraps a variable in a class that triggers an
-/// even if the value changes. This is useful when
-/// values can be meaningfully compared using Equals,
-/// and when the variable changes infrequently in
-/// comparison to the number of times it is updated.
-/// </summary>
-/// <typeparam name="T">The type of the value you want to observe</typeparam>
-/// <remarks>This is a typical use case:
-/// <code>
-/// ObservedValue&lt;bool&gt; showWindow;
-/// 
-/// public void Start()
-/// {
-///		show = new ObservedValue(false);
-///     show.OnValueChanged += ShowHideWindow;
-/// }
-/// public void OnGUI()
-/// {
-///		showWindow.Value = GUILayout.Toggle("Show Window", showWindow.Value);
-/// }
-/// 
-/// public void ShowHideWindow()
-/// {
-///		window.gameObject.SetActive(showWindow.Value);
-/// }
-/// </code>
-/// </remarks>
-
-public class ObservedValue<T>
+namespace Atto
 {
-	private T currentValue;
-
-	/// <summary>
-	/// Subscribe to this event to get notified when the value changes.
-	/// </summary>
-#pragma warning disable 0067
-	public event Action OnValueChange;
-#pragma warning restore 0067
-
-
-	public ObservedValue() {
-		currentValue = default(T);
-	}
-
-	public ObservedValue(T initialValue)
+	public class ObservedValue<T>
 	{
-		currentValue = initialValue;
-	}
+		#pragma warning disable 0067
+		public event Action OnValueChange;
+		#pragma warning restore 0067
 
-	public T Value
-	{
-		get { return currentValue; }
+		private T currentValue;
 
-		set
+		public ObservedValue()
 		{
-			if (!currentValue.Equals(value))
-			{
-				currentValue = value;
+			currentValue = default(T);
+		}
 
-				if (OnValueChange != null) OnValueChange();
+		public ObservedValue(T initialValue)
+		{
+			currentValue = initialValue;
+		}
+
+		public T Value
+		{
+			get { return currentValue; }
+
+			set
+			{
+				if (!currentValue.Equals(value))
+				{
+					currentValue = value;
+
+					if (OnValueChange != null)
+					{
+						OnValueChange();
+					}
+				}
 			}
 		}
-	}
 
-	/// <summary>
-	/// Sets the value without notification.
-	/// </summary>
-	/// <param name="value">The value.</param>
-	public void SetSilently(T value)
-	{
-		currentValue = value;
+		public void SetSilently(T value)
+		{
+			currentValue = value;
+		}
 	}
 }

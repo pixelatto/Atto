@@ -1,34 +1,57 @@
 using UnityEngine;
-using System.Collections;
 
-public class Timer
+namespace Atto
 {
+	public class Timer
+	{
+		public float elapsedTime
+		{
+			get { return currentTime - startTime; }
+		}
 
-    public bool isReady { get { return (elapsedTime > maxTime) && isRunning; } }
+		public float remainingTime
+		{
+			get { return maxTime - elapsedTime; }
+		}
 
-    float startTime;
-    float maxTime;
-    public float elapsedTime { get { return currentTime - startTime; } }
-    public float remainingTime { get { return maxTime - elapsedTime; } }
-	float currentTime { get { return timeType == TimeType.RealTime ? Time.unscaledTime : Time.time; } }
-	bool isRunning = false;
-	TimeType timeType = TimeType.GameTime;
+		public bool isReady
+		{
+			get { return (elapsedTime > maxTime) && isRunning; }
+		}
 
-	public Timer(float maxTime, TimeType timeType = TimeType.GameTime) {
-        this.maxTime = maxTime;
-		this.timeType = timeType;
-		Start();
-    }
+		private float startTime;
+		private float maxTime;
+		private bool isRunning = false;
+		private TimeType timeType = TimeType.GameTime;
 
-	public void Start() {
-		startTime = currentTime;
-		isRunning = true;
+		private float currentTime
+		{
+			get { return (timeType == TimeType.RealTime ? Time.unscaledTime : Time.time); }
+		}
+
+		public Timer(float maxTime, TimeType timeType = TimeType.GameTime)
+		{
+			this.maxTime = maxTime;
+			this.timeType = timeType;
+
+			Start();
+		}
+
+		public void Start()
+		{
+			startTime = currentTime;
+			isRunning = true;
+		}
+
+		public void Reset()
+		{
+			startTime = currentTime;
+		}
 	}
 
-    public void Reset() {
-        startTime = currentTime;
-    }
-
+	public enum TimeType
+	{
+		RealTime,
+		GameTime
+	}
 }
-
-public enum TimeType { RealTime, GameTime }

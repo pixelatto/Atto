@@ -1,9 +1,4 @@
-using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections;
-using System.Collections.Generic;
-using System;
-using Atto;
 
 namespace Atto.Services
 {
@@ -31,8 +26,5 @@ namespace Atto.Services
 			this.sceneParams = sceneParams;
 			SceneManager.LoadScene(sceneToLoad.ToString() + "Scene");
 		}
-
 	}
 }
-
-

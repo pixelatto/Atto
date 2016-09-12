@@ -1,5 +1,4 @@
 using UnityEngine;
-using Atto;
 
 namespace Atto
 {
@@ -40,7 +39,7 @@ namespace Atto
 			}
 			catch
 			{
-				Debug.LogError("Error converting HexColor " + hexCode);
+				Core.Log.Error("Error converting HexColor {0}", hexCode);
 			}
 
 			return color;
