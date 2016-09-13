@@ -55,6 +55,11 @@ namespace Atto
 					}
 					else
 					{
+						if(!instanceContainer.ContainsKey(type))
+						{
+							instanceContainer.Add(type, new Dictionary<Identifier, object>());
+						}
+
 						instance = classConstructors[type][id]();
 
 						instanceContainer[type].Add(id, instance);

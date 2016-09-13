@@ -1,24 +1,10 @@
+using System;
+using UnityEngine;
 
 namespace Atto.Services
 {
-	// TODO: Reimplement this as a service (without exposing coroutines, only using callback functions)
-	/*
-	IEnumerator LoadTextureFromWeb(string url)
+	public abstract class WebService : Service
 	{
-		WWW www = new WWW(url);
-
-		while (!www.isDone)
-		{
-			yield return www;
-
-			www.LoadImageIntoTexture(value);
-
-			if (www.error != null)
-			{
-				Debug.Log(www.error);
-				break;
-			}
-		}
+		public abstract void LoadTexture(string url, Action<Texture2D> onComplete);
 	}
-	*/
 }
