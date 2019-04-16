@@ -3,7 +3,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class SimpleImageDownloadService : IImageDownloadService
+public class SimpleImageDownloadProvider : IImageDownloadService
 {
 	private sealed class WebDownloader : MonoBehaviour
 	{

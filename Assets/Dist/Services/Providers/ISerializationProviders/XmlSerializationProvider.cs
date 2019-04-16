@@ -1,7 +1,7 @@
 using System.Xml.Serialization;
 using System.IO;
 
-public class XmlSerializationService : ISerializationService
+public class XmlSerializationProvider : ISerializationService
 {
 	public string Serialize<T>(T objectToSerialize)
 	{

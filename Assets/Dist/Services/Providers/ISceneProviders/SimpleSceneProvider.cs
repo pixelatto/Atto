@@ -1,6 +1,6 @@
 using UnityEngine.SceneManagement;
 
-public class SimpleSceneService : ISceneService
+public class SimpleSceneProvider : ISceneService
 {
 	SceneParams sceneParams;
 

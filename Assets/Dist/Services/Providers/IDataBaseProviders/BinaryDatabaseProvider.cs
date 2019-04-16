@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using UnityEngine;
 
-public class BinaryFileDatabase : IDataBaseService
+public class BinaryDatabaseProvider : IDataBaseService
 {
     private static readonly string IdFormat = "db_{0}";
 
@@ -17,7 +17,7 @@ public class BinaryFileDatabase : IDataBaseService
     const string encodingKey = "db_encoding";
     const string versionKey = "db_gameversion";
 
-    public BinaryFileDatabase(string path)
+    public BinaryDatabaseProvider(string path)
     {
         savePath = path;
         LoadData();
