@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IPersistenceService<T>
+public interface IStorageService
 {
     void SetDestination(string path);
-    T Read();
-    void Write(T content);
-    void Append(T content);
+    string ReadFromStorage();
+    void WriteToStorage(string content);
 }

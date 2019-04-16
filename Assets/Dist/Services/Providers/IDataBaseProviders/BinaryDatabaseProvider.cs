@@ -3,69 +3,91 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UnityEngine;
+using RSG;
 
 public class BinaryDatabaseProvider : IDataBaseService
 {
     private static readonly string IdFormat = "db_{0}";
-
-    private Dictionary<string, string> data;
-    private string savePath;
-
-    const string utf8Tag = "UTF8";
-    const string asciiTag = "ASCII";
+    Encoding encoding = Encoding.UTF8;
 
     const string encodingKey = "db_encoding";
     const string versionKey = "db_gameversion";
 
-    public BinaryDatabaseProvider(string path)
+    private Dictionary<string, string> data;
+
+    IStorageService databaseStorage;
+    ISerializationService serialization;
+
+    public BinaryDatabaseProvider(string path, IStorageService storage, ISerializationService serializationProvider)
     {
-        savePath = path;
-        LoadData();
+        databaseStorage = storage;
+        serialization = serializationProvider;
+        LoadFromStorage();
     }
 
-    public T Load<T>(string id, T defaultValue = default(T)) where T : new()
+    void LoadFromStorage()
     {
-        T result = new T();
+        string plainData = databaseStorage.ReadFromStorage();
+        data = serialization.Deserialize<Dictionary<string, string>>(plainData);
+    }
+
+    void SaveToStorage()
+    {
+        string serializedData = serialization.Serialize(data);
+        databaseStorage.WriteToStorage(serializedData);
+    }
+
+    public IPromise<T> ReadEntry<T>(string id, T defaultValue = default(T))
+    {
+        Promise<T> result = new Promise<T>();
         string dbId = GetDbId(id);
 
         if (data.ContainsKey(dbId))
         {
             try
             {
-                T value = Core.Serialization.Deserialize<T>(data[dbId]);
-                result = value;
+                object value = Core.Serialization.Deserialize<T>(data[dbId]);
+                result.Resolve((T)value);
             }
             catch
             {
-                throw new UnityException("Couldn't deserialize database");
+                result.Reject(new InvalidCastException(string.Format("Entry with id '{0}' is not a {1} value", id, typeof(T).ToString())));
             }
         }
         else
         {
             if (defaultValue != null)
             {
-                return defaultValue;
+                result.Resolve(defaultValue);
             }
             else
             {
-                throw new UnityException(string.Format("Entry with id '{0}' not found in database.", id));
+                result.Reject(new ArgumentException(string.Format("Entry with id '{0}' not found in database.", id)));
             }
         }
 
         return result;
     }
 
-    public void Save<T>(string id, T value)
+    public void WriteEntry<T>(string id, T value)
     {
         string dbId = GetDbId(id);
         data[dbId] = Core.Serialization.Serialize(value);
-        SynchronizeFile();
+
+        SetDataKey(encodingKey, encoding.ToString());
+        SetDataKey(versionKey, Application.version);
+
+        SaveToStorage();
     }
 
-    public bool HasEntry(string id)
+    public IPromise<bool> HasEntry(string id)
     {
+        Promise<bool> result = new Promise<bool>();
         string dbId = GetDbId(id);
-        return data.ContainsKey(dbId);
+
+        result.Resolve(data.ContainsKey(dbId));
+
+        return result;
     }
 
     private string GetDbId(string id)
@@ -83,73 +105,6 @@ public class BinaryDatabaseProvider : IDataBaseService
         {
             data[key] = value;
         }
-    }
-
-    private void SynchronizeFile()
-    {
-        BinaryWriter bw;
-
-        SetDataKey(encodingKey, utf8Tag);
-        SetDataKey(versionKey, Application.version);
-
-        Byte[] bytes = Encoding.UTF8.GetBytes(Core.Serialization.Serialize(data));
-        string content = Convert.ToBase64String(bytes);
-        
-        try
-        {
-            bw = new BinaryWriter(new FileStream(savePath, FileMode.Create));
-            bw.Write(content);
-        }
-        catch (IOException e)
-        {
-            Debug.Log(e.Message);
-            return;
-        }
-        bw.Close();
-    }
-
-    private void LoadData()
-    {
-        BinaryReader br;
-        FileStream fs;
-        string content;
-
-        try
-        {
-            fs = new FileStream(savePath, FileMode.OpenOrCreate);
-            if (fs.Length > 0)
-            {
-                br = new BinaryReader(fs);
-                byte[] bytes = Convert.FromBase64String(br.ReadString());
-                content = Encoding.ASCII.GetString(bytes);
-                data = Core.Serialization.Deserialize<Dictionary<string, string>>(content);
-
-                //If we don't find any encoding, we asume ASCII
-                if (!data.ContainsKey(encodingKey))
-                {
-                    data.Add(encodingKey, asciiTag);
-                }
-                else
-                {
-                    if (data[encodingKey] == utf8Tag)
-                    {
-                        content = Encoding.UTF8.GetString(bytes);
-                        data = Core.Serialization.Deserialize<Dictionary<string, string>>(content);
-                    }
-                }
-            }
-            else
-            {
-                data = new Dictionary<string, string>();
-            }
-        }
-        catch (Exception e)
-        {
-            Debug.Log(e.Message);
-            data = new Dictionary<string, string>();
-            return;
-        }
-
     }
 
     private bool IsBasicType(Type type)

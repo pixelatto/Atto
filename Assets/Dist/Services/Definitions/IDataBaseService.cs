@@ -1,7 +1,8 @@
-﻿
+﻿using RSG;
+
 public interface IDataBaseService
 {
-	void Save<T>(string id, T value);
-    T Load<T>(string id, T defaultValue = default(T)) where T : new();
-    bool HasEntry(string id);
+    void WriteEntry<T>(string entryKey, T value);
+    IPromise<T> ReadEntry<T>(string entryKey, T defaultEntryValue = default(T));
+    IPromise<bool> HasEntry(string entryKey);
 }
