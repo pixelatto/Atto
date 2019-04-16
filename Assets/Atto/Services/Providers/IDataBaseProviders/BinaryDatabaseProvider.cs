@@ -11,7 +11,8 @@ public class BinaryDatabaseProvider : IDataBaseService
     Encoding encoding = Encoding.UTF8;
 
     const string encodingKey = "db_encoding";
-    const string versionKey = "db_gameversion";
+    const string appVersionKey = "db_appversion";
+    const string dbVersionKey = "db_version";
 
     private Dictionary<string, string> data;
 
@@ -33,8 +34,21 @@ public class BinaryDatabaseProvider : IDataBaseService
 
     void SaveToStorage()
     {
+        UpdateMetadata();
         string serializedData = serialization.Serialize(data);
         databaseStorage.WriteToStorage(serializedData);
+    }
+
+    private void UpdateMetadata()
+    {
+        string currentVersionString = "0";
+        data.TryGetValue(dbVersionKey, out currentVersionString);
+        int currentVersionNumber = 0;
+        int.TryParse(currentVersionString, out currentVersionNumber);
+        currentVersionNumber++;
+        SetDataKey(dbVersionKey, currentVersionNumber.ToString());
+        SetDataKey(encodingKey, encoding.ToString());
+        SetDataKey(appVersionKey, Application.version);
     }
 
     public IPromise<T> ReadEntry<T>(string id, T defaultValue = default(T))
@@ -69,13 +83,18 @@ public class BinaryDatabaseProvider : IDataBaseService
         return result;
     }
 
+    public void DeleteEntry<T>(string entryKey)
+    {
+        if (data.ContainsKey(entryKey))
+        {
+            data.Remove(entryKey);
+        }
+    }
+
     public void WriteEntry<T>(string id, T value)
     {
         string dbId = GetDbId(id);
         data[dbId] = Core.Serialization.Serialize(value);
-
-        SetDataKey(encodingKey, encoding.ToString());
-        SetDataKey(versionKey, Application.version);
 
         SaveToStorage();
     }
@@ -111,4 +130,5 @@ public class BinaryDatabaseProvider : IDataBaseService
     {
         return type.Equals(typeof(int)) || type.Equals(typeof(float)) || type.Equals(typeof(string));
     }
+
 }
