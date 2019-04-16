@@ -37,8 +37,13 @@ public static partial class Core
 		container.ProvideFactory<T>(id, classConstructor);
 	}
 
-	public static ILogService Log
+	public static ILogService Logger
 	{
 		get { return container.Get<ILogService>(); }
 	}
+
+    public static ISerializationService Serialization
+    {
+        get { return container.Get<ISerializationService>(); }
+    }
 }

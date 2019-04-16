@@ -39,7 +39,7 @@ namespace Atto
 			}
 			catch
 			{
-				Core.Log.Error("Error converting HexColor {0}", hexCode);
+				Core.Logger.Error("Error converting HexColor {0}", hexCode);
 			}
 
 			return color;

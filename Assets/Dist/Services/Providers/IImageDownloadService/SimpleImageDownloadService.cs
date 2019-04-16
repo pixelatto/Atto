@@ -34,7 +34,7 @@ public class SimpleImageDownloadService : IImageDownloadService
 
 			if (www.error != null)
 			{
-				Core.Log.Error(www.error);
+				Core.Logger.Error(www.error);
 				break;
 			}
 		}

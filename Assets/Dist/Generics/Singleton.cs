@@ -14,7 +14,7 @@ namespace Atto
 			{
 				if (applicationIsQuitting)
 				{
-					Core.Log.Warning("[Singleton] Instance '{0}' already destroyed on application quit. Won't create again - returning null.", typeof(T));
+					Core.Logger.Warning("[Singleton] Instance '{0}' already destroyed on application quit. Won't create again - returning null.", typeof(T));
 
 					return null;
 				}
@@ -27,7 +27,7 @@ namespace Atto
 
 						if (FindObjectsOfType(typeof(T)).Length > 1)
 						{
-							Core.Log.Error("[Singleton] Something went really wrong - there should never be more than 1 singleton! Reopening the scene might fix it.");
+							Core.Logger.Error("[Singleton] Something went really wrong - there should never be more than 1 singleton! Reopening the scene might fix it.");
 
 							return instance;
 						}
@@ -40,7 +40,7 @@ namespace Atto
 
 							DontDestroyOnLoad(singleton);
 
-							Core.Log.Debug("[Singleton] An instance of {0} is needed in the scene, so '{1}' was created with DontDestroyOnLoad.", typeof(T), singleton);
+							Core.Logger.Log("[Singleton] An instance of {0} is needed in the scene, so '{1}' was created with DontDestroyOnLoad.", typeof(T), singleton);
 						}
 						else
 						{

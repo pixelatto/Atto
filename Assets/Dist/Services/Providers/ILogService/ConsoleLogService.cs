@@ -13,7 +13,7 @@ namespace Atto.Services
 			this.minLogLevel = minLogLevel;
 		}
 
-		public void Debug(string message, params object[] args)
+		public void Log(string message, params object[] args)
 		{
 			if(minLogLevel <= LogLevel.Debug)
 			{
