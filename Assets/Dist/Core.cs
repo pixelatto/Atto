@@ -2,7 +2,7 @@ using Atto.Services;
 using System;
 using Identifier = System.String;
 
-public static class Core
+public static partial class Core
 {
 	public static Container Container { get { return container; } }
 	private static Container container = new Container();
