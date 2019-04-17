@@ -5,22 +5,19 @@ using RSG;
 using RSG.Promises;
 using System;
 
-namespace AttoExamples
+public class BootstrapExample : MonoBehaviour
 {
-    public class BootstrapExample : MonoBehaviour
+
+    void Awake()
     {
-
-        void Awake()
-        {
-            Core.Bind<IDataChannelService, UriDataChannelProvider>();
-            Core.Bind<ILogService, UnityConsoleLogProvider>();
-            Core.Bind<ISerializationService, JsonSerializationProvider>();
-            Core.Bind<IStorageService, FileStorageProvider>();
-            Core.Bind<IAchievementService, SimpleAchievementProvider>();
-            Core.Bind<IDataBaseService, BinaryDatabaseProvider>();
-            Core.Bind<IEventService, SimpleEventProvider>();
-            Core.Bind<IInputService, SimpleInputProvider>();
-        }
-
+        Core.Bind<IDataChannelService, UriDataChannelProvider>();
+        Core.Bind<ILogService, UnityConsoleLogProvider>();
+        Core.Bind<ISerializationService, JsonSerializationProvider>();
+        Core.Bind<IStorageService, FileStorageProvider>();
+        Core.Bind<IAchievementService, SimpleAchievementProvider>();
+        Core.Bind<IDataBaseService, BinaryDatabaseProvider>();
+        Core.Bind<IEventService, SimpleEventProvider>();
+        Core.Bind<IInputService, SimpleInputProvider>();
     }
+
 }
