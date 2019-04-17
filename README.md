@@ -64,7 +64,7 @@ Create or open a Unity project somewhere. In this project, open the `/Packages/M
 ```
 {
   "dependencies": {
-    "com.pixelatto.atto": "https://github.com/JaviCepa/Atto.git"
+    "com.pixelatto.atto": "https://github.com/pixelatto/atto.git"
   }
 }
 ```
