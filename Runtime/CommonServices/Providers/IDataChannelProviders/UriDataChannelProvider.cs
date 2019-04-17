@@ -9,9 +9,12 @@ public class UriDataChannelProvider : IDataChannelService
 
     public UriDataChannelProvider()
     {
+        //TODO: If a DataChannels.js file exists, build this entries from there
         string basePath = Application.dataPath;
-        AddEntry(DataChannelTypes.Database, basePath + "/Data.sav");
-        AddEntry(DataChannelTypes.Options,  basePath + "/Options.sav");
+        AddEntry(DataChannelTypes.Database , basePath + "/Data.sav");
+        AddEntry(DataChannelTypes.Options  , basePath + "/Options.sav");
+        AddEntry(DataChannelTypes.Rankings , basePath + "/Rankings.sav");
+        AddEntry(DataChannelTypes.SavedGame, basePath + "/SavedGame.sav");
     }
 
     void AddEntry(DataChannelTypes key, string entry)

@@ -7,7 +7,7 @@ public static partial class Atto
 {
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    public static void BindBasicServices()
+    public static void BindCommonServices()
     {
         Bind<IDataChannelService,   UriDataChannelProvider>();
         Bind<ILogService,           UnityConsoleLogProvider>();
