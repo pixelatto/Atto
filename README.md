@@ -56,11 +56,11 @@ They are named similarly to the service they implement, with some definition of 
 
 # Installation
 
-Atto is installed as a local package. On the future, Unity will enable installing packages via GitHub UI, but in the meantime the process requires some manual setup.
+Atto is installed as a Unity package. You can find additional info on setting up custom packages [here](https://gist.github.com/LotteMakesStuff/6e02e0ea303030517a071a1c81eb016e).
 
-## Initial setup
+## Package setup
 
-Create or open a Unity project somewhere. In this project, open the `/Packages/Manifest.json` file and include the following entry:
+Create a new Unity project (NOTE: Atto is not namespaced, since it's designed to be a starting point for projects and shouldn't be imported in existing codebases). In this new project, open the `/Packages/manifest.json` file and include the following entry:
 ```
 {
   "dependencies": {
@@ -68,7 +68,7 @@ Create or open a Unity project somewhere. In this project, open the `/Packages/M
   }
 }
 ```
-You can find more info on setting up custom packages [here](https://gist.github.com/LotteMakesStuff/6e02e0ea303030517a071a1c81eb016e).
+Save the manifest, go back to Unity, wait for it to refresh (or force with ctrl+R) and... you're ready to go!
 
 # Usage
 
