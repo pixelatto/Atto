@@ -7,16 +7,17 @@ using System;
 
 public class Bootstrap : MonoBehaviour
 {
-    public ISerializationService serialization;
 
-    void Start ()
+    void Awake()
     {
         Core.Bind<IDataChannelService, UriDataChannelProvider>();
         Core.Bind<ILogService, UnityConsoleLogProvider>();
         Core.Bind<ISerializationService, JsonSerializationProvider>();
         Core.Bind<IStorageService, FileStorageProvider>();
-        Core.Bind<IAchievementService<DummyAchievement>, DummyAchievementProvider>();
+        Core.Bind<IAchievementService, SimpleAchievementProvider>();
         Core.Bind<IDataBaseService, BinaryDatabaseProvider>();
-        Core.Bind<IEventService, BasicEventProvider>();
+        Core.Bind<IEventService, SimpleEventProvider>();
+        Core.Bind<IInputService, SimpleInputProvider>();
     }
+
 }

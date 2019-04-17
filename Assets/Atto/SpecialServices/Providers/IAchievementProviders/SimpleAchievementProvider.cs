@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DummyAchievementProvider : IAchievementService<DummyAchievement>
+public class SimpleAchievementProvider : IAchievementService
 {
 
-    List<DummyAchievement> achievementList;
+    List<IAchievement> achievementList;
 
     public void CheckAchievementUnlocks()
     {
@@ -16,11 +16,11 @@ public class DummyAchievementProvider : IAchievementService<DummyAchievement>
         }
     }
 
-    public void DefineAchievement(DummyAchievement achievement)
+    public void DefineAchievement(IAchievement achievement)
     {
         if (achievementList == null)
         {
-            achievementList = new List<DummyAchievement>();
+            achievementList = new List<IAchievement>();
         }
         if (!achievementList.Contains(achievement))
         {
@@ -42,35 +42,19 @@ public class DummyAchievementProvider : IAchievementService<DummyAchievement>
         throw new NotImplementedException();
     }
 
-    public List<DummyAchievement> GetAchievementList()
+    public List<IAchievement> GetAchievementList()
     {
         return achievementList;
     }
 
-    public void UnlockAchievement(DummyAchievement entry)
+    public void UnlockAchievement(IAchievement entry)
     {
         achievementList.Find((x => entry.name == x.name)).unlocked = true;
     }
 
-    public void UpdateAchievementProgress(DummyAchievement entry, int progress)
+    public void UpdateAchievementProgress(IAchievement entry, int progress)
     {
         achievementList.Find((x => entry.name == x.name)).progress = progress;
     }
-
-}
-
-public class DummyAchievement
-{
-    public string name;
-    public bool unlocked;
-    public int progress;
-    public Predicate<DummyAchievement> UnlockCondition;
-
-    public void Check()
-    {
-        if (UnlockCondition != null && UnlockCondition(this))
-        {
-            unlocked = true;
-        }
-    }
+    
 }

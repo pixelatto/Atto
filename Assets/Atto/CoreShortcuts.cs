@@ -40,4 +40,9 @@ public static partial class Core
     {
         get { return container.Get<IDataBaseService>(); }
     }
+
+    public static IInputService Input
+    {
+        get { return container.Get<IInputService>(); }
+    }
 }

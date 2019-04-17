@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class BasicEventProvider : IEventService
+public class SimpleEventProvider : IEventService
 {
 	public event SuscribeRequest OnSuscribeRequest;
 	public event TriggerRequest OnTriggerRequest;
