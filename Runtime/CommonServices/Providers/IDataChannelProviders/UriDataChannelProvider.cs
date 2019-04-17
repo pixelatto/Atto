@@ -27,7 +27,7 @@ public class UriDataChannelProvider : IDataChannelService
         }
         else
         {
-            Core.Logger.Error("Unknown path entry.");
+            Atto.Logger.Error("Unknown path entry.");
             return null;
         }
     }

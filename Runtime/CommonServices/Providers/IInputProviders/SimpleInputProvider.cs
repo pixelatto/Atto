@@ -25,7 +25,7 @@ public class SimpleInputProvider : IInputService
         }
         else
         {
-            Core.Logger.Warning("Couldn't remove controllable from device (it wasn't listed)");
+            Atto.Logger.Warning("Couldn't remove controllable from device (it wasn't listed)");
         }
     }
 
@@ -54,7 +54,7 @@ public class SimpleInputProvider : IInputService
         var result = devices.Find(x => x.Id == deviceId);
         if (result == null)
         {
-            Core.Logger.Warning("Device with id " + deviceId.ToString() + " is not connected.");
+            Atto.Logger.Warning("Device with id " + deviceId.ToString() + " is not connected.");
         }
         return result;
     }

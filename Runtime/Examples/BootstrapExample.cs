@@ -10,14 +10,14 @@ public class BootstrapExample : MonoBehaviour
 
     void Awake()
     {
-        Core.Bind<IDataChannelService, UriDataChannelProvider>();
-        Core.Bind<ILogService, UnityConsoleLogProvider>();
-        Core.Bind<ISerializationService, JsonSerializationProvider>();
-        Core.Bind<IStorageService, FileStorageProvider>();
-        Core.Bind<IAchievementService, SimpleAchievementProvider>();
-        Core.Bind<IDataBaseService, BinaryDatabaseProvider>();
-        Core.Bind<IEventService, SimpleEventProvider>();
-        Core.Bind<IInputService, SimpleInputProvider>();
+        Atto.Bind<IDataChannelService, UriDataChannelProvider>();
+        Atto.Bind<ILogService, UnityConsoleLogProvider>();
+        Atto.Bind<ISerializationService, JsonSerializationProvider>();
+        Atto.Bind<IStorageService, FileStorageProvider>();
+        Atto.Bind<IAchievementService, SimpleAchievementProvider>();
+        Atto.Bind<IDataBaseService, BinaryDatabaseProvider>();
+        Atto.Bind<IEventService, SimpleEventProvider>();
+        Atto.Bind<IInputService, SimpleInputProvider>();
     }
 
 }

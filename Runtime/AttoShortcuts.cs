@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public static partial class Core
+public static partial class Atto
 {
 
     public static IDataChannelService Channels

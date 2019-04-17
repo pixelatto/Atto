@@ -1,4 +1,4 @@
-using Atto;
+
 using System;
 using System.Collections;
 using UnityEngine;
@@ -34,7 +34,7 @@ public class SimpleImageDownloadProvider : IImageDownloadService
 
 			if (www.error != null)
 			{
-				Core.Logger.Error(www.error);
+				Atto.Logger.Error(www.error);
 				break;
 			}
 		}

@@ -28,7 +28,7 @@ public class SimpleAchievementProvider : IAchievementService
         } 
         else
         {
-            Core.Logger.Log("Achievement already defined " + achievement.name);
+            Atto.Logger.Log("Achievement already defined " + achievement.name);
         }
     }
 

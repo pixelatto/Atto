@@ -1,7 +1,7 @@
 using System;
 using Identifier = System.String;
 
-public static partial class Core
+public static partial class Atto
 {
 	public static Container Container { get { return container; } }
 	private static Container container = new Container();

@@ -36,7 +36,7 @@ public class FileStorageProvider : IStorageService
         }
         catch (IOException e)
         {
-            Core.Logger.Log(e.Message);
+            Atto.Logger.Log(e.Message);
             return;
         }
         bw.Close();
@@ -70,7 +70,7 @@ public class FileStorageProvider : IStorageService
         }
         catch (Exception e)
         {
-            Core.Logger.Log(e.Message);
+            Atto.Logger.Log(e.Message);
             return "";
         }
 

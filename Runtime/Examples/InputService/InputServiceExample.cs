@@ -10,7 +10,7 @@ public class InputServiceExample : MonoBehaviour , IControllable
     void Start ()
     {
         device = GetComponent<UnityKeyboardDevice>();
-        Core.Input.AssignControllable(device, this);
+        Atto.Input.AssignControllable(device, this);
     }
 
     public void Control(IDevice controller)
