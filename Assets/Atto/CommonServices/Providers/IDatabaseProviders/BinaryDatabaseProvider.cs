@@ -19,16 +19,20 @@ public class BinaryDatabaseProvider : IDataBaseService
     IStorageService databaseStorage;
     ISerializationService serialization;
 
-    public BinaryDatabaseProvider(string path, IStorageService storage, ISerializationService serializationProvider)
+    DataChannel storageChannel;
+
+    public BinaryDatabaseProvider()
     {
-        databaseStorage = storage;
-        serialization = serializationProvider;
+        databaseStorage = Core.Storage;
+        serialization = Core.Serialization;
+        storageChannel = Core.Channels.GetChannel(DataChannelTypes.Database);
+
         LoadFromStorage();
     }
 
     void LoadFromStorage()
     {
-        string plainData = databaseStorage.ReadFromStorage();
+        string plainData = databaseStorage.ReadFromStorage(storageChannel);
         data = serialization.Deserialize<Dictionary<string, string>>(plainData);
     }
 
@@ -36,7 +40,7 @@ public class BinaryDatabaseProvider : IDataBaseService
     {
         UpdateMetadata();
         string serializedData = serialization.Serialize(data);
-        databaseStorage.WriteToStorage(serializedData);
+        databaseStorage.WriteToStorage(serializedData, storageChannel);
     }
 
     private void UpdateMetadata()

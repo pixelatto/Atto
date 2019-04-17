@@ -10,20 +10,20 @@ public class FileStorageProvider : IStorageService
 
     Encoding encoding = Encoding.UTF8;
 
-    string dataPath = "";
+    DataChannel defaultStorageChannel = new DataChannel() { uri = Application.dataPath + "/defaultStorage.sav" };
 
-    public FileStorageProvider(string path)
+    public FileStorageProvider()
     {
-        SetDestination(path);
+        
     }
 
-    public void SetDestination(string path)
+    public void WriteToStorage(string data, DataChannel channel = null)
     {
-        dataPath = path;
-    }
+        if (channel == null)
+        {
+            channel = defaultStorageChannel;
+        }
 
-    public void WriteToStorage(string data)
-    {
         BinaryWriter bw;
 
         Byte[] bytes = encoding.GetBytes(data);
@@ -31,7 +31,7 @@ public class FileStorageProvider : IStorageService
 
         try
         {
-            bw = new BinaryWriter(new FileStream(dataPath, FileMode.Create));
+            bw = new BinaryWriter(new FileStream(channel.uri, FileMode.Create));
             bw.Write(content);
         }
         catch (IOException e)
@@ -42,15 +42,20 @@ public class FileStorageProvider : IStorageService
         bw.Close();
     }
 
-    public string ReadFromStorage()
+    public string ReadFromStorage(DataChannel channel = null)
     {
+        if (channel == null)
+        {
+            channel = defaultStorageChannel;
+        }
+
         BinaryReader br;
         FileStream fs;
         string content;
 
         try
         {
-            fs = new FileStream(dataPath, FileMode.OpenOrCreate);
+            fs = new FileStream(channel.uri, FileMode.OpenOrCreate);
             if (fs.Length > 0)
             {
                 br = new BinaryReader(fs);
@@ -70,5 +75,5 @@ public class FileStorageProvider : IStorageService
         }
 
     }
-
+    
 }

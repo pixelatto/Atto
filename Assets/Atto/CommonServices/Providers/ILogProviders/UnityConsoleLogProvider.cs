@@ -5,10 +5,15 @@ public class UnityConsoleLogProvider : ILogService
 {
 	LogLevel minLogLevel = LogLevel.Debug;
 
-    public UnityConsoleLogProvider(LogLevel minLogLevel)
+    public UnityConsoleLogProvider()
 	{
-		this.minLogLevel = minLogLevel;
+		
 	}
+
+    public void SetMinLogLevel(LogLevel minLogLevel)
+    {
+        this.minLogLevel = minLogLevel;
+    }
 
 	public void Log(string message, params object[] args)
 	{

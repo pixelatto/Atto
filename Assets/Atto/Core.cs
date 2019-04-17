@@ -16,6 +16,11 @@ public static partial class Core
 		return container.Get<T>(id);
 	}
 
+    public static void Bind<Service, Provider>() where Provider : Service,  new()
+    {
+        Provide<Service>(() => new Provider());
+    }
+
 	public static void Provide<T>(Func<T> classConstructor)
 	{
 		container.Provide<T>(classConstructor);
@@ -36,13 +41,4 @@ public static partial class Core
 		container.ProvideFactory<T>(id, classConstructor);
 	}
 
-	public static ILogService Logger
-	{
-		get { return container.Get<ILogService>(); }
-	}
-
-    public static ISerializationService Serialization
-    {
-        get { return container.Get<ISerializationService>(); }
-    }
 }

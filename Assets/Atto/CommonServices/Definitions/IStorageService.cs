@@ -4,7 +4,6 @@ using UnityEngine;
 
 public interface IStorageService
 {
-    void SetDestination(string path);
-    string ReadFromStorage();
-    void WriteToStorage(string content);
+    string ReadFromStorage(DataChannel channel);
+    void WriteToStorage(string content, DataChannel channel);
 }
