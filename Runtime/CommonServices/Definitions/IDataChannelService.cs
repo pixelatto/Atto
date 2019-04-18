@@ -6,12 +6,14 @@ public interface IDataChannelService
 {
 
     DataChannel GetChannel(DataChannelTypes channel);
+    List<DataChannelTypes> GetAvailableChannels();
 
 }
 
+[System.Serializable]
 public class DataChannel
 {
-    DataChannelTypes channelType;
+    public DataChannelTypes type;
     public string uri;
 }
 
