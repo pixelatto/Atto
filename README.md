@@ -1,6 +1,6 @@
 # Atto
 
-Atto is a basic architecture and tools pack for Unity projects. Unity nature usually makes unexperienced programmers to make very coupled code with no structure whatsoever. This basic framework, while not being the ultimate solution, helps solve that without being something as sophisticated as a DI framework. It's aimed at intermediate users who want their code to significantly improve its maintainability without running into much additional boilerplate.
+Atto is a basic architecture and tools pack for Unity projects. Unity nature usually pushes unexperienced programmers to very coupled code with no structure whatsoever. Atto, while not being the ultimate solution, helps to improve that without being too sophisticated. It is aimed at intermediate users who want to improve their codebase maintainability without running into additional boilerplate.
 
 Atto it's build around these principles:
 - **Easy to boot:** You just have to import the package and type `Atto.[Something]` to get started. There's a caveat: Atto sacrifices namespacing in order to get up and running right away.
