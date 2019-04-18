@@ -12,7 +12,7 @@ public class AttoSettingsProvider : ISettingsService
     AttoSettings defaultSettings = new AttoSettings()
     {
         autoBindCommonServices = true,
-        basePath = "Application.dataPath",
+        storagePath = "dataPath",
         dataChannels = new List<DataChannel>()
         {
             new DataChannel() { type = DataChannelTypes.Database, uri = "/Data.sav" },

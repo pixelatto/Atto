@@ -12,20 +12,25 @@ public class UriDataChannelProvider : IDataChannelService
     {
         if (Atto.Settings.Current != null)
         {
-            string basePath = Atto.Settings.Current.basePath;
-            if (basePath == "Application.dataPath")
+            string storagePath = Atto.Settings.Current.storagePath;
+            if (storagePath == "dataPath")
             {
-                basePath = Application.dataPath;
-            } else if (basePath == "Application.persistentDataPath")
+                storagePath = Application.dataPath;
+            } else if (storagePath == "persistentDataPath")
             {
-                basePath = Application.persistentDataPath;
+                storagePath = Application.persistentDataPath;
             }
             var dataChannels = Atto.Settings.Current.dataChannels;
             foreach (var channel in dataChannels)
             {
                 if (channel != null && channel.type != DataChannelTypes.Undefined && channel.uri != "")
                 {
-                    var newDataChannel = new DataChannel() { uri = basePath + channel.uri, type = channel.type };
+                    var fullPath = channel.uri;
+                    if (channel.uri.StartsWith("/"))
+                    {
+                        fullPath = storagePath + channel.uri;
+                    }
+                    var newDataChannel = new DataChannel() { uri = fullPath, type = channel.type };
                     AddEntry(channel.type, newDataChannel);
                 }
             }
