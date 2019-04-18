@@ -1,6 +1,11 @@
 # Atto
 
-Basic architecture and tools for Unity projects
+Atto is a basic architecture and tools pack for Unity projects. Unity nature usually makes unexperienced programmers to make very coupled code with no structure whatsoever. This basic framework, while not being the ultimate solution, helps solve that without being something as sophisticated as a DI framework. It's aimed at intermediate users who want their code to significantly improve its maintainability without running into much additional boilerplate.
+
+Atto it's build around these principles:
+- **Easy to boot:** You just have to import the package and type `Atto.[Something]` to get started. There's a caveat: Atto sacrifices namespacing in order to get up and running right away.
+- **Simple to use:** There are many common services already installed and automatically included.
+- **Easy to customize:** It's quite simple to add new services or configure the default ones using the [settings](#settings) file.
 
 ## Table of contents
 
@@ -62,7 +67,7 @@ Atto is installed as a Unity package. You can find additional info on setting up
 
 ## Package setup
 
-Create a new Unity project (NOTE: Atto is not namespaced, since it's designed to be a starting point for projects and shouldn't be imported in existing codebases). In this new project, open the `/Packages/manifest.json` file and include the following entry:
+Create a new Unity project. In this new project, open the `/Packages/manifest.json` file and include the following entry:
 ```
 {
   "dependencies": {
@@ -71,6 +76,8 @@ Create a new Unity project (NOTE: Atto is not namespaced, since it's designed to
 }
 ```
 Save the manifest, go back to Unity, wait for it to refresh (or force with ctrl+R) and... you're ready to go!
+
+**Important note**: Atto is not namespaced, since it's designed to be a starting point for projects and fast/simple to use. It shouldn't be imported in existing codebases.
 
 ## Binding
 
