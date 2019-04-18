@@ -70,6 +70,22 @@ Create a new Unity project (NOTE: Atto is not namespaced, since it's designed to
 ```
 Save the manifest, go back to Unity, wait for it to refresh (or force with ctrl+R) and... you're ready to go!
 
+## Binding providers to services
+
+*This step is optional for basic usage.*
+
+By default, the basic services are all binded to the container and available for immediate use. You can Bind additional services using the generic static method `Atto.Bind<IService, Provider>()` to setup a service. It'll then be available via `Atto.Get<IService>()`. To avoid verbosity, we've added static shortcuts for common services, for example, instead of using `Atto.Get<ILoggerService>().Log("Some text")` you can type `Atto.Logger.Log("Some text")`. You can use a static class of your own for this kind of shotcuts using the `AttoShortCuts.cs` file as a template/example.
+
+## Settings file
+
+After running the compiled package for the first time, a `attoSettings.json` file will be generated on the root of your assets folder (hit ctrl+R if you don't see it). This is a JSON file that contains various settings you can tweak to modify the behaviour of the framework.
+
+| Key                      | Values                                 | Description                                                      |
+| ----------------         | ----------------                       | ----------------                                                 |
+| autoBindCommonServices   | "true", "false"                        | Sets the default boostrapping on startup for all common services.|
+| storagePath              | "dataPath", "persistentDataPath", URI  | Sets the base path for the storage service                       |
+| dataChannels             | An array of data channel definitions   | Defines data channels for the data channels service              |
+
 # Usage
 
 ## Common services
