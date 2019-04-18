@@ -10,7 +10,9 @@ Basic architecture and tools for Unity projects
   - [Services](#services)
   - [Providers](#providers)
 - Installation
-  - [Initial setup](#initial-setup)
+  - [Package setup](#package-setup)
+  - [Binding](#binding)
+  - [Settings](#settings)
 - Usage
   - Common services
     - [Logger](#logger-service)
@@ -25,7 +27,7 @@ Basic architecture and tools for Unity projects
 
 ## Container
 
-This is the center of the Atto architecture, a service container providing various kinds of common fucntionality through your app. It's major advantage is that it enables global access to common services through your app while also providing loose coupling to them (they are all isolated via interfaces).
+This is the center of the Atto architecture, a service container providing various kinds of common fucntionality through your app. Its major advantage is that it enables global access to common services through your app while also providing loose coupling to them (they are all isolated via interfaces).
 
 
 ## Atto
@@ -70,13 +72,13 @@ Create a new Unity project (NOTE: Atto is not namespaced, since it's designed to
 ```
 Save the manifest, go back to Unity, wait for it to refresh (or force with ctrl+R) and... you're ready to go!
 
-## Binding providers to services
+## Binding
 
 *This step is optional for basic usage.*
 
 By default, the basic services are all binded to the container and available for immediate use. You can Bind additional services using the generic static method `Atto.Bind<IService, Provider>()` to setup a service. It'll then be available via `Atto.Get<IService>()`. To avoid verbosity, we've added static shortcuts for common services, for example, instead of using `Atto.Get<ILoggerService>().Log("Some text")` you can type `Atto.Logger.Log("Some text")`. You can use a static class of your own for this kind of shotcuts using the `AttoShortCuts.cs` file as a template/example.
 
-## Settings file
+## Settings
 
 After running the compiled package for the first time, a `attoSettings.json` file will be generated on the root of your assets folder (hit ctrl+R if you don't see it). This is a JSON file that contains various settings you can tweak to modify the behaviour of the framework.
 
@@ -85,6 +87,33 @@ After running the compiled package for the first time, a `attoSettings.json` fil
 | autoBindCommonServices   | "true", "false"                        | Sets the default boostrapping on startup for all common services.|
 | storagePath              | "dataPath", "persistentDataPath", URI  | Sets the base path for the storage service                       |
 | dataChannels             | An array of data channel definitions   | Defines data channels for the data channels service              |
+
+The default `attoSettings.json` file looks like this:
+```
+{
+    "autoBindCommonServices": true,
+    "storagePath": "dataPath",
+    "dataChannels": [
+        {
+            "type": 1,
+            "uri": "/Data.sav"
+        },
+        {
+            "type": 2,
+            "uri": "/Options.sav"
+        },
+        {
+            "type": 3,
+            "uri": "/Save.sav"
+        },
+        {
+            "type": 4,
+            "uri": "/Rankings.sav"
+        }
+    ]
+}
+```
+
 
 # Usage
 
