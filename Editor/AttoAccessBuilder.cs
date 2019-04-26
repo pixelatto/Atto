@@ -13,19 +13,10 @@ public static class AttoAccessBuilder
 
     const string defaultCoreName = "Core";
 
-    [InitializeOnLoadMethod]
-    public static void OnInitialize()
+    [UnityEditor.Callbacks.DidReloadScripts]
+    public static void ReloadAfterScripts()
     {
-        if (EditorApplication.isPlaying) { return; }
-        EditorApplication.update += Update;
-    }
-
-    private static void Update()
-    {
-        if (EditorApplication.isPlayingOrWillChangePlaymode && !EditorApplication.isPlaying)
-        {
-            ReloadServices();
-        }
+        ReloadServices();
     }
 
     [MenuItem("Tools/ReloadServices")]
