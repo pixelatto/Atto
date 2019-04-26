@@ -10,6 +10,7 @@ public interface ISettingsService
 [System.Serializable]
 public class AttoSettings
 {
+    public string coreName = "";
     public string storagePath;
     public List<DataChannel> dataChannels;
     public bool autoBindCommonServices;

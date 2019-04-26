@@ -9,7 +9,9 @@ using System;
 public static class AttoAccessBuilder
 {
 
-    const string coreClassName = "C"; //Use whatever but not "Atto" or any existing class name
+    static string coreClassName = "Core";
+
+    const string defaultCoreName = "Core";
 
     [InitializeOnLoadMethod]
     public static void OnInitialize()
@@ -29,8 +31,23 @@ public static class AttoAccessBuilder
     [MenuItem("Tools/ReloadServices")]
     public static void ReloadServices()
     {
+        GetCoreName();
         var bindingsList = GetBindingsList();
         WriteAccessFile(bindingsList);
+    }
+
+    private static void GetCoreName()
+    {
+        var settings = new AttoSettingsProvider();
+        var customCoreName = settings.Current.coreName;
+        if (!string.IsNullOrEmpty(customCoreName))
+        {
+            coreClassName = customCoreName;
+        }
+        else
+        {
+            coreClassName = defaultCoreName;
+        }
     }
 
     public static void LogReadyServices()

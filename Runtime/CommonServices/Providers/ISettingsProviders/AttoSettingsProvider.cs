@@ -12,6 +12,7 @@ public class AttoSettingsProvider : ISettingsService
 
     AttoSettings defaultSettings = new AttoSettings()
     {
+        coreName = "Core",
         autoBindCommonServices = true,
         storagePath = "dataPath",
         dataChannels = new List<DataChannel>()
