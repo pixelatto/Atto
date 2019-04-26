@@ -9,11 +9,17 @@ public class UriDataChannelProvider : IDataChannelService
 
     Dictionary<DataChannelTypes, DataChannel> channelDictionary;
 
+    ISettingsService settings;
+    ILogService logger;
+
     public UriDataChannelProvider()
     {
-        if (Atto.Settings.Current != null)
+        logger = Atto.Get<ILogService>();
+        settings = Atto.Get<ISettingsService>();
+
+        if (settings.Current != null)
         {
-            string storagePath = Atto.Settings.Current.storagePath;
+            string storagePath = settings.Current.storagePath;
             if (storagePath == "dataPath")
             {
                 storagePath = Application.dataPath;
@@ -21,7 +27,7 @@ public class UriDataChannelProvider : IDataChannelService
             {
                 storagePath = Application.persistentDataPath;
             }
-            var dataChannels = Atto.Settings.Current.dataChannels;
+            var dataChannels = settings.Current.dataChannels;
             foreach (var channel in dataChannels)
             {
                 if (channel != null && channel.type != DataChannelTypes.Undefined && channel.uri != "")
@@ -55,7 +61,7 @@ public class UriDataChannelProvider : IDataChannelService
         }
         else
         {
-            Atto.Logger.Error("Unregistered channel: " + channelType.ToString());
+            logger.Error("Unregistered channel: " + channelType.ToString());
             return null;
         }
     }
@@ -66,7 +72,7 @@ public class UriDataChannelProvider : IDataChannelService
         foreach (var channelEntry in channelDictionary)
         {
             result.Add(channelEntry.Key);
-            Atto.Logger.Log(channelEntry.Key.ToString() + " -> " + channelEntry.Value.uri);
+            logger.Log(channelEntry.Key.ToString() + " -> " + channelEntry.Value.uri);
         }
         return result;
     }

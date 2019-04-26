@@ -24,9 +24,9 @@ public class BinaryDatabaseProvider : IDataBaseService
 
     public BinaryDatabaseProvider()
     {
-        databaseStorage = Atto.Storage;
-        serialization = Atto.Serialization;
-        storageChannel = Atto.Channels.GetChannel(DataChannelTypes.Database);
+        databaseStorage = Atto.Get<IStorageService>();
+        serialization = Atto.Get<ISerializationService>();
+        storageChannel = Atto.Get<IDataChannelService>().GetChannel(DataChannelTypes.Database);
 
         LoadFromStorage();
     }
@@ -65,7 +65,7 @@ public class BinaryDatabaseProvider : IDataBaseService
         {
             try
             {
-                object value = Atto.Serialization.Deserialize<T>(data[dbId]);
+                object value = serialization.Deserialize<T>(data[dbId]);
                 result.Resolve((T)value);
             }
             catch
@@ -99,7 +99,7 @@ public class BinaryDatabaseProvider : IDataBaseService
     public void WriteEntry<T>(string id, T value)
     {
         string dbId = GetDbId(id);
-        data[dbId] = Atto.Serialization.Serialize(value);
+        data[dbId] = serialization.Serialize(value);
 
         SaveToStorage();
     }

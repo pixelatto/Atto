@@ -12,7 +12,7 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 		{
 			if (applicationIsQuitting)
 			{
-				Atto.Logger.Warning("[Singleton] Instance '{0}' already destroyed on application quit. Won't create again - returning null.", typeof(T));
+				Debug.LogWarning(string.Format("[Singleton] Instance '{0}' already destroyed on application quit. Won't create again - returning null.", typeof(T)));
 
 				return null;
 			}
@@ -25,7 +25,7 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 
 					if (FindObjectsOfType(typeof(T)).Length > 1)
 					{
-						Atto.Logger.Error("[Singleton] Something went really wrong - there should never be more than 1 singleton! Reopening the scene might fix it.");
+                        Debug.LogError("[Singleton] Something went really wrong - there should never be more than 1 singleton! Reopening the scene might fix it.");
 
 						return instance;
 					}
@@ -38,7 +38,7 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 
 						DontDestroyOnLoad(singleton);
 
-						Atto.Logger.Log("[Singleton] An instance of {0} is needed in the scene, so '{1}' was created with DontDestroyOnLoad.", typeof(T), singleton);
+						Debug.Log(string.Format("[Singleton] An instance of {0} is needed in the scene, so '{1}' was created with DontDestroyOnLoad.", typeof(T), singleton));
 					}
 					else
 					{

@@ -37,7 +37,7 @@ public static class ColorExtensions
 		}
 		catch
 		{
-			Atto.Logger.Error("Error converting HexColor {0}", hexCode);
+			Debug.LogError(string.Format("Error converting HexColor {0}", hexCode));
 		}
 
 		return color;

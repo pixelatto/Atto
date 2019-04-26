@@ -7,7 +7,16 @@ using System;
 public class SimpleInputProvider : IInputService
 {
 
+    IInputService input;
+    ILogService logger;
+
     List<IDevice> devices = new List<IDevice>();
+
+    public SimpleInputProvider()
+    {
+        input = Atto.Get<IInputService>();
+        logger = Atto.Get<ILogService>();
+    }
 
     public void AssignControllable(IDevice device, IControllable controllable)
     {
@@ -26,7 +35,7 @@ public class SimpleInputProvider : IInputService
         }
         else
         {
-            Atto.Logger.Warning("Couldn't remove controllable from device (it wasn't listed)");
+            logger.Warning("Couldn't remove controllable from device (it wasn't listed)");
         }
     }
 
@@ -55,7 +64,7 @@ public class SimpleInputProvider : IInputService
         var result = devices.Find(x => x.Id == deviceId);
         if (result == null)
         {
-            Atto.Logger.Warning("Device with id " + deviceId.ToString() + " is not connected.");
+            logger.Warning("Device with id " + deviceId.ToString() + " is not connected.");
         }
         return result;
     }

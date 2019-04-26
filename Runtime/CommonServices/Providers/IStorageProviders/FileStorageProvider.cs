@@ -9,13 +9,15 @@ using System;
 public class FileStorageProvider : IStorageService
 {
 
+    ILogService logger;
+
     Encoding encoding = Encoding.UTF8;
 
     DataChannel defaultStorageChannel = new DataChannel() { uri = Application.dataPath + "/defaultStorage.sav" };
 
     public FileStorageProvider()
     {
-        
+        logger = Atto.Get<ILogService>();
     }
 
     public void WriteToStorage(string data, DataChannel channel = null)
@@ -37,7 +39,7 @@ public class FileStorageProvider : IStorageService
         }
         catch (IOException e)
         {
-            Atto.Logger.Log(e.Message);
+            logger.Log(e.Message);
             return;
         }
         bw.Close();
@@ -71,7 +73,7 @@ public class FileStorageProvider : IStorageService
         }
         catch (Exception e)
         {
-            Atto.Logger.Log(e.Message);
+            logger.Log(e.Message);
             return "";
         }
 

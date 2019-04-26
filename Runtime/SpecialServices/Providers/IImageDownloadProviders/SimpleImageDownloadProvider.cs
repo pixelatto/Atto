@@ -5,9 +5,17 @@ using UnityEngine;
 
 public class SimpleImageDownloadProvider : IImageDownloadService
 {
+
+    ILogService logger;
+
 	private sealed class WebDownloader : MonoBehaviour
 	{
 	}
+
+    public SimpleImageDownloadProvider()
+    {
+        logger = Atto.Get<ILogService>();
+    }
 
 	public void LoadTexture(string url, Action<Texture2D> onComplete)
 	{
@@ -34,7 +42,7 @@ public class SimpleImageDownloadProvider : IImageDownloadService
 
 			if (www.error != null)
 			{
-				Atto.Logger.Error(www.error);
+				logger.Error(www.error);
 				break;
 			}
 		}

@@ -6,7 +6,14 @@ using UnityEngine;
 public class SimpleAchievementProvider : IAchievementService
 {
 
+    ILogService logger;
+
     List<IAchievement> achievementList;
+
+    public SimpleAchievementProvider()
+    {
+        logger = Atto.Get<ILogService>();
+    }
 
     public void CheckAchievementUnlocks()
     {
@@ -28,7 +35,7 @@ public class SimpleAchievementProvider : IAchievementService
         } 
         else
         {
-            Atto.Logger.Log("Achievement already defined " + achievement.name);
+            logger.Log("Achievement already defined " + achievement.name);
         }
     }
 
