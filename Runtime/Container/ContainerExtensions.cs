@@ -13,13 +13,6 @@ public static class ContainerExtensions
 
 	public static void Provide<T>(this Container container, Func<T> classConstructor)
 	{
-        var previousProvider = container.Get<T>(DEFAULT_ID);
-        if (previousProvider != null)
-        {
-            Debug.LogError("Can't provide service of type: " + typeof(T).Name + " because it's already provided by " + previousProvider.GetType().Name);
-            return;
-        }
-
         container.Provide<T>(DEFAULT_ID, classConstructor);
 	}
 

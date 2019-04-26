@@ -6,11 +6,14 @@ using UnityEngine;
 public class BindService : Attribute
 {
 
-    public string accessDescriptor;
+    public string accessDescriptor = "";
 
-    public BindService(string accessDescriptor)
+    public BindService(string accessDescriptor, bool enabled = true)
     {
-        this.accessDescriptor = accessDescriptor;
+        if (enabled)
+        {
+            this.accessDescriptor = accessDescriptor;
+        }
     }
 
 }

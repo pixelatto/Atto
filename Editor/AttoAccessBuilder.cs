@@ -9,7 +9,7 @@ using System;
 public static class AttoAccessBuilder
 {
 
-    const string coreClassName = "Atto";
+    const string coreClassName = "Core"; //Use whatever but not "Atto" or any existing class name
 
     [InitializeOnLoadMethod]
     public static void OnInitialize()
