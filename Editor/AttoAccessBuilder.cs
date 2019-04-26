@@ -26,16 +26,6 @@ public static class AttoAccessBuilder
         }
     }
 
-    [MenuItem("Tools/LogAssemblies")]
-    public static void LogAssemblies()
-    {
-        Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-        foreach (var assembly in assemblies)
-        {
-            Debug.Log(assembly.FullName);
-        }
-    }
-
     [MenuItem("Tools/ReloadServices")]
     public static void ReloadServices()
     {
@@ -48,7 +38,7 @@ public static class AttoAccessBuilder
         var bindingsList = GetBindingsList();
         foreach (var binding in bindingsList)
         {
-            Debug.Log(binding.classType + " -> IMPLEMENTS -> " + binding.interfaceName + " AS A." + binding.accessDescriptor);
+            Debug.Log(binding.providerClass + " -> IMPLEMENTS -> " + binding.interfaceName + " AS A." + binding.accessDescriptor);
         }
         Debug.Log("Loaded services: " + bindingsList.Count);
     }
@@ -74,32 +64,31 @@ public static class AttoAccessBuilder
 
     static ServiceAtributeBinding GetBindingFromType(Type type)
     {
-        string interfaceName = "";
-        string accessDescriptor = "";
-        ServiceMode serviceMode = ServiceMode.Undefined;
+        ServiceAtributeBinding result = new ServiceAtributeBinding();
+
+        result.providerClass = type;
 
         var attributes = type.GetCustomAttributes(typeof(BindService), true);
         if (attributes.Length == 1)
         {
-            BindService bindAttribute = (BindService)attributes[0];
-            accessDescriptor = bindAttribute.accessDescriptor;
-            serviceMode = bindAttribute.serviceMode;
+            var bindAttribute = (BindService)attributes[0];
+            result.accessDescriptor = bindAttribute.accessDescriptor;
+            result.serviceMode = bindAttribute.serviceMode;
+            result.serviceCaching = bindAttribute.serviceCaching;
         }
 
         var interfaces = type.GetInterfaces();
         if (interfaces.Length == 1)
         {
-            interfaceName = interfaces[0].ToString();
+            result.interfaceName = interfaces[0].ToString();
         }
 
-        if (accessDescriptor != "" && interfaceName != "" && type != null)
+        if (!result.IsValid)
         {
-            return new ServiceAtributeBinding() { accessDescriptor = accessDescriptor, interfaceName = interfaceName, classType = type };
+            result = null;
         }
-        else
-        {
-            return null;
-        }
+
+        return result;
     }
 
     static void WriteAccessFile(List<ServiceAtributeBinding> bindings)
@@ -131,7 +120,7 @@ public static class AttoAccessBuilder
 
         foreach (var binding in bindings)
         {
-            result += "\t\t\tAtto.Bind<" + binding.interfaceName + "," + binding.classType.Name + ">();\n";
+            result += "\t\t\tAtto.Bind<" + binding.interfaceName + "," + binding.providerClass.Name + ">();\n";
         }
 
         result += "\t\t}\n\t}\n\n";
@@ -144,7 +133,26 @@ public static class AttoAccessBuilder
         {
             string header = "\tpublic static ";
             string type = binding.interfaceName + " " + binding.accessDescriptor;
-            string body = "{ get { return Atto.Get<" + binding.interfaceName + ">(); }}\n\n";
+            string body = "{ get { ";
+            if (binding.serviceCaching == ServiceCaching.Dynamic)
+            {
+                body += "return Atto.Get<" + binding.interfaceName + ">();";
+                body += " }\n";
+                body += "}\n";
+            }
+            else if (binding.serviceCaching == ServiceCaching.Static)
+            {
+                string privateAccessDescriptor = binding.accessDescriptor + "_ ";
+                body += "if (" + privateAccessDescriptor + "== null) {";
+                body += privateAccessDescriptor + "= Atto.Get<" + binding.interfaceName + ">();} return " + privateAccessDescriptor + ";";
+                body += " } }\n";
+                body += "\tstatic " + binding.interfaceName + " " + privateAccessDescriptor + ";\n\n";
+            }
+            else
+            {
+                Debug.LogError("Undefined caching service for " + binding.providerClass.ToString());
+            }
+
             string result = header+type+body;
             return result;
         }
@@ -161,14 +169,35 @@ public static class AttoAccessBuilder
 
     class ServiceAtributeBinding
     {
-        public Type classType;
+        public Type providerClass;
         public ServiceMode serviceMode;
         public ServiceCaching serviceCaching;
         public string accessDescriptor;
         public string interfaceName;
 
+        public bool IsValid { get { return accessDescriptor != "" && interfaceName != "" && providerClass != null && serviceCaching != ServiceCaching.Undefined && serviceMode != ServiceMode.Undefined; } }
         public bool IsEnabled { get { return serviceMode != ServiceMode.Disabled; } }
         public bool IsVisible { get { return serviceMode != ServiceMode.Hidden; } }
+
+        public override string ToString()
+        {
+            string result = "";
+            if (providerClass != null)
+            {
+                result += "[Binding] " + providerClass.Name;
+            }
+            else
+            {
+                result += "[Binding] " + "UNKNOWN";
+            }
+            result += " provides " + interfaceName;
+            result += " as " + coreClassName;
+            result += "." + accessDescriptor;
+            result += " with [" + serviceMode.ToString();
+            result += ", " + serviceCaching.ToString() + "]";
+
+            return result;
+        }
     }
 
 }
