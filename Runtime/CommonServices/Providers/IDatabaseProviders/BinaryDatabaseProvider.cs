@@ -5,8 +5,8 @@ using System.Text;
 using UnityEngine;
 using RSG;
 
-[BindService("Database")]
-public class BinaryDatabaseProvider : IDataBaseService
+[BindService]
+public class BinaryDatabaseProvider : IDatabaseService
 {
     private static readonly string IdFormat = "db_{0}";
     Encoding encoding = Encoding.UTF8;

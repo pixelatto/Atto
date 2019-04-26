@@ -89,7 +89,7 @@ public static class AttoAccessBuilder
         if (attributes.Length == 1)
         {
             var bindAttribute = (BindService)attributes[0];
-            result.accessDescriptor = bindAttribute.accessDescriptor;
+            //result.accessDescriptor = bindAttribute.accessDescriptor;
             result.serviceMode = bindAttribute.serviceMode;
             result.serviceCaching = bindAttribute.serviceCaching;
         }
@@ -146,37 +146,40 @@ public static class AttoAccessBuilder
 
     static string WriteAccessDescriptor(ServiceAtributeBinding binding)
     {
-        if (binding.IsVisible)
+        string prefix = "";
+        string sufix = "";
+        if (!binding.IsVisible)
         {
-            string header = "\tpublic static ";
-            string type = binding.interfaceName + " " + binding.accessDescriptor;
-            string body = "{ get { ";
-            if (binding.serviceCaching == ServiceCaching.Dynamic)
-            {
-                body += "return Atto.Get<" + binding.interfaceName + ">();";
-                body += " }\n";
-                body += "}\n";
-            }
-            else if (binding.serviceCaching == ServiceCaching.Static)
-            {
-                string privateAccessDescriptor = binding.accessDescriptor + "_ ";
-                body += "if (" + privateAccessDescriptor + "== null) {";
-                body += privateAccessDescriptor + "= Atto.Get<" + binding.interfaceName + ">();} return " + privateAccessDescriptor + ";";
-                body += " } }\n";
-                body += "\tstatic " + binding.interfaceName + " " + privateAccessDescriptor + ";\n\n";
-            }
-            else
-            {
-                Debug.LogError("Undefined caching service for " + binding.providerClass.ToString());
-            }
-
-            string result = header+type+body;
-            return result;
+            prefix = "/*This service is hidden from API use, use Atto.Get<IService>() to access it from other services.\n";
+        }
+        string header = "\tpublic static ";
+        string type = binding.interfaceName + " " + binding.accessDescriptor;
+        string body = " { get { ";
+        if (binding.serviceCaching == ServiceCaching.Dynamic)
+        {
+            body += "return Atto.Get<" + binding.interfaceName + ">();";
+            body += " }\n";
+            body += "}\n";
+        }
+        else if (binding.serviceCaching == ServiceCaching.Static)
+        {
+            string privateAccessDescriptor = binding.accessDescriptor + "_ ";
+            body += "if (" + privateAccessDescriptor + "== null) {";
+            body += privateAccessDescriptor + "= Atto.Get<" + binding.interfaceName + ">();} return " + privateAccessDescriptor + ";";
+            body += " } }\n";
+            body += "\tstatic " + binding.interfaceName + " " + privateAccessDescriptor + ";";
         }
         else
         {
-            return "";
+            Debug.LogError("Undefined caching service for " + binding.providerClass.ToString());
         }
+        if (!binding.IsVisible)
+        {
+            sufix = "\n*/";
+        }
+
+        string result = prefix + header + type + body + sufix + "\n\n";
+        return result;
     }
 
     static string WriteClassFooter()
@@ -189,10 +192,10 @@ public static class AttoAccessBuilder
         public Type providerClass;
         public ServiceMode serviceMode;
         public ServiceCaching serviceCaching;
-        public string accessDescriptor;
+        public string accessDescriptor { get { return interfaceName.Substring(1, interfaceName.Length-1).Replace("Service", ""); } }
         public string interfaceName;
 
-        public bool IsValid { get { return accessDescriptor != "" && interfaceName != "" && providerClass != null && serviceCaching != ServiceCaching.Undefined && serviceMode != ServiceMode.Undefined; } }
+        public bool IsValid { get { return interfaceName != "" && providerClass != null && serviceCaching != ServiceCaching.Undefined && serviceMode != ServiceMode.Undefined; } }
         public bool IsEnabled { get { return serviceMode != ServiceMode.Disabled; } }
         public bool IsVisible { get { return serviceMode != ServiceMode.Hidden; } }
 

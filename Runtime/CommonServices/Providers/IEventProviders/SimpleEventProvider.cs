@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-[BindService("Events")]
+[BindService]
 public class SimpleEventProvider : IEventService
 {
 	public event SuscribeRequest OnSuscribeRequest;

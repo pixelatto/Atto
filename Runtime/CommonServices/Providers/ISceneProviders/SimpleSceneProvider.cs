@@ -1,6 +1,6 @@
 using UnityEngine.SceneManagement;
 
-[BindService("Scene")]
+[BindService]
 public class SimpleSceneProvider : ISceneService
 {
 	SceneParams sceneParams;

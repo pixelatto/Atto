@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-[BindService("Channel")]
+[BindService(ServiceMode.Hidden)]
 public class UriDataChannelProvider : IDataChannelService
 {
 

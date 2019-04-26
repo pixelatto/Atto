@@ -1,6 +1,6 @@
 ﻿using RSG;
 
-public interface IDataBaseService
+public interface IDatabaseService
 {
     void WriteEntry<T>(string entryKey, T value);
     IPromise<T> ReadEntry<T>(string entryKey, T defaultEntryValue = default(T));

@@ -5,14 +5,12 @@ using UnityEngine;
 
 public class BindService : Attribute
 {
-
-    public string accessDescriptor = "";
+    
     public ServiceMode serviceMode;
     public ServiceCaching serviceCaching;
 
-    public BindService(string accessDescriptor, ServiceMode serviceMode = ServiceMode.Enabled, ServiceCaching serviceCaching = ServiceCaching.Static)
+    public BindService(ServiceMode serviceMode = ServiceMode.Enabled, ServiceCaching serviceCaching = ServiceCaching.Static)
     {
-        this.accessDescriptor = accessDescriptor;
         this.serviceMode = serviceMode;
         this.serviceCaching = serviceCaching;
     }
