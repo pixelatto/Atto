@@ -62,7 +62,7 @@ public static class AttoAccessBuilder
             foreach (var type in assembly.GetTypes())
             {
                 var binding = GetBindingFromType(type);
-                if (binding != null)
+                if (binding != null && binding.IsEnabled)
                 {
                     results.Add(binding);
                 }
@@ -76,12 +76,14 @@ public static class AttoAccessBuilder
     {
         string interfaceName = "";
         string accessDescriptor = "";
+        ServiceMode serviceMode = ServiceMode.Undefined;
 
         var attributes = type.GetCustomAttributes(typeof(BindService), true);
         if (attributes.Length == 1)
         {
             BindService bindAttribute = (BindService)attributes[0];
             accessDescriptor = bindAttribute.accessDescriptor;
+            serviceMode = bindAttribute.serviceMode;
         }
 
         var interfaces = type.GetInterfaces();
@@ -138,11 +140,18 @@ public static class AttoAccessBuilder
 
     static string WriteAccessDescriptor(ServiceAtributeBinding binding)
     {
-        string header = "\tpublic static ";
-        string type = binding.interfaceName + " " + binding.accessDescriptor;
-        string body = "{ get { return Atto.Get<" + binding.interfaceName + ">(); }}\n\n";
-        string result = header+type+body;
-        return result;
+        if (binding.IsVisible)
+        {
+            string header = "\tpublic static ";
+            string type = binding.interfaceName + " " + binding.accessDescriptor;
+            string body = "{ get { return Atto.Get<" + binding.interfaceName + ">(); }}\n\n";
+            string result = header+type+body;
+            return result;
+        }
+        else
+        {
+            return "";
+        }
     }
 
     static string WriteClassFooter()
@@ -153,8 +162,12 @@ public static class AttoAccessBuilder
     class ServiceAtributeBinding
     {
         public Type classType;
+        public ServiceMode serviceMode;
         public string accessDescriptor;
         public string interfaceName;
+
+        public bool IsEnabled { get { return serviceMode != ServiceMode.Disabled; } }
+        public bool IsVisible { get { return serviceMode != ServiceMode.Hidden; } }
     }
 
 }

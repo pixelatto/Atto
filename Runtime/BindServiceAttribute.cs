@@ -7,13 +7,14 @@ public class BindService : Attribute
 {
 
     public string accessDescriptor = "";
+    public ServiceMode serviceMode;
 
-    public BindService(string accessDescriptor, bool enabled = true)
+    public BindService(string accessDescriptor, ServiceMode serviceMode = ServiceMode.Enabled)
     {
-        if (enabled)
-        {
-            this.accessDescriptor = accessDescriptor;
-        }
+        this.accessDescriptor = accessDescriptor;
+        this.serviceMode = serviceMode;
     }
 
 }
+
+public enum ServiceMode { Undefined, Enabled, Hidden, Disabled }
