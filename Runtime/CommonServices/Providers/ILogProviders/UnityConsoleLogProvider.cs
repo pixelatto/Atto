@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 
+[BindService("Logger")]
 public class UnityConsoleLogProvider : ILogService
 {
 	LogLevel minLogLevel = LogLevel.Debug;

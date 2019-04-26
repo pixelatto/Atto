@@ -5,6 +5,7 @@ using System.IO;
 using System.Text;
 using System;
 
+[BindService("Storage")]
 public class FileStorageProvider : IStorageService
 {
 

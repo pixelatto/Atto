@@ -6,23 +6,6 @@ using UnityEngine;
 public static partial class Atto
 {
 
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    public static void BindCommonServices()
-    {
-        Bind<ISettingsService,      AttoSettingsProvider>();
-        if (Settings.Current.autoBindCommonServices)
-        {
-            Bind<IDataChannelService,   UriDataChannelProvider>();
-            Bind<ILogService,           UnityConsoleLogProvider>();
-            Bind<ISerializationService, JsonSerializationProvider>();
-            Bind<IStorageService,       FileStorageProvider>();
-            Bind<IAchievementService,   SimpleAchievementProvider>();
-            Bind<IDataBaseService,      BinaryDatabaseProvider>();
-            Bind<IEventService,         SimpleEventProvider>();
-            Bind<IInputService,         SimpleInputProvider>();
-        }
-    }
-
     public static ISettingsService Settings
     {
         get { return container.Get<ISettingsService>(); }

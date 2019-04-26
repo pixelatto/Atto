@@ -5,6 +5,7 @@ using System.Text;
 using UnityEngine;
 using RSG;
 
+[BindService("Database")]
 public class BinaryDatabaseProvider : IDataBaseService
 {
     private static readonly string IdFormat = "db_{0}";

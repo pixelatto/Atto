@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
+[BindService("Settings")]
 public class AttoSettingsProvider : ISettingsService
 {
     public AttoSettings Current { get; private set; }

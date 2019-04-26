@@ -1,6 +1,7 @@
 using System.IO;
 using UnityEngine;
 
+[BindService("Serialization")]
 public class JsonSerializationProvider : ISerializationService
 {
 	public string Serialize<T>(T objectToSerialize)

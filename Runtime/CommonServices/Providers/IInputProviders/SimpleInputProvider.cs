@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+[BindService("Input")]
 public class SimpleInputProvider : IInputService
 {
 
