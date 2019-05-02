@@ -85,7 +85,7 @@ Save the manifest, go back to Unity, wait for it to refresh (or force with ctrl+
 
 *This step is optional for basic usage.*
 
-By default, the basic services are all binded to the container and available for immediate use. You can Bind additional services using the generic static method `Atto.Bind<IService, Provider>()` to setup a service. It'll then be available via `Atto.Get<IService>()`. To avoid verbosity, we've added static shortcuts for common services, for example, instead of using `Atto.Get<ILoggerService>().Log("Some text")` you can type `Atto.Logger.Log("Some text")`. You can use a static class of your own for this kind of shotcuts using the `AttoShortCuts.cs` file as a template/example.
+By default, the basic services are all binded to the container and available for immediate use. You can Bind additional services using the attribute [BindService] into any class that implements exactly one interface to create and bind a new service. If the interface is named IMyInterfaceService it'll then be available as `Atto.MyInterface` as a static shortcut.
 
 ## Settings
 
