@@ -16,6 +16,11 @@ public static partial class Atto
 		return container.Get<T>(id);
 	}
 
+    public static void Bind<Service>() where Service : new()
+    {
+        Provide<Service>(() => new Service());
+    }
+
     public static void Bind<Service, Provider>() where Provider : Service,  new()
     {
         Provide<Service>(() => new Provider());

@@ -46,7 +46,7 @@ public static class AttoAccessBuilder
         var bindingsList = GetBindingsList();
         foreach (var binding in bindingsList)
         {
-            Debug.Log(binding.providerClass + " -> IMPLEMENTS -> " + binding.interfaceName + " AS A." + binding.accessDescriptor);
+            Debug.Log(binding.providerClass + " -> IMPLEMENTS -> " + binding.serviceSpecificationName + " AS A." + binding.accessDescriptor);
         }
         Debug.Log("Loaded services: " + bindingsList.Count);
     }
@@ -77,18 +77,39 @@ public static class AttoAccessBuilder
         result.providerClass = type;
 
         var attributes = type.GetCustomAttributes(typeof(BindService), true);
-        if (attributes.Length == 1)
+
+        foreach (var attribute in attributes)
         {
-            var bindAttribute = (BindService)attributes[0];
-            //result.accessDescriptor = bindAttribute.accessDescriptor;
-            result.serviceMode = bindAttribute.serviceMode;
-            result.serviceCaching = bindAttribute.serviceCaching;
+            if (attribute is BindService)
+            {
+                var bindAttribute = (BindService)attribute;
+                result.serviceMode = bindAttribute.serviceMode;
+                result.serviceCaching = bindAttribute.serviceCaching;
+            }
         }
 
         var interfaces = type.GetInterfaces();
-        if (interfaces.Length == 1)
+        Type bindTarget = null;
+
+        foreach (var item in interfaces)
         {
-            result.interfaceName = interfaces[0].ToString();
+            if (item.Name.EndsWith("Service"))
+            {
+                bindTarget = item;
+                break;
+            }
+        }
+
+        bool hasInterface = (bindTarget != null);
+        if (hasInterface)
+        {
+            result.serviceSpecificationName = bindTarget.Name;
+            result.isInterfaced = true;
+        }
+        else
+        {
+            result.serviceSpecificationName = type.Name;
+            result.isInterfaced = false;
         }
 
         if (!result.IsValid)
@@ -128,7 +149,14 @@ public static class AttoAccessBuilder
 
         foreach (var binding in bindings)
         {
-            result += "\t\t\tAtto.Bind<" + binding.interfaceName + "," + binding.providerClass.Name + ">();\n";
+            if (binding.isInterfaced)
+            {
+                result += "\t\t\tAtto.Bind<" + binding.serviceSpecificationName + "," + binding.providerClass.Name + ">();\n";
+            }
+            else
+            {
+                result += "\t\t\tAtto.Bind<" + binding.serviceSpecificationName + ">();\n";
+            }
         }
 
         result += "\t\t}\n\t}\n\n";
@@ -144,11 +172,11 @@ public static class AttoAccessBuilder
             prefix = "/*This service is hidden from API use, use Atto.Get<IService>() to access it from other services.\n";
         }
         string header = "\tpublic static ";
-        string type = binding.interfaceName + " " + binding.accessDescriptor;
+        string type = binding.serviceSpecificationName + " " + binding.accessDescriptor;
         string body = " { get { ";
         if (binding.serviceCaching == ServiceCaching.Dynamic)
         {
-            body += "return Atto.Get<" + binding.interfaceName + ">();";
+            body += "return Atto.Get<" + binding.serviceSpecificationName + ">();";
             body += " }\n";
             body += "}\n";
         }
@@ -156,9 +184,9 @@ public static class AttoAccessBuilder
         {
             string privateAccessDescriptor = binding.accessDescriptor + "_ ";
             body += "if (" + privateAccessDescriptor + "== null) {";
-            body += privateAccessDescriptor + "= Atto.Get<" + binding.interfaceName + ">();} return " + privateAccessDescriptor + ";";
+            body += privateAccessDescriptor + "= Atto.Get<" + binding.serviceSpecificationName + ">();} return " + privateAccessDescriptor + ";";
             body += " } }\n";
-            body += "\tstatic " + binding.interfaceName + " " + privateAccessDescriptor + ";";
+            body += "\tstatic " + binding.serviceSpecificationName + " " + privateAccessDescriptor + ";";
         }
         else
         {
@@ -183,12 +211,36 @@ public static class AttoAccessBuilder
         public Type providerClass;
         public ServiceMode serviceMode;
         public ServiceCaching serviceCaching;
-        public string accessDescriptor { get { return interfaceName.Substring(1, interfaceName.Length-1).Replace("Service", ""); } }
-        public string interfaceName;
+        public string accessDescriptor { get { return FormatAccessDescriptor(); } }
 
-        public bool IsValid { get { return interfaceName != "" && providerClass != null && serviceCaching != ServiceCaching.Undefined && serviceMode != ServiceMode.Undefined; } }
+        public string serviceSpecificationName;
+        public bool isInterfaced = true;
+
+        public bool IsValid { get { return serviceSpecificationName != "" && providerClass != null && serviceCaching != ServiceCaching.Undefined && serviceMode != ServiceMode.Undefined; } }
         public bool IsEnabled { get { return serviceMode != ServiceMode.Disabled; } }
         public bool IsVisible { get { return serviceMode != ServiceMode.Hidden; } }
+
+
+        private string FormatAccessDescriptor()
+        {
+            var result = serviceSpecificationName;
+            if (result.StartsWith("I"))
+            {
+                result = result.Substring(1, result.Length - 1);
+            }
+
+            if (result.EndsWith("Service"))
+            {
+                result = result.Replace("Service", "");
+            }
+
+            if (result.EndsWith("Provider"))
+            {
+                result = result.Replace("Provider", "");
+            }
+
+            return result;
+        }
 
         public override string ToString()
         {
@@ -201,7 +253,7 @@ public static class AttoAccessBuilder
             {
                 result += "[Binding] " + "UNKNOWN";
             }
-            result += " provides " + interfaceName;
+            result += " provides " + serviceSpecificationName;
             result += " as " + coreClassName;
             result += "." + accessDescriptor;
             result += " with [" + serviceMode.ToString();
