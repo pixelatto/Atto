@@ -15,6 +15,8 @@ public class BinaryDatabaseProvider : IDatabaseService
     const string appVersionKey = "db_appversion";
     const string dbVersionKey = "db_version";
 
+    const string defaultDatabaseName = "Database";
+
     private Dictionary<string, string> data;
 
     IStorageService storageProvider;
@@ -28,7 +30,7 @@ public class BinaryDatabaseProvider : IDatabaseService
         this.storageProvider = Atto.Get<IStorageService>();
         this.serializationProvider = Atto.Get<ISerializationService>();
         this.dataChannelProvider = Atto.Get<IDataChannelService>();
-        currentDataChannel = dataChannelProvider.GetChannel(DataChannelTypes.Database);
+        currentDataChannel = dataChannelProvider.GetChannelByName(defaultDatabaseName);
 
         LoadFromStorage();
     }

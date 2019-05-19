@@ -13,6 +13,8 @@ public static class AttoAccessBuilder
 
     const string defaultCoreName = "Core";
 
+    static AttoSettingsProvider settings;
+
     public static void ReloadAfterScripts()
     {
         ReloadServices();
@@ -28,7 +30,7 @@ public static class AttoAccessBuilder
 
     private static void GetCoreName()
     {
-        var settings = new AttoSettingsProvider();
+        settings = new AttoSettingsProvider();
         var customCoreName = settings.Current.coreName;
         if (!string.IsNullOrEmpty(customCoreName))
         {
@@ -137,6 +139,8 @@ public static class AttoAccessBuilder
         }
 
         fileContents += WriteClassFooter();
+
+        fileContents += WriteDataChannelsEnum();
         
         string path = Application.dataPath + "/Plugins/Atto/AttoAccess.cs";
         if (!Directory.Exists(Path.GetDirectoryName(path)))
@@ -147,6 +151,20 @@ public static class AttoAccessBuilder
         AssetDatabase.Refresh();
     }
 
+    private static string WriteDataChannelsEnum()
+    {
+        string result = "";
+        result += "\n\npublic enum DataChannelTypes \n";
+        result += "{\n";
+        result += "Undefined = 0, ";
+        foreach (var dataChannel in settings.Current.dataChannels)
+        {
+            result += dataChannel.channelName + " = " + dataChannel.channelId + ", ";
+        }
+        result = result.Substring(0, result.Length - 2) + "\n";
+        result += "}\n\n";
+        return result;
+    }
 
     static string WriteClassHeader(List<ServiceAtributeBinding> bindings)
     {
@@ -157,7 +175,7 @@ public static class AttoAccessBuilder
         result += "\t\tAtto.Bind<ISettingsService, AttoSettingsProvider>();\n";
         result += "\t\tif (Atto.Get<ISettingsService>().Current.autoBindCommonServices)\n\t\t{\n";
 
-        result += "\n\t\t//Interfaced services (replaceable):\n";
+        result += "\n\t\t\t//Interfaced services (replaceable):\n";
         foreach (var binding in bindings)
         {
             if (binding.isInterfaced)
@@ -166,7 +184,7 @@ public static class AttoAccessBuilder
             }
         }
 
-        result += "\n\t\t//Non-interfaced services:\n";
+        result += "\n\t\t\t//Non-interfaced services:\n";
         foreach (var binding in bindings)
         {
             if (!binding.isInterfaced)
@@ -208,12 +226,14 @@ public static class AttoAccessBuilder
         {
             Debug.LogError("Undefined caching service for " + binding.providerClass.ToString());
         }
+
         if (!binding.IsVisible)
         {
             sufix = "\n*/";
         }
 
         string result = prefix + header + type + body + sufix + "\n\n";
+        
         return result;
     }
 
@@ -279,3 +299,5 @@ public static class AttoAccessBuilder
     }
 
 }
+
+

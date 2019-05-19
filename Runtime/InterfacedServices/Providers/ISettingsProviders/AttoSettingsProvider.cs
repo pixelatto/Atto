@@ -17,10 +17,10 @@ public class AttoSettingsProvider : ISettingsService
         storagePath = "dataPath",
         dataChannels = new List<DataChannel>()
         {
-            new DataChannel() { type = DataChannelTypes.Database, uri = "/Data.sav" },
-            new DataChannel() { type = DataChannelTypes.Options, uri = "/Options.sav" },
-            new DataChannel() { type = DataChannelTypes.SavedGame, uri = "/Save.sav" },
-            new DataChannel() { type = DataChannelTypes.Rankings, uri = "/Rankings.sav"}
+            new DataChannel() { channelName = "Database", channelId = 1, uri = "/Data.sav" },
+            new DataChannel() { channelName = "Options", channelId = 2, uri = "/Options.sav" },
+            new DataChannel() { channelName = "Save", channelId = 3, uri = "/Save.sav" },
+            new DataChannel() { channelName = "Rankings", channelId = 4, uri = "/Rankings.sav"}
         }
     };
 

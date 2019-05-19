@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-[BindService(ServiceMode.Hidden)]
+[BindService]
 public class UriDataChannelProvider : IDataChannelService
 {
 
-    Dictionary<DataChannelTypes, DataChannel> channelDictionary;
+    Dictionary<int, DataChannel> channelDictionary;
 
     ISettingsService settings;
     ILogService logger;
@@ -30,45 +30,57 @@ public class UriDataChannelProvider : IDataChannelService
             var dataChannels = settings.Current.dataChannels;
             foreach (var channel in dataChannels)
             {
-                if (channel != null && channel.type != DataChannelTypes.Undefined && channel.uri != "")
+                if (channel != null && channel.channelId != 0 && channel.uri != "")
                 {
                     var fullPath = channel.uri;
                     if (channel.uri.StartsWith("/"))
                     {
                         fullPath = storagePath + channel.uri;
                     }
-                    var newDataChannel = new DataChannel() { uri = fullPath, type = channel.type };
-                    AddEntry(channel.type, newDataChannel);
+                    var newDataChannel = new DataChannel() { uri = fullPath, channelId = channel.channelId };
+                    AddEntry(channel.channelId, newDataChannel);
                 }
             }
         }
     }
 
-    void AddEntry(DataChannelTypes key, DataChannel entry)
+    void AddEntry(int channeId, DataChannel entry)
     {
         if (channelDictionary == null)
         {
-            channelDictionary = new Dictionary<DataChannelTypes, DataChannel>();
+            channelDictionary = new Dictionary<int, DataChannel>();
         }
-        channelDictionary.Add(key, entry);
+        channelDictionary.Add(channeId, entry);
     }
 
-    public DataChannel GetChannel(DataChannelTypes channelType)
+    public DataChannel GetChannelByName(string channelName)
     {
-        if (channelDictionary.ContainsKey(channelType))
+        foreach (var channelEntry in channelDictionary)
         {
-            return channelDictionary[channelType];
+            if (channelEntry.Value.channelName == channelName)
+            {
+                return channelEntry.Value;
+            }
+        }
+        return null;
+    }
+
+    public DataChannel GetChannel(int channelId)
+    {
+        if (channelDictionary.ContainsKey(channelId))
+        {
+            return channelDictionary[channelId];
         }
         else
         {
-            logger.Error("Unregistered channel: " + channelType.ToString());
+            logger.Error("Unregistered channel: " + channelId.ToString());
             return null;
         }
     }
 
-    public List<DataChannelTypes> GetAvailableChannels()
+    public List<int> GetAvailableChannels()
     {
-        var result = new List<DataChannelTypes>();
+        var result = new List<int>();
         foreach (var channelEntry in channelDictionary)
         {
             result.Add(channelEntry.Key);
