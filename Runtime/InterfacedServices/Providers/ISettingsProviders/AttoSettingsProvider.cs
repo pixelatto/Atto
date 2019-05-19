@@ -8,7 +8,7 @@ public class AttoSettingsProvider : ISettingsService
 {
     public AttoSettings Current { get; private set; }
 
-    string settingsPath { get { return Application.dataPath + "/attoSettings.json"; } }
+    string settingsPath { get { return Application.dataPath + "/Plugins/Atto/AttoSettings.json"; } }
 
     AttoSettings defaultSettings = new AttoSettings()
     {
@@ -36,6 +36,10 @@ public class AttoSettingsProvider : ISettingsService
         {
             Current = defaultSettings;
             string serializedSettings = JsonUtility.ToJson(Current, true);
+            if (!Directory.Exists(Path.GetDirectoryName(settingsPath)))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(settingsPath));
+            }
             File.WriteAllText(settingsPath, serializedSettings);
         }
     }

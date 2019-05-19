@@ -20,12 +20,12 @@ public class UriDataChannelProvider : IDataChannelService
         if (settings.Current != null)
         {
             string storagePath = settings.Current.storagePath;
-            if (storagePath == "dataPath")
+            if (storagePath.Contains("dataPath"))
             {
-                storagePath = Application.dataPath;
-            } else if (storagePath == "persistentDataPath")
+                storagePath = storagePath.Replace("dataPath", Application.dataPath);
+            } else if (storagePath.Contains("persistentDataPath"))
             {
-                storagePath = Application.persistentDataPath;
+                storagePath = storagePath.Replace("persistentDataPath", Application.persistentDataPath);
             }
             var dataChannels = settings.Current.dataChannels;
             foreach (var channel in dataChannels)

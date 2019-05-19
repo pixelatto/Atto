@@ -18,7 +18,7 @@ public static class AttoAccessBuilder
         ReloadServices();
     }
 
-    [MenuItem("Tools/Regenerate AttoAccess")]
+    [MenuItem("Tools/Regenerate Atto Files")]
     public static void ReloadServices()
     {
         GetCoreName();
@@ -113,7 +113,7 @@ public static class AttoAccessBuilder
             result.isInterfaced = false;
         }
 
-        if (!string.IsNullOrEmpty(bindAttribute.customAccessName))
+        if (bindAttribute != null && bindAttribute.customAccessName != null && bindAttribute.customAccessName != "")
         {
             result.serviceSpecificationName = bindAttribute.customAccessName;
         }
@@ -138,7 +138,11 @@ public static class AttoAccessBuilder
 
         fileContents += WriteClassFooter();
         
-        string path = Application.dataPath + "/AttoAccess.cs";
+        string path = Application.dataPath + "/Plugins/Atto/AttoAccess.cs";
+        if (!Directory.Exists(Path.GetDirectoryName(path)))
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
+        }
         File.WriteAllText(path, fileContents);
         AssetDatabase.Refresh();
     }
