@@ -13,13 +13,12 @@ public static class AttoAccessBuilder
 
     const string defaultCoreName = "Core";
 
-    [UnityEditor.Callbacks.DidReloadScripts]
     public static void ReloadAfterScripts()
     {
         ReloadServices();
     }
 
-    [MenuItem("Tools/ReloadServices")]
+    [MenuItem("Tools/Regenerate AttoAccess")]
     public static void ReloadServices()
     {
         GetCoreName();
@@ -145,15 +144,21 @@ public static class AttoAccessBuilder
         result += "\t[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]\n";
         result += "\tpublic static void BindCommonServices()\n\t{\n";
         result += "\t\tAtto.Bind<ISettingsService, AttoSettingsProvider>();\n";
-        result += "\t\tif (Settings.Current.autoBindCommonServices)\n{\n";
+        result += "\t\tif (Atto.Get<ISettingsService>().Current.autoBindCommonServices)\n\t\t{\n";
 
+        result += "\n\t\t//Interfaced services (replaceable):\n";
         foreach (var binding in bindings)
         {
             if (binding.isInterfaced)
             {
                 result += "\t\t\tAtto.Bind<" + binding.serviceSpecificationName + "," + binding.providerClass.Name + ">();\n";
             }
-            else
+        }
+
+        result += "\n\t\t//Non-interfaced services:\n";
+        foreach (var binding in bindings)
+        {
+            if (!binding.isInterfaced)
             {
                 result += "\t\t\tAtto.Bind<" + binding.serviceSpecificationName + ">();\n";
             }

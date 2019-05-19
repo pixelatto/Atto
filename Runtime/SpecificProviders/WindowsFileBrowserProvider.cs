@@ -4,7 +4,7 @@ using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
 
-public class WindowsFileBrowserProvider : IFileBrowserService
+public class WindowsFileBrowserProvider
 {
 	private static readonly string EXECUTABLE_PATH = Application.dataPath + "/StreamingAssets/FileBrowser.exe";
 	private static readonly string ACTION_PARAMETER = "/a";
@@ -228,3 +228,5 @@ public class WindowsFileBrowserProvider : IFileBrowserService
 		}
 	}
 }
+
+public enum FileBrowserResponseReason { Unknown, FileSelected, UserCancelled }

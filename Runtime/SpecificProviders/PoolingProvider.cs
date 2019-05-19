@@ -3,12 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SimplePoolingService : IPoolingService
+public class PoolingProvider
 {
 
     Dictionary<GameObject, List<GameObject>> prefabToObjectsRegistry = new Dictionary<GameObject, List<GameObject>>();
 
-    public SimplePoolingService()
+    public PoolingProvider()
     {
 
     }

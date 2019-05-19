@@ -3,7 +3,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class SimpleImageDownloadProvider : IImageDownloadService
+public class ImageDownloadProvider
 {
 
     ILogService logger;
@@ -12,7 +12,7 @@ public class SimpleImageDownloadProvider : IImageDownloadService
 	{
 	}
 
-    public SimpleImageDownloadProvider()
+    public ImageDownloadProvider()
     {
         logger = Atto.Get<ILogService>();
     }

@@ -4,14 +4,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [BindService]
-public class SimpleAchievementProvider : IAchievementService
+public class AchievementsProvider
 {
 
     ILogService logger;
 
-    List<IAchievement> achievementList;
+    List<Achievement> achievementList;
 
-    public SimpleAchievementProvider()
+    public AchievementsProvider()
     {
         logger = Atto.Get<ILogService>();
     }
@@ -24,11 +24,11 @@ public class SimpleAchievementProvider : IAchievementService
         }
     }
 
-    public void DefineAchievement(IAchievement achievement)
+    public void DefineAchievement(Achievement achievement)
     {
         if (achievementList == null)
         {
-            achievementList = new List<IAchievement>();
+            achievementList = new List<Achievement>();
         }
         if (!achievementList.Contains(achievement))
         {
@@ -50,19 +50,38 @@ public class SimpleAchievementProvider : IAchievementService
         throw new NotImplementedException();
     }
 
-    public List<IAchievement> GetAchievementList()
+    public List<Achievement> GetAchievementList()
     {
         return achievementList;
     }
 
-    public void UnlockAchievement(IAchievement entry)
+    public void UnlockAchievement(Achievement entry)
     {
         achievementList.Find((x => entry.name == x.name)).unlocked = true;
     }
 
-    public void UpdateAchievementProgress(IAchievement entry, int progress)
+    public void UpdateAchievementProgress(Achievement entry, int progress)
     {
         achievementList.Find((x => entry.name == x.name)).progress = progress;
     }
     
 }
+
+public class Achievement
+{
+    public string name { get; set; }
+    public bool unlocked { get; set; }
+    public int progress { get; set; }
+    public UnlockCondition Condition { get; set; }
+
+
+    public void Check()
+    {
+        if (Condition != null && Condition())
+        {
+            unlocked = true;
+        }
+    }
+}
+
+public delegate bool UnlockCondition();
