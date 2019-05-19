@@ -1,11 +1,11 @@
 {
-    "name": "com.pixelatto.atto",
-    "displayName": "Atto",
-    "version": "0.0.1",
-    "unity": "2018.3",
-    "description": "Starting tools for Atto projects.",
-    "keywords": [
-        "framework"
-    ],
-    "category": "Unity"
+  "name": "com.pixelatto.atto",
+  "displayName": "Atto",
+  "version": "0.0.2",
+  "unity": "2018.3",
+  "description": "Starting tools for Atto projects.",
+  "keywords": [
+    "framework"
+  ],
+  "category": "Unity"
 }

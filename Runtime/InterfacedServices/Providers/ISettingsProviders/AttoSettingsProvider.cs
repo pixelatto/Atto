@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-//[BindService] -> This service should not autobind, since it's initialized before anything else
+[BindService]
 public class AttoSettingsProvider : ISettingsService
 {
     public AttoSettings Current { get; private set; }
