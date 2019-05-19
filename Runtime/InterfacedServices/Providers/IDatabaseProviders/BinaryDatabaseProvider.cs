@@ -17,31 +17,33 @@ public class BinaryDatabaseProvider : IDatabaseService
 
     private Dictionary<string, string> data;
 
-    IStorageService databaseStorage;
-    ISerializationService serialization;
+    IStorageService storageProvider;
+    ISerializationService serializationProvider;
+    IDataChannelService dataChannelProvider;
 
-    DataChannel storageChannel;
+    DataChannel currentDataChannel;
 
     public BinaryDatabaseProvider()
     {
-        databaseStorage = Atto.Get<IStorageService>();
-        serialization = Atto.Get<ISerializationService>();
-        storageChannel = Atto.Get<IDataChannelService>().GetChannel(DataChannelTypes.Database);
+        this.storageProvider = Atto.Get<IStorageService>();
+        this.serializationProvider = Atto.Get<ISerializationService>();
+        this.dataChannelProvider = Atto.Get<IDataChannelService>();
+        currentDataChannel = dataChannelProvider.GetChannel(DataChannelTypes.Database);
 
         LoadFromStorage();
     }
 
     void LoadFromStorage()
     {
-        string plainData = databaseStorage.ReadFromStorage(storageChannel);
-        data = serialization.Deserialize<Dictionary<string, string>>(plainData);
+        string plainData = storageProvider.ReadFromStorage(currentDataChannel);
+        data = serializationProvider.Deserialize<Dictionary<string, string>>(plainData);
     }
 
     void SaveToStorage()
     {
         UpdateMetadata();
-        string serializedData = serialization.Serialize(data);
-        databaseStorage.WriteToStorage(serializedData, storageChannel);
+        string serializedData = serializationProvider.Serialize(data);
+        storageProvider.WriteToStorage(serializedData, currentDataChannel);
     }
 
     private void UpdateMetadata()
@@ -65,7 +67,7 @@ public class BinaryDatabaseProvider : IDatabaseService
         {
             try
             {
-                object value = serialization.Deserialize<T>(data[dbId]);
+                object value = serializationProvider.Deserialize<T>(data[dbId]);
                 result.Resolve((T)value);
             }
             catch
@@ -99,7 +101,7 @@ public class BinaryDatabaseProvider : IDatabaseService
     public void WriteEntry<T>(string id, T value)
     {
         string dbId = GetDbId(id);
-        data[dbId] = serialization.Serialize(value);
+        data[dbId] = serializationProvider.Serialize(value);
 
         SaveToStorage();
     }
