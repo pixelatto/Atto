@@ -87,7 +87,6 @@ public static class AttoAccessBuilder
             {
                 bindAttribute = (BindService)attribute;
                 result.serviceMode = bindAttribute.serviceMode;
-                result.serviceCaching = bindAttribute.serviceCaching;
             }
         }
 
@@ -159,10 +158,10 @@ public static class AttoAccessBuilder
         result += "using UnityEngine;\n\n public static partial class "+coreClassName+"\n{\n";
         result += "\t[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]\n";
         result += "\tpublic static void BindCommonServices()\n\t{\n";
-        result += "\t\tAtto.Bind<ISettingsService, AttoSettingsProvider>();\n";
-        result += "\t\tif (Atto.Get<ISettingsService>().Current.autoBindCommonServices)\n\t\t{\n";
+        result += "\t\tvar settings = new AttoSettingsProvider();\n";
+        result += "\t\tif (settings.Current.autoBindCommonServices)\n\t\t{\n";
 
-        result += "\n\t\t\t//Interfaced services (replaceable):\n";
+        result += "\t\t\t//Interfaced services (replaceable):\n";
         foreach (var binding in bindings)
         {
             if (binding.isInterfaced)
@@ -195,24 +194,7 @@ public static class AttoAccessBuilder
         string header = "\tpublic static ";
         string type = binding.serviceSpecificationName + " " + binding.accessDescriptor;
         string body = " { get { ";
-        if (binding.serviceCaching == ServiceCaching.Dynamic)
-        {
-            body += "return Atto.Get<" + binding.serviceSpecificationName + ">();";
-            body += " }\n";
-            body += "}\n";
-        }
-        else if (binding.serviceCaching == ServiceCaching.Static)
-        {
-            string privateAccessDescriptor = binding.accessDescriptor + "_ ";
-            body += "if (" + privateAccessDescriptor + "== null) {";
-            body += privateAccessDescriptor + "= Atto.Get<" + binding.serviceSpecificationName + ">();} return " + privateAccessDescriptor + ";";
-            body += " } }\n";
-            body += "\tstatic " + binding.serviceSpecificationName + " " + privateAccessDescriptor + ";";
-        }
-        else
-        {
-            Debug.LogError("Undefined caching service for " + binding.providerClass.ToString());
-        }
+        body += "return Atto.Get<" + binding.serviceSpecificationName + ">(); } }";
 
         if (!binding.IsVisible)
         {
@@ -233,13 +215,12 @@ public static class AttoAccessBuilder
     {
         public Type providerClass;
         public ServiceMode serviceMode;
-        public ServiceCaching serviceCaching;
         public string accessDescriptor { get { return FormatAccessDescriptor(); } }
 
         public string serviceSpecificationName;
         public bool isInterfaced = true;
 
-        public bool IsValid { get { return serviceSpecificationName != "" && providerClass != null && serviceCaching != ServiceCaching.Undefined && serviceMode != ServiceMode.Undefined; } }
+        public bool IsValid { get { return serviceSpecificationName != "" && providerClass != null && serviceMode != ServiceMode.Undefined; } }
         public bool IsEnabled { get { return serviceMode != ServiceMode.Disabled; } }
         public bool IsVisible { get { return serviceMode != ServiceMode.Hidden; } }
 
@@ -278,8 +259,7 @@ public static class AttoAccessBuilder
             result += " provides " + serviceSpecificationName;
             result += " as " + coreClassName;
             result += "." + accessDescriptor;
-            result += " with [" + serviceMode.ToString();
-            result += ", " + serviceCaching.ToString() + "]";
+            result += " with [" + serviceMode.ToString() + "]";
 
             return result;
         }
@@ -296,7 +276,7 @@ public static class AttoAccessBuilder
             result += dataChannel.channelName + " = " + dataChannel.channelId + ", ";
         }
         result = result.Substring(0, result.Length - 2) + "\n";
-        result += "}\n\n";
+        result += "}\n";
         return result;
     }
 

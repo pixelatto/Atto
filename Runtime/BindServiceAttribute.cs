@@ -8,12 +8,10 @@ public class BindService : Attribute
     
     public string customAccessName;
     public ServiceMode serviceMode;
-    public ServiceCaching serviceCaching;
 
-    public BindService(ServiceMode serviceMode = ServiceMode.Enabled, ServiceCaching serviceCaching = ServiceCaching.Static, string customAccessName = "")
+    public BindService(ServiceMode serviceMode = ServiceMode.Enabled, string customAccessName = "")
     {
         this.serviceMode = serviceMode;
-        this.serviceCaching = serviceCaching;
         this.customAccessName = customAccessName;
     }
 
