@@ -5,12 +5,12 @@ using UnityEngine;
 public interface IDataChannelService
 {
     /// <summary>
-    /// Get a channel by its Id. A helper enum "DataChannelTypes" is generated. Use this enum casting to (int) as argument
+    /// Get a channel from some Id.
     /// </summary>
-    /// <param name="channelId">The channel Id</param>
+    /// <param name="channelId">The channel Id: either the name, a DataChannelType enum value or the int Id</param>
     /// <returns>The corresponding data channel for I/O operations</returns>
-    DataChannel GetChannel(int channelId);
-    DataChannel GetChannelByName(string channelName);
+    DataChannel GetChannel(object channelId);
+
     List<int> GetAvailableChannels();
 
 }

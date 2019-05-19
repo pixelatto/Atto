@@ -141,7 +141,9 @@ public static class AttoAccessBuilder
         fileContents += WriteClassFooter();
 
         fileContents += WriteDataChannelsEnum();
-        
+
+        fileContents += WriteExtensionMethods();
+
         string path = Application.dataPath + "/Plugins/Atto/AttoAccess.cs";
         if (!Directory.Exists(Path.GetDirectoryName(path)))
         {
@@ -149,21 +151,6 @@ public static class AttoAccessBuilder
         }
         File.WriteAllText(path, fileContents);
         AssetDatabase.Refresh();
-    }
-
-    private static string WriteDataChannelsEnum()
-    {
-        string result = "";
-        result += "\n\npublic enum DataChannelTypes \n";
-        result += "{\n";
-        result += "Undefined = 0, ";
-        foreach (var dataChannel in settings.Current.dataChannels)
-        {
-            result += dataChannel.channelName + " = " + dataChannel.channelId + ", ";
-        }
-        result = result.Substring(0, result.Length - 2) + "\n";
-        result += "}\n\n";
-        return result;
     }
 
     static string WriteClassHeader(List<ServiceAtributeBinding> bindings)
@@ -296,6 +283,34 @@ public static class AttoAccessBuilder
 
             return result;
         }
+    }
+
+    private static string WriteDataChannelsEnum()
+    {
+        string result = "";
+        result += "\n\npublic enum DataChannelTypes \n";
+        result += "{\n";
+        result += "\tUndefined = 0, ";
+        foreach (var dataChannel in settings.Current.dataChannels)
+        {
+            result += dataChannel.channelName + " = " + dataChannel.channelId + ", ";
+        }
+        result = result.Substring(0, result.Length - 2) + "\n";
+        result += "}\n\n";
+        return result;
+    }
+
+    static string WriteExtensionMethods()
+    {
+        string result = "\n";
+        result += "public static class AttoExtensions\n";
+        result += "{\n";
+        result += "\tpublic static DataChannel GetChannelByType(this IDataChannelService dataChannelService, DataChannelTypes channelType)\n";
+        result += "\t{\n";
+        result += "\t\treturn dataChannelService.GetChannel((int)channelType);\n";
+        result += "\t}\n";
+        result += "}\n\n";
+        return result;
     }
 
 }

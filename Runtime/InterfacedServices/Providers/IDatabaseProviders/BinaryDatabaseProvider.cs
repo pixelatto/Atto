@@ -30,7 +30,7 @@ public class BinaryDatabaseProvider : IDatabaseService
         this.storageProvider = Atto.Get<IStorageService>();
         this.serializationProvider = Atto.Get<ISerializationService>();
         this.dataChannelProvider = Atto.Get<IDataChannelService>();
-        currentDataChannel = dataChannelProvider.GetChannelByName(defaultDatabaseName);
+        currentDataChannel = dataChannelProvider.GetChannel(defaultDatabaseName);
 
         LoadFromStorage();
     }

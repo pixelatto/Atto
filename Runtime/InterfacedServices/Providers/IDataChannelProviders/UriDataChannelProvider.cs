@@ -53,7 +53,33 @@ public class UriDataChannelProvider : IDataChannelService
         channelDictionary.Add(channeId, entry);
     }
 
-    public DataChannel GetChannelByName(string channelName)
+    public DataChannel GetChannel(object channelId)
+    {
+        if (channelId is int || channelId.GetType().IsEnum)
+        {
+            int intId = (int)channelId;
+            if (channelDictionary.ContainsKey(intId))
+            {
+                return channelDictionary[intId];
+            }
+            else
+            {
+                logger.Error("Unregistered channel: " + channelId.ToString());
+                return null;
+            }
+        }
+        else if (channelId is string)
+        {
+            string stringId = (string)channelId;
+            return GetChannelByName(stringId);
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    DataChannel GetChannelByName(string channelName)
     {
         foreach (var channelEntry in channelDictionary)
         {
@@ -63,19 +89,6 @@ public class UriDataChannelProvider : IDataChannelService
             }
         }
         return null;
-    }
-
-    public DataChannel GetChannel(int channelId)
-    {
-        if (channelDictionary.ContainsKey(channelId))
-        {
-            return channelDictionary[channelId];
-        }
-        else
-        {
-            logger.Error("Unregistered channel: " + channelId.ToString());
-            return null;
-        }
     }
 
     public List<int> GetAvailableChannels()
