@@ -77,11 +77,13 @@ public static class AttoAccessBuilder
 
         var attributes = type.GetCustomAttributes(typeof(BindService), true);
 
+        BindService bindAttribute = null;
+
         foreach (var attribute in attributes)
         {
             if (attribute is BindService)
             {
-                var bindAttribute = (BindService)attribute;
+                bindAttribute = (BindService)attribute;
                 result.serviceMode = bindAttribute.serviceMode;
                 result.serviceCaching = bindAttribute.serviceCaching;
             }
@@ -109,6 +111,11 @@ public static class AttoAccessBuilder
         {
             result.serviceSpecificationName = type.Name;
             result.isInterfaced = false;
+        }
+
+        if (!string.IsNullOrEmpty(bindAttribute.customAccessName))
+        {
+            result.serviceSpecificationName = bindAttribute.customAccessName;
         }
 
         if (!result.IsValid)
@@ -224,7 +231,6 @@ public static class AttoAccessBuilder
         public bool IsValid { get { return serviceSpecificationName != "" && providerClass != null && serviceCaching != ServiceCaching.Undefined && serviceMode != ServiceMode.Undefined; } }
         public bool IsEnabled { get { return serviceMode != ServiceMode.Disabled; } }
         public bool IsVisible { get { return serviceMode != ServiceMode.Hidden; } }
-
 
         private string FormatAccessDescriptor()
         {
