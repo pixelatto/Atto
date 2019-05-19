@@ -89,7 +89,7 @@ By default, the basic services are all binded to the container and available for
 
 ## Settings
 
-After running the compiled package for the first time, a `attoSettings.json` file will be generated on the root of your assets folder (hit ctrl+R if you don't see it). This is a JSON file that contains various settings you can tweak to modify the behaviour of the framework.
+After running the compiled package for the first time, a `AttoSettings.json` file will be generated on the 'Assets/Plugins/Atto' folder (hit ctrl+R if you don't see it). This is a JSON file that contains various settings you can tweak to modify the behaviour of the framework.
 
 | Key                      | Values                                 | Description                                                      |
 | ----------------         | ----------------                       | ----------------                                                 |
@@ -98,26 +98,30 @@ After running the compiled package for the first time, a `attoSettings.json` fil
 | dataChannels             | An array of data channel definitions   | Defines data channels for the data channels service              |
 | coreName                 | An string                              | Redefines the name of the Core class                             |
 
-The default `attoSettings.json` file looks like this:
+The default `AttoSettings.json` file looks like this:
 ```
 {
     "autoBindCommonServices": true,
     "storagePath": "dataPath",
     "dataChannels": [
         {
-            "type": 1,
+            "channelName": "Database",
+            "channelId": 1,
             "uri": "/Data.sav"
         },
         {
-            "type": 2,
+            "channelName": "Options",
+            "channelId": 2,
             "uri": "/Options.sav"
         },
         {
-            "type": 3,
+            "channelName": "Save",
+            "channelId": 3,
             "uri": "/Save.sav"
         },
         {
-            "type": 4,
+            "channelName": "Rankings",
+            "channelId": 4,
             "uri": "/Rankings.sav"
         }
     ]
