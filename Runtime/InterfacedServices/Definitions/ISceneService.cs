@@ -9,14 +9,3 @@ public interface ISceneService
     void SetSceneParams(SceneParams sceneParams);
     void LoadScene(object sceneToLoad, SceneParams sceneParams);
 }
-
-public class SceneParams : SerializableDictionary<string, object>
-{
-    public SceneParams()
-    {
-    }
-
-    public virtual void UseMockValues()
-    {
-    }
-}

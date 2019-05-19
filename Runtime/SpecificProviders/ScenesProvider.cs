@@ -31,3 +31,14 @@ public class ScenesProvider
 		SceneManager.LoadScene(sceneToLoad.ToString());
 	}
 }
+
+public class SceneParams : SerializableDictionary<string, object>
+{
+    public SceneParams()
+    {
+    }
+
+    public virtual void UseMockValues()
+    {
+    }
+}
