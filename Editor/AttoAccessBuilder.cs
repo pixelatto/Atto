@@ -143,11 +143,14 @@ public static class AttoAccessBuilder
 
         fileContents += WriteExtensionMethods();
 
-        string path = Application.dataPath + "/Plugins/Atto/AttoAccess.cs";
+        var settings = new AttoSettingsProvider();
+        string path = settings.Current.GetFullAttoAccessPath();
+
         if (!Directory.Exists(Path.GetDirectoryName(path)))
         {
             Directory.CreateDirectory(Path.GetDirectoryName(path));
         }
+        Debug.Log("Saving to: " + path);
         File.WriteAllText(path, fileContents);
         AssetDatabase.Refresh();
     }

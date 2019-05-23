@@ -6,15 +6,12 @@ using System;
 [BindService]
 public class SimpleInputProvider : IInputService
 {
-
-    IInputService input;
     ILogService logger;
 
     List<IDevice> devices = new List<IDevice>();
 
     public SimpleInputProvider()
     {
-        input = Atto.Get<IInputService>();
         logger = Atto.Get<ILogService>();
     }
 

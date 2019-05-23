@@ -10,6 +10,8 @@ public class AttoSettingsProvider : ISettingsService
 
     string settingsPath { get { return Application.dataPath + "/Plugins/Atto/AttoSettings.json"; } }
 
+    static string defaultAttoAccessPath = "[dataPath]/AttoAccess.cs";
+
     AttoSettings defaultSettings = new AttoSettings()
     {
         coreName = "Core",
@@ -21,7 +23,8 @@ public class AttoSettingsProvider : ISettingsService
             new DataChannel() { channelName = "Options", channelId = 2, uri = "/Options.sav" },
             new DataChannel() { channelName = "Save", channelId = 3, uri = "/Save.sav" },
             new DataChannel() { channelName = "Rankings", channelId = 4, uri = "/Rankings.sav"}
-        }
+        },
+        attoAccessPath = defaultAttoAccessPath
     };
 
     public AttoSettingsProvider()
@@ -35,6 +38,10 @@ public class AttoSettingsProvider : ISettingsService
         else
         {
             Current = defaultSettings;
+            if (string.IsNullOrEmpty(Current.attoAccessPath))
+            {
+                Current.attoAccessPath = defaultAttoAccessPath;
+            }
             string serializedSettings = JsonUtility.ToJson(Current, true);
             if (!Directory.Exists(Path.GetDirectoryName(settingsPath)))
             {
