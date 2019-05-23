@@ -77,7 +77,9 @@ Create a new Unity project. In this new project, open the `/Packages/manifest.js
   }
 }
 ```
-Save the manifest, go back to Unity, wait for it to refresh (or force with ctrl+R) and... you're ready to go!
+Save the manifest, go back to Unity, wait for it to refresh (or force with ctrl+R) and select ´Tools -> Regenerate Atto Files´.
+
+You're ready to go!
 
 **Important note**: Atto is not namespaced, since it's designed to be a starting point for projects and fast/simple to use. It shouldn't be imported in existing codebases.
 
