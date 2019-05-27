@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 using Identifier = System.String;
 
 public static partial class Atto
@@ -15,6 +16,23 @@ public static partial class Atto
 	{
 		return container.Get<T>(id);
 	}
+
+    public static void BindMonoBehaviour<Service>() where Service : MonoBehaviour
+    {
+        var existingService = GameObject.FindObjectOfType<Service>();
+
+        if (existingService == null)
+        {
+            var newObject = new GameObject(typeof(Service).Name);
+            GameObject.DontDestroyOnLoad(newObject);
+            var newComponent = newObject.AddComponent<Service>();
+            Provide<Service>(() => newComponent);
+        }
+        else
+        {
+            Provide<Service>(() => existingService);
+        }
+    }
 
     public static void Bind<Service>() where Service : new()
     {

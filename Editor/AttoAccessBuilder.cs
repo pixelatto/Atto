@@ -150,7 +150,6 @@ public static class AttoAccessBuilder
         {
             Directory.CreateDirectory(Path.GetDirectoryName(path));
         }
-        Debug.Log("Saving to: " + path);
         File.WriteAllText(path, fileContents);
         AssetDatabase.Refresh();
     }
@@ -169,7 +168,13 @@ public static class AttoAccessBuilder
         {
             if (binding.isInterfaced)
             {
-                result += "\t\t\tAtto.Bind<" + binding.serviceSpecificationName + "," + binding.providerClass.Name + ">();\n";
+                string bindMethodName = "Bind";
+                if (binding.providerClass.IsSubclassOf(typeof(MonoBehaviour)))
+                {
+                    bindMethodName = "BindMonoBehaviour";
+                }
+                result += "\t\t\tAtto."+ bindMethodName + "<" + binding.serviceSpecificationName + "," + binding.providerClass.Name + ">();\n";
+                
             }
         }
 
@@ -178,7 +183,12 @@ public static class AttoAccessBuilder
         {
             if (!binding.isInterfaced)
             {
-                result += "\t\t\tAtto.Bind<" + binding.serviceSpecificationName + ">();\n";
+                string bindMethodName = "Bind";
+                if (binding.providerClass.IsSubclassOf(typeof(MonoBehaviour)))
+                {
+                    bindMethodName = "BindMonoBehaviour";
+                }
+                result += "\t\t\tAtto."+ bindMethodName + "<" + binding.serviceSpecificationName + ">();\n";
             }
         }
 
