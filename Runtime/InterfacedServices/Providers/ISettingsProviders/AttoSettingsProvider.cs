@@ -8,7 +8,8 @@ public class AttoSettingsProvider : ISettingsService
 {
     public AttoSettings Current { get; private set; }
 
-    string settingsPath { get { return Application.dataPath + "/Plugins/Atto/AttoSettings.json"; } }
+    string settingsFilename = "AttoSettings";
+    string settingsPath { get { return Application.dataPath + "/Plugins/Atto/Resources/" + settingsFilename + ".json"; } }
 
     static string defaultAttoAccessPath = "[dataPath]/AttoAccess.cs";
 
@@ -29,7 +30,14 @@ public class AttoSettingsProvider : ISettingsService
 
     public AttoSettingsProvider()
     {
-        if (File.Exists(settingsPath))
+
+        TextAsset settingsResourceFile = Resources.Load<TextAsset>(settingsFilename);
+        if (settingsResourceFile != null)
+        {
+            AttoSettings parsedSettings = JsonUtility.FromJson<AttoSettings>(settingsResourceFile.text);
+            Current = parsedSettings;
+        }
+        else if (File.Exists(settingsPath))
         {
             var settingsText = File.ReadAllText(settingsPath);
             AttoSettings parsedSettings = JsonUtility.FromJson<AttoSettings>(settingsText);
