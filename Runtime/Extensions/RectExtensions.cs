@@ -2,6 +2,11 @@
 
 public static class RectIntExtensions
 {
+	public static Rect ToRect(this RectInt rect)
+	{
+		return new Rect(rect.x, rect.y, rect.width, rect.height);
+	}
+
 	public static RectInt Move(this RectInt rect, int x, int y)
 	{
 		return new RectInt(rect.x + x, rect.y + y, rect.width, rect.height);
@@ -44,6 +49,11 @@ public static class RectIntExtensions
 
 public static class RectExtensions
 {
+	public static RectInt ToRectInt(this Rect rect)
+	{
+		return new RectInt(Mathf.RoundToInt(rect.x), Mathf.RoundToInt(rect.y), Mathf.RoundToInt(rect.width), Mathf.RoundToInt(rect.height));
+	}
+
 	public static Rect Move(this Rect rect, float x, float y)
 	{
 		return new Rect(rect.x + x, rect.y + y, rect.width, rect.height);
