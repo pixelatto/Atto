@@ -1,12 +1,15 @@
 {
     "name": "pixelatto.atto.Runtime",
-    "references": [],
-    "optionalUnityReferences": [],
+    "references": [
+        "GUID:bfddafe0e7ebb5642be155cd152928db"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": []
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

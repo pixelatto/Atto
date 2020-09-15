@@ -1,11 +1,19 @@
 {
   "name": "com.pixelatto.atto",
   "displayName": "Atto",
-  "version": "0.0.2",
-  "unity": "2018.3",
+  "version": "1.0.0",
+  "unity": "2019.3",
   "description": "Starting tools for Atto projects.",
+  "dependencies": {
+    "com.judelco.core": "1.24.0"
+  },
+  "type": "library",
   "keywords": [
     "framework"
   ],
-  "category": "Unity"
+  "category": "Unity",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pixelatto/Atto.git"
+  }
 }
