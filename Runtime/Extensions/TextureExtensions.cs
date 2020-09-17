@@ -5,6 +5,11 @@ using UnityEngine;
 public static class TextureExtensions
 {
 
+    public static void SetPixels(this Texture2D texture, RectInt rect, Color[] colors)
+    {
+        texture.SetPixels(rect.x, rect.y, rect.width, rect.height, colors);
+    }
+
     public static Color[] GetPixels(this Texture2D texture, RectInt rect, int mipLevel = 0)
     {
         return texture.GetPixels(rect.x, rect.y, rect.width, rect.height, mipLevel);
