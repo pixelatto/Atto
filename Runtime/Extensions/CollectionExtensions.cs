@@ -10,6 +10,25 @@ public static class ArrayExtensions
         return array[Random.Range(0, array.Length)];
     }
 
+    public static List<T> ToList<T>(this T[] array)
+    {
+        var result = new List<T>();
+        for (int i = 0; i < array.Length; i++)
+        {
+            result.Add(array[i]);
+        }
+        return result;
+    }
+
+    public static int Sum(this IList<int> list)
+    {
+        int result = 0;
+        for (int i = 0; i < list.Count; i++)
+        {
+            result += list[i];
+        }
+        return result;
+    }
 }
 
 public static class ListExtensions
