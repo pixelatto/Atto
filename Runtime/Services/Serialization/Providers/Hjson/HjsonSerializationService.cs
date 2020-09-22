@@ -6,22 +6,25 @@ using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 using Hjson;
 
-public class HjsonSerializationService : ISerializationService
+namespace Atto.Services
 {
-    public string formatExtension => ".hjson";
+	public class HjsonSerializationService : ISerializationService
+	{
+		public string formatExtension => ".hjson";
 
-    public T Deserialize<T>(string hjsonData)
-    {
-        var jsonValue = HjsonValue.Parse(hjsonData);
-        var jsonString = jsonValue.ToString(Stringify.Formatted);
-        return JsonConvert.DeserializeObject<T>(jsonString);
-    }
+		public T Deserialize<T>(string hjsonData)
+		{
+			var jsonValue = HjsonValue.Parse(hjsonData);
+			var jsonString = jsonValue.ToString(Stringify.Formatted);
+			return JsonConvert.DeserializeObject<T>(jsonString);
+		}
 
-    public string Serialize<T>(T obj)
-    {
-        var jsonString = JsonConvert.SerializeObject(obj, Formatting.Indented);
-        var hjsonString = HjsonValue.Parse(jsonString);
-        return hjsonString;
-    }
+		public string Serialize<T>(T obj)
+		{
+			var jsonString = JsonConvert.SerializeObject(obj, Formatting.Indented);
+			var hjsonString = HjsonValue.Parse(jsonString).Qo();
+			return hjsonString.ToString(Stringify.Hjson);
+		}
 
+	}
 }

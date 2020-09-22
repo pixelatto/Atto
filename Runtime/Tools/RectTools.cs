@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class RectTools
+namespace Atto.Utils
 {
-	public static RectInt GetTileRect(Vector2Int tileSize, int x, int y)
+	public static class RectTools
 	{
-		return new RectInt(tileSize.x * x, tileSize.y * y, tileSize.x, tileSize.y);
+		public static RectInt GetTileRect(Vector2Int tileSize, int x, int y)
+		{
+			return new RectInt(tileSize.x * x, tileSize.y * y, tileSize.x, tileSize.y);
+		}
 	}
 }
+

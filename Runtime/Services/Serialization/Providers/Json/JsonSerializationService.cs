@@ -5,17 +5,14 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 
-public class JsonSerializationService : ISerializationService
+namespace Atto.Services
 {
-    public string formatExtension => ".json";
+	public class JsonSerializationService : ISerializationService
+	{
+		public string formatExtension => ".json";
 
-    public T Deserialize<T>(string data)
-    {
-        return JsonConvert.DeserializeObject<T>(data);
-    }
+		public T Deserialize<T>(string data) => JsonConvert.DeserializeObject<T>(data);
 
-    public string Serialize<T>(T obj)
-    {
-        return JsonConvert.SerializeObject(obj, Formatting.Indented);
-    }
+		public string Serialize<T>(T obj) => JsonConvert.SerializeObject(obj, Formatting.Indented);
+	}
 }

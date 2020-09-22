@@ -6,29 +6,29 @@ using System.Globalization;
 using System.Threading;
 using UnityEngine;
 
-public class UriConverter : JsonConverter
+namespace Atto.Serialization.Converters
 {
-    const string coordinateSeparator = ", ";
+	public class UriConverter : JsonConverter
+	{
+		const string coordinateSeparator = ", ";
 
-    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-    {
-        Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-        string data = (string)value;
-        data = data.Replace('\\', '/');
-        data = data.Replace("//", "/");
-        writer.WriteValue(data);
-    }
+		public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+		{
+			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+			string data = (string)value;
+			data = data.Replace('\\', '/');
+			data = data.Replace("//", "/");
+			writer.WriteValue(data);
+		}
 
-    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-    {
-        var tilesString = reader.Value.ToString();
-        tilesString = tilesString.Replace('\\', '/');
-        tilesString = tilesString.Replace("//", "/");
-        return tilesString;
-    }
+		public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+		{
+			var tilesString = reader.Value.ToString();
+			tilesString = tilesString.Replace('\\', '/');
+			tilesString = tilesString.Replace("//", "/");
+			return tilesString;
+		}
 
-    public override bool CanConvert(Type objectType)
-    {
-        return objectType == typeof(string);
-    }
+		public override bool CanConvert(Type objectType) => objectType == typeof(string);
+	}
 }

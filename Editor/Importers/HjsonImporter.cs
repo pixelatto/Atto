@@ -1,17 +1,20 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+using UnityEngine;
 using UnityEditor;
 
 using System.IO;
 
-#if UNITY_EDITOR
-[UnityEditor.AssetImporters.ScriptedImporter(1, "hjson")]
-public class HjsonImporter : UnityEditor.AssetImporters.ScriptedImporter
+namespace Atto.Editor.Importers
 {
-	public override void OnImportAsset(UnityEditor.AssetImporters.AssetImportContext context)
+	[UnityEditor.AssetImporters.ScriptedImporter(1, "hjson")]
+	public class HjsonImporter : UnityEditor.AssetImporters.ScriptedImporter
 	{
-		TextAsset subAsset = new TextAsset(File.ReadAllText(context.assetPath));
-		context.AddObjectToAsset("text", subAsset);
-		context.SetMainObject(subAsset);
+		public override void OnImportAsset(UnityEditor.AssetImporters.AssetImportContext context)
+		{
+			TextAsset subAsset = new TextAsset(File.ReadAllText(context.assetPath));
+			context.AddObjectToAsset("text", subAsset);
+			context.SetMainObject(subAsset);
+		}
 	}
 }
 #endif
