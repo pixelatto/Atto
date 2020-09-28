@@ -6,9 +6,9 @@ namespace Atto.Utils
 {
 	public static class RectTools
 	{
-		public static RectInt GetTileRect(Vector2Int tileSize, int x, int y)
+		public static RectInt GetTileRect(Vector2Int tileSize, Vector2Int tilePosition)
 		{
-			return new RectInt(tileSize.x * x, tileSize.y * y, tileSize.x, tileSize.y);
+			return new RectInt(tileSize.x * tilePosition.x, tileSize.y * tilePosition.y, tileSize.x, tileSize.y);
 		}
 	}
 }

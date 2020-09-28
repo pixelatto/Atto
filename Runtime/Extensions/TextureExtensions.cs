@@ -20,7 +20,7 @@ namespace Atto.Extensions
 
 		public static Color[] GetTileColors(this Texture2D texture, Vector2Int tileSize, int x, int y)
 		{
-			return texture.GetPixels(RectTools.GetTileRect(tileSize, x, y));
+			return texture.GetPixels(RectTools.GetTileRect(tileSize, new Vector2Int(x, y)));
 		}
 
 		public static Sprite CreateSprite(this Texture2D texture, RectInt rect, Vector2? pivot = null, float pixelsPerUnit = 100)
