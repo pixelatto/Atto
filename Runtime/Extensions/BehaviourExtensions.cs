@@ -4,7 +4,7 @@ namespace Atto.Extensions
 {
 	public static class BehaviourExtensions
 	{
-		public static T GetOrAddComponent<T>(this Behaviour target) where T : Component
+		public static T GetOrAddComponent<T>(this Component target) where T : Component
 		{
 			T result = target.GetComponent<T>();
 
