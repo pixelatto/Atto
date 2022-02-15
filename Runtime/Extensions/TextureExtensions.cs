@@ -28,36 +28,5 @@ namespace Atto.Extensions
 			if (pivot == null) { pivot = new Vector2(0.5f, 0.5f); };
 			return Sprite.Create(texture, rect.ToRect(), (Vector2)pivot, pixelsPerUnit);
 		}
-
-        public static void BleedRectEdges(this Texture2D texture, RectInt paddedRect, int padding)
-        {
-            var leftBleedPixels = texture.GetPixels(new RectInt(paddedRect.x + padding, paddedRect.y, 1, paddedRect.height));
-            for (int i = 0; i < padding; i++)
-            {
-                var bleedRect = new RectInt(paddedRect.x + i, paddedRect.y, 1, paddedRect.height);
-                texture.SetPixels(bleedRect, leftBleedPixels);
-            }
-
-            var rightBleedPixels = texture.GetPixels(new RectInt(paddedRect.x + paddedRect.width - 1 - padding, paddedRect.y, 1, paddedRect.height));
-            for (int i = 0; i < padding; i++)
-            {
-                var bleedRect = new RectInt(paddedRect.x + paddedRect.width - 1 - i, paddedRect.y, 1, paddedRect.height);
-                texture.SetPixels(bleedRect, rightBleedPixels);
-            }
-
-            var bottomBleedPixels = texture.GetPixels(new RectInt(paddedRect.x, paddedRect.y + padding, paddedRect.width, 1));
-            for (int i = 0; i < padding; i++)
-            {
-                var bleedRect = new RectInt(paddedRect.x, paddedRect.y + i, paddedRect.width, 1);
-                texture.SetPixels(bleedRect, bottomBleedPixels);
-            }
-
-            var topBleedPixels = texture.GetPixels(new RectInt(paddedRect.x, paddedRect.y + paddedRect.height - 1 - padding, paddedRect.width, 1));
-            for (int i = 0; i < padding; i++)
-            {
-                var bleedRect = new RectInt(paddedRect.x, paddedRect.y + paddedRect.height - 1 - i, paddedRect.width, 1);
-                texture.SetPixels(bleedRect, topBleedPixels);
-            }
-        }
-    }
+	}
 }
