@@ -4,6 +4,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 
 namespace Elendow.SpritedowAnimator
 {
