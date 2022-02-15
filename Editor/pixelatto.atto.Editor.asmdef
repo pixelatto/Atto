@@ -1,18 +1,14 @@
 {
     "name": "pixelatto.atto.Editor",
-    "rootNamespace": "",
     "references": [
         "pixelatto.atto.Runtime"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": [],
-    "noEngineReferences": false
+    "defineConstraints": []
 }
