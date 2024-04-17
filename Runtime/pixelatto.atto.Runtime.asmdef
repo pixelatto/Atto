@@ -1,10 +1,7 @@
 {
     "name": "pixelatto.atto.Runtime",
     "rootNamespace": "",
-    "references": [
-        "GUID:bfddafe0e7ebb5642be155cd152928db",
-        "GUID:ce29871d1f59eac4a88208c26d2de190"
-    ],
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

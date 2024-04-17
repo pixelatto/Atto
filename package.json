@@ -4,10 +4,6 @@
   "version": "1.0.0",
   "unity": "2019.3",
   "description": "Starting tools for Atto projects.",
-  "dependencies": {
-    "com.judelco.core": "1.24.0",
-    "com.pixelatto.hjson-unity": "1.0.0"
-  },
   "type": "library",
   "keywords": [
     "framework"
