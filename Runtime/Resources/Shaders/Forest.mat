@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: AutoTileShader
+  m_Name: Forest
   m_Shader: {fileID: 4800000, guid: 1ec3810c9632cb74e9385bcfb86e81fd, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -32,7 +32,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Texture:
-        m_Texture: {fileID: 2800000, guid: f842b45f0fc48a24e827a360c99c9d94, type: 3}
+        m_Texture: {fileID: 2800000, guid: 879b80e89ef2ad343994665af7e5c8fc, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Texture1:
@@ -48,6 +48,6 @@ Material:
     - _NumTiles: 2
     - _TileSize: 2
     m_Colors:
-    - _OutlineColor: {r: 0.13333334, g: 0.1254902, b: 0.20392159, a: 1}
-    - _TopColor: {r: 1, g: 1, b: 1, a: 1}
+    - _OutlineColor: {r: 0.19607845, g: 0.23529413, b: 0.22352943, a: 1}
+    - _TopColor: {r: 0.6, g: 0.8980393, b: 0.3137255, a: 1}
   m_BuildTextureStacks: []
