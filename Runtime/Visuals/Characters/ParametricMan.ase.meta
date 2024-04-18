@@ -75,7 +75,7 @@ ScriptedImporter:
     importHiddenLayers: 1
     layerImportMode: 0
     defaultPivotSpace: 0
-    defaultPivotAlignment: 7
+    defaultPivotAlignment: 0
     customPivotPosition: {x: 0.5, y: 0.5}
     spritePadding: 0
     generateModelPrefab: 1
@@ -87,7 +87,7 @@ ScriptedImporter:
     importHiddenLayers: 1
     layerImportMode: 0
     defaultPivotSpace: 0
-    defaultPivotAlignment: 7
+    defaultPivotAlignment: 0
     customPivotPosition: {x: 0.5, y: 0.5}
     spritePadding: 0
     generateModelPrefab: 1
@@ -95,7 +95,7 @@ ScriptedImporter:
     addSortingGroup: 1
     addShadowCasters: 0
   importFileNodeState: 1
-  platformSettingsDirtyTick: 638489855710349762
+  platformSettingsDirtyTick: 638490555072832233
   textureAssetName: 
   singleSpriteImportData:
   - name: 
@@ -121,7 +121,7 @@ ScriptedImporter:
   animatedSpriteImportData:
   - name: Hair_Frame_0
     originalName: 
-    pivot: {x: 0.6666666, y: -0.2857143}
+    pivot: {x: 0.6666666, y: 0.57142854}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -141,7 +141,7 @@ ScriptedImporter:
     uvTransform: {x: 4, y: 4}
   - name: Hair_Frame_1
     originalName: 
-    pivot: {x: 0.6666666, y: -0.2857143}
+    pivot: {x: 0.6666666, y: 0.57142854}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -161,7 +161,7 @@ ScriptedImporter:
     uvTransform: {x: 4, y: 19}
   - name: Hair_Frame_2
     originalName: 
-    pivot: {x: 0.6666666, y: -0.2857143}
+    pivot: {x: 0.6666666, y: 0.57142854}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -181,7 +181,7 @@ ScriptedImporter:
     uvTransform: {x: 4, y: 34}
   - name: Hair_Frame_3
     originalName: 
-    pivot: {x: 0.71428573, y: -0.5}
+    pivot: {x: 0.71428573, y: 0.5}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -201,7 +201,7 @@ ScriptedImporter:
     uvTransform: {x: 18, y: 4}
   - name: Hair_Frame_4
     originalName: 
-    pivot: {x: 0.71428573, y: -0.5}
+    pivot: {x: 0.71428573, y: 0.5}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -221,7 +221,7 @@ ScriptedImporter:
     uvTransform: {x: 18, y: 18}
   - name: Body
     originalName: 
-    pivot: {x: 0.6666666, y: -1.5}
+    pivot: {x: 0.6666666, y: 1.5}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -241,7 +241,7 @@ ScriptedImporter:
     uvTransform: {x: 4, y: 79}
   - name: Pants_Frame_0
     originalName: 
-    pivot: {x: 0.8, y: -1}
+    pivot: {x: 0.8, y: 1.9999999}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -261,7 +261,7 @@ ScriptedImporter:
     uvTransform: {x: 4, y: 49}
   - name: Pants_Frame_1
     originalName: 
-    pivot: {x: 0.8, y: -1}
+    pivot: {x: 0.8, y: 1.9999999}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -281,7 +281,7 @@ ScriptedImporter:
     uvTransform: {x: 4, y: 59}
   - name: Pants_Frame_2
     originalName: 
-    pivot: {x: 0.6666666, y: -1}
+    pivot: {x: 0.6666666, y: 1.9999999}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -301,7 +301,7 @@ ScriptedImporter:
     uvTransform: {x: 49, y: 54}
   - name: Pants_Frame_3
     originalName: 
-    pivot: {x: 0.6666666, y: -1}
+    pivot: {x: 0.6666666, y: 1.9999999}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -321,7 +321,7 @@ ScriptedImporter:
     uvTransform: {x: 49, y: 64}
   - name: Pants_Frame_4
     originalName: 
-    pivot: {x: 0.6, y: -1}
+    pivot: {x: 0.6, y: 1.9999999}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -341,7 +341,7 @@ ScriptedImporter:
     uvTransform: {x: 4, y: 69}
   - name: Shirt
     originalName: 
-    pivot: {x: 0.6, y: -4}
+    pivot: {x: 0.6, y: 1.9999999}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -361,7 +361,7 @@ ScriptedImporter:
     uvTransform: {x: 18, y: 32}
   - name: Head
     originalName: 
-    pivot: {x: 0.49999997, y: -1}
+    pivot: {x: 0.49999997, y: 0.49999997}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -381,7 +381,7 @@ ScriptedImporter:
     uvTransform: {x: 33, y: 4}
   - name: RightShoe_Frame_0
     originalName: 
-    pivot: {x: 0, y: -2}
+    pivot: {x: 0, y: 3.9999998}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -401,7 +401,7 @@ ScriptedImporter:
     uvTransform: {x: 66, y: 74}
   - name: RightShoe_Frame_1
     originalName: 
-    pivot: {x: 0, y: -2}
+    pivot: {x: 0, y: 3.9999998}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -421,7 +421,7 @@ ScriptedImporter:
     uvTransform: {x: 66, y: 83}
   - name: RightShoe_Frame_2
     originalName: 
-    pivot: {x: -0.99999976, y: -3}
+    pivot: {x: -0.99999976, y: 3}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -441,7 +441,7 @@ ScriptedImporter:
     uvTransform: {x: 66, y: 92}
   - name: RightShoe_Frame_3
     originalName: 
-    pivot: {x: -0.99999976, y: -3}
+    pivot: {x: -0.99999976, y: 3}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -461,7 +461,7 @@ ScriptedImporter:
     uvTransform: {x: 66, y: 101}
   - name: RightShoe_Frame_4
     originalName: 
-    pivot: {x: -0.99999976, y: -3}
+    pivot: {x: -0.99999976, y: 3}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -481,7 +481,7 @@ ScriptedImporter:
     uvTransform: {x: 66, y: 110}
   - name: LeftShoe_Frame_0
     originalName: 
-    pivot: {x: 1.9999999, y: -2}
+    pivot: {x: 1.9999999, y: 3.9999998}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -501,7 +501,7 @@ ScriptedImporter:
     uvTransform: {x: 66, y: 119}
   - name: LeftShoe_Frame_1
     originalName: 
-    pivot: {x: 1.9999999, y: -2}
+    pivot: {x: 1.9999999, y: 3.9999998}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -521,7 +521,7 @@ ScriptedImporter:
     uvTransform: {x: 75, y: 4}
   - name: LeftShoe_Frame_2
     originalName: 
-    pivot: {x: 3, y: -3}
+    pivot: {x: 3, y: 3}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -541,7 +541,7 @@ ScriptedImporter:
     uvTransform: {x: 75, y: 13}
   - name: LeftShoe_Frame_3
     originalName: 
-    pivot: {x: 3, y: -3}
+    pivot: {x: 3, y: 3}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -561,7 +561,7 @@ ScriptedImporter:
     uvTransform: {x: 75, y: 22}
   - name: LeftShoe_Frame_4
     originalName: 
-    pivot: {x: 3, y: -3}
+    pivot: {x: 3, y: 3}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -581,7 +581,7 @@ ScriptedImporter:
     uvTransform: {x: 75, y: 31}
   - name: Hat_Frame_0
     originalName: 
-    pivot: {x: 0.5, y: -1.75}
+    pivot: {x: 0.5, y: -0.24999994}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -601,7 +601,7 @@ ScriptedImporter:
     uvTransform: {x: 33, y: 64}
   - name: Hat_Frame_3
     originalName: 
-    pivot: {x: 0.5, y: -1.75}
+    pivot: {x: 0.5, y: -0.24999994}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -621,7 +621,7 @@ ScriptedImporter:
     uvTransform: {x: 33, y: 76}
   - name: Hat_Frame_4
     originalName: 
-    pivot: {x: 0.5, y: -1.75}
+    pivot: {x: 0.5, y: -0.24999994}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -641,7 +641,7 @@ ScriptedImporter:
     uvTransform: {x: 33, y: 88}
   - name: Crown
     originalName: 
-    pivot: {x: 0.44444442, y: -3.5}
+    pivot: {x: 0.44444442, y: -0.49999988}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -661,7 +661,7 @@ ScriptedImporter:
     uvTransform: {x: 49, y: 4}
   - name: RightHand_Frame_0
     originalName: 
-    pivot: {x: -0.99999976, y: -3}
+    pivot: {x: -0.99999976, y: 3}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -681,7 +681,7 @@ ScriptedImporter:
     uvTransform: {x: 75, y: 40}
   - name: RightHand_Frame_1
     originalName: 
-    pivot: {x: -0.49999988, y: -4}
+    pivot: {x: -0.49999988, y: 1.9999999}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -701,7 +701,7 @@ ScriptedImporter:
     uvTransform: {x: 18, y: 77}
   - name: RightHand_Frame_2
     originalName: 
-    pivot: {x: -2.0000002, y: -6}
+    pivot: {x: -2.0000002, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -721,7 +721,7 @@ ScriptedImporter:
     uvTransform: {x: 75, y: 49}
   - name: RightHand_Frame_3
     originalName: 
-    pivot: {x: -2.0000002, y: -4}
+    pivot: {x: -2.0000002, y: 1.9999999}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -741,7 +741,7 @@ ScriptedImporter:
     uvTransform: {x: 75, y: 58}
   - name: RightHand_Frame_4
     originalName: 
-    pivot: {x: -2.0000002, y: -5}
+    pivot: {x: -2.0000002, y: 1.0000001}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -761,7 +761,7 @@ ScriptedImporter:
     uvTransform: {x: 75, y: 67}
   - name: LeftHand_Frame_0
     originalName: 
-    pivot: {x: 3, y: -3}
+    pivot: {x: 3, y: 3}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -781,7 +781,7 @@ ScriptedImporter:
     uvTransform: {x: 75, y: 76}
   - name: LeftHand_Frame_1
     originalName: 
-    pivot: {x: 1.9999999, y: -4}
+    pivot: {x: 1.9999999, y: 1.9999999}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -801,7 +801,7 @@ ScriptedImporter:
     uvTransform: {x: 18, y: 86}
   - name: LeftHand_Frame_2
     originalName: 
-    pivot: {x: 3, y: -4}
+    pivot: {x: 3, y: 1.9999999}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -821,7 +821,7 @@ ScriptedImporter:
     uvTransform: {x: 75, y: 85}
   - name: LeftHand_Frame_3
     originalName: 
-    pivot: {x: 3, y: -4}
+    pivot: {x: 3, y: 1.9999999}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -841,7 +841,7 @@ ScriptedImporter:
     uvTransform: {x: 75, y: 94}
   - name: LeftHand_Frame_4
     originalName: 
-    pivot: {x: 3, y: -5}
+    pivot: {x: 3, y: 1.0000001}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -861,7 +861,7 @@ ScriptedImporter:
     uvTransform: {x: 75, y: 103}
   - name: LeftEye
     originalName: 
-    pivot: {x: 1.0000001, y: -2.5}
+    pivot: {x: 1.0000001, y: 0.50000006}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -881,7 +881,7 @@ ScriptedImporter:
     uvTransform: {x: 18, y: 95}
   - name: RightEye
     originalName: 
-    pivot: {x: -0.99999976, y: -2.5}
+    pivot: {x: -0.99999976, y: 0.50000006}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -901,7 +901,7 @@ ScriptedImporter:
     uvTransform: {x: 66, y: 24}
   - name: Beard_Frame_0
     originalName: 
-    pivot: {x: 0.25000003, y: -0.6666667}
+    pivot: {x: 0.25000003, y: 1.3333333}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -921,7 +921,7 @@ ScriptedImporter:
     uvTransform: {x: 49, y: 74}
   - name: Beard_Frame_4
     originalName: 
-    pivot: {x: 0.25000003, y: -0.6666667}
+    pivot: {x: 0.25000003, y: 1.3333333}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -941,7 +941,7 @@ ScriptedImporter:
     uvTransform: {x: 49, y: 85}
   - name: Body_Frame_1
     originalName: 
-    pivot: {x: 0.6666666, y: -1.5}
+    pivot: {x: 0.6666666, y: 1.5}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -961,7 +961,7 @@ ScriptedImporter:
     uvTransform: {x: 4, y: 89}
   - name: Body_Frame_2
     originalName: 
-    pivot: {x: 0.6666666, y: -1.5}
+    pivot: {x: 0.6666666, y: 1.5}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -981,7 +981,7 @@ ScriptedImporter:
     uvTransform: {x: 4, y: 99}
   - name: Body_Frame_3
     originalName: 
-    pivot: {x: 0.6666666, y: -1.5}
+    pivot: {x: 0.6666666, y: 1.5}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -1001,7 +1001,7 @@ ScriptedImporter:
     uvTransform: {x: 4, y: 109}
   - name: Body_Frame_4
     originalName: 
-    pivot: {x: 0.6666666, y: -1.5}
+    pivot: {x: 0.6666666, y: 1.5}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -1021,7 +1021,7 @@ ScriptedImporter:
     uvTransform: {x: 4, y: 119}
   - name: Shirt_Frame_1
     originalName: 
-    pivot: {x: 0.6, y: -4}
+    pivot: {x: 0.6, y: 1.9999999}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -1041,7 +1041,7 @@ ScriptedImporter:
     uvTransform: {x: 18, y: 41}
   - name: Shirt_Frame_2
     originalName: 
-    pivot: {x: 0.6, y: -4}
+    pivot: {x: 0.6, y: 1.9999999}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -1061,7 +1061,7 @@ ScriptedImporter:
     uvTransform: {x: 18, y: 50}
   - name: Shirt_Frame_3
     originalName: 
-    pivot: {x: 0.6, y: -4}
+    pivot: {x: 0.6, y: 1.9999999}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -1081,7 +1081,7 @@ ScriptedImporter:
     uvTransform: {x: 18, y: 59}
   - name: Shirt_Frame_4
     originalName: 
-    pivot: {x: 0.6, y: -4}
+    pivot: {x: 0.6, y: 1.9999999}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -1101,7 +1101,7 @@ ScriptedImporter:
     uvTransform: {x: 18, y: 68}
   - name: Head_Frame_1
     originalName: 
-    pivot: {x: 0.49999997, y: -1}
+    pivot: {x: 0.49999997, y: 0.49999997}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -1121,7 +1121,7 @@ ScriptedImporter:
     uvTransform: {x: 33, y: 16}
   - name: Head_Frame_2
     originalName: 
-    pivot: {x: 0.49999997, y: -1}
+    pivot: {x: 0.49999997, y: 0.49999997}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -1141,7 +1141,7 @@ ScriptedImporter:
     uvTransform: {x: 33, y: 28}
   - name: Head_Frame_3
     originalName: 
-    pivot: {x: 0.49999997, y: -1}
+    pivot: {x: 0.49999997, y: 0.49999997}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -1161,7 +1161,7 @@ ScriptedImporter:
     uvTransform: {x: 33, y: 40}
   - name: Head_Frame_4
     originalName: 
-    pivot: {x: 0.49999997, y: -1}
+    pivot: {x: 0.49999997, y: 0.49999997}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -1181,7 +1181,7 @@ ScriptedImporter:
     uvTransform: {x: 33, y: 52}
   - name: Hat_Frame_3
     originalName: 
-    pivot: {x: 0.5, y: -2}
+    pivot: {x: 0.5, y: -0.50000006}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -1201,7 +1201,7 @@ ScriptedImporter:
     uvTransform: {x: 33, y: 100}
   - name: Hat_Frame_4
     originalName: 
-    pivot: {x: 0.5, y: -2}
+    pivot: {x: 0.5, y: -0.50000006}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -1221,7 +1221,7 @@ ScriptedImporter:
     uvTransform: {x: 33, y: 112}
   - name: Crown_Frame_1
     originalName: 
-    pivot: {x: 0.44444442, y: -3.5}
+    pivot: {x: 0.44444442, y: -0.49999988}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -1241,7 +1241,7 @@ ScriptedImporter:
     uvTransform: {x: 49, y: 14}
   - name: Crown_Frame_2
     originalName: 
-    pivot: {x: 0.44444442, y: -3.5}
+    pivot: {x: 0.44444442, y: -0.49999988}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -1261,7 +1261,7 @@ ScriptedImporter:
     uvTransform: {x: 49, y: 24}
   - name: Crown_Frame_3
     originalName: 
-    pivot: {x: 0.44444442, y: -3.5}
+    pivot: {x: 0.44444442, y: -0.49999988}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -1281,7 +1281,7 @@ ScriptedImporter:
     uvTransform: {x: 49, y: 34}
   - name: Crown_Frame_4
     originalName: 
-    pivot: {x: 0.44444442, y: -3.5}
+    pivot: {x: 0.44444442, y: -0.49999988}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -1301,7 +1301,7 @@ ScriptedImporter:
     uvTransform: {x: 49, y: 44}
   - name: LeftEye_Frame_1
     originalName: 
-    pivot: {x: 1.0000001, y: -2.5}
+    pivot: {x: 1.0000001, y: 0.50000006}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -1321,7 +1321,7 @@ ScriptedImporter:
     uvTransform: {x: 18, y: 105}
   - name: LeftEye_Frame_2
     originalName: 
-    pivot: {x: 1.0000001, y: -2.5}
+    pivot: {x: 1.0000001, y: 0.50000006}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -1341,7 +1341,7 @@ ScriptedImporter:
     uvTransform: {x: 18, y: 115}
   - name: LeftEye_Frame_3
     originalName: 
-    pivot: {x: 1.0000001, y: -2.5}
+    pivot: {x: 1.0000001, y: 0.50000006}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -1361,7 +1361,7 @@ ScriptedImporter:
     uvTransform: {x: 66, y: 4}
   - name: LeftEye_Frame_4
     originalName: 
-    pivot: {x: 1.0000001, y: -2.5}
+    pivot: {x: 1.0000001, y: 0.50000006}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -1381,7 +1381,7 @@ ScriptedImporter:
     uvTransform: {x: 66, y: 14}
   - name: RightEye_Frame_1
     originalName: 
-    pivot: {x: -0.99999976, y: -2.5}
+    pivot: {x: -0.99999976, y: 0.50000006}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -1401,7 +1401,7 @@ ScriptedImporter:
     uvTransform: {x: 66, y: 34}
   - name: RightEye_Frame_2
     originalName: 
-    pivot: {x: -0.99999976, y: -2.5}
+    pivot: {x: -0.99999976, y: 0.50000006}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -1421,7 +1421,7 @@ ScriptedImporter:
     uvTransform: {x: 66, y: 44}
   - name: RightEye_Frame_3
     originalName: 
-    pivot: {x: -0.99999976, y: -2.5}
+    pivot: {x: -0.99999976, y: 0.50000006}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -1441,7 +1441,7 @@ ScriptedImporter:
     uvTransform: {x: 66, y: 54}
   - name: RightEye_Frame_4
     originalName: 
-    pivot: {x: -0.99999976, y: -2.5}
+    pivot: {x: -0.99999976, y: 0.50000006}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -1461,7 +1461,7 @@ ScriptedImporter:
     uvTransform: {x: 66, y: 64}
   - name: Beard_Frame_2
     originalName: 
-    pivot: {x: 0.25000003, y: -0.6666667}
+    pivot: {x: 0.25000003, y: 1.3333333}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -1481,7 +1481,7 @@ ScriptedImporter:
     uvTransform: {x: 49, y: 96}
   - name: Beard_Frame_3
     originalName: 
-    pivot: {x: 0.25000003, y: -0.6666667}
+    pivot: {x: 0.25000003, y: 1.3333333}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -1501,7 +1501,7 @@ ScriptedImporter:
     uvTransform: {x: 49, y: 107}
   - name: Beard_Frame_4
     originalName: 
-    pivot: {x: 0.25000003, y: -0.6666667}
+    pivot: {x: 0.25000003, y: 1.3333333}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
