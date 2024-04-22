@@ -1,4 +1,4 @@
-Shader "Custom/GraySpriteShader"
+Shader "Custom/ParametricManShader"
 {
     Properties{
         _MainTex("Texture", 2D) = "white" {}

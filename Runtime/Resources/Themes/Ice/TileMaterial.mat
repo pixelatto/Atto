@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Magma
+  m_Name: TileMaterial
   m_Shader: {fileID: 4800000, guid: 1ec3810c9632cb74e9385bcfb86e81fd, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -32,7 +32,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Texture:
-        m_Texture: {fileID: 2800000, guid: 9aa1a2824a6090f4d9379950d65d6055, type: 3}
+        m_Texture: {fileID: 2800000, guid: 52b211ad27859404b8fe8f1eb713236a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Texture1:
@@ -48,6 +48,6 @@ Material:
     - _NumTiles: 2
     - _TileSize: 2
     m_Colors:
-    - _OutlineColor: {r: 0.27058825, g: 0.15686275, b: 0.23529413, a: 1}
-    - _TopColor: {r: 0.6745098, g: 0.19607845, b: 0.19607845, a: 1}
+    - _OutlineColor: {r: 1, g: 1, b: 1, a: 1}
+    - _TopColor: {r: 0.37254903, g: 0.80392164, b: 0.8941177, a: 1}
   m_BuildTextureStacks: []
