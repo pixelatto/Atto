@@ -45,9 +45,9 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _LightRadius: 3.94
+    - _LightRadius: 4.35
     - _LightSteps: 4
-    - _Luminosity: 1
+    - _Luminosity: 3
     - _NumTiles: 2
     - _PixelSize: 0.05
     - _PixelSizeX: 0.19
@@ -59,7 +59,7 @@ Material:
     - _TileSize: 2
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _LightPoints: {r: 11.4, g: 4.7, b: 0, a: 0}
+    - _LightPoints: {r: 10.94, g: 4.3, b: 0, a: 0}
     - _OutlineColor: {r: 0.13333334, g: 0.1254902, b: 0.20392159, a: 1}
     - _TopColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
