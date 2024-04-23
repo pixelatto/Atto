@@ -81,7 +81,7 @@ Shader "Custom/TileShading"
             float darkness = 1 - lightness;
             float frac = (lightness - exposure);
 
-            fixed4 dither = frac * round(tex2D(_NoiseTex, i.worldPos.xy / 16));
+            fixed4 dither = frac * round(tex2D(_NoiseTex, i.worldPos.xy / 2));
 
             col.rgb = 0;
             col.a = clamp(ceil((darkness + dither) * _LightSteps) / _LightSteps, 0, 1);
