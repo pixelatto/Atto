@@ -1,4 +1,4 @@
-Shader "Custom/ParametricManShader"
+Shader "Atto/GrayscaleMask"
 {
     Properties{
         _MainTex("Texture", 2D) = "white" {}

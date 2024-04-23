@@ -1,4 +1,4 @@
-Shader "Custom/AutoTileShader"
+Shader "Atto/SilouetteTilemaps"
 {
     Properties
     {
@@ -6,7 +6,7 @@ Shader "Custom/AutoTileShader"
         _TopColor("Top Color", Color) = (1,1,1,1)
         _MainTex("Texture", 2D) = "white" {}
         _Texture("Main Texture", 2D) = "white" {}
-        _NoiseTex("Noise Texture", 2D) = "white" {} // Nueva propiedad para la textura de ruido
+        _NoiseTex("Noise Texture", 2D) = "white" {}
     }
         SubShader
     {
@@ -39,7 +39,7 @@ Shader "Custom/AutoTileShader"
 
             sampler2D _MainTex;
             sampler2D _Texture;
-            sampler2D _NoiseTex; // Sampler para la textura de ruido
+            sampler2D _NoiseTex;
             float4 _TopColor;
             float4 _OutlineColor;
 

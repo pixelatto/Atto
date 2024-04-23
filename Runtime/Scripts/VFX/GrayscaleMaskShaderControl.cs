@@ -1,8 +1,11 @@
 using UnityEngine;
 
+/// <summary>
+/// Manages Atto/GrayscaleMaskShader values
+/// </summary>
 [ExecuteAlways]
 [RequireComponent(typeof(SpriteRenderer))]
-public class ParametricManShader : MonoBehaviour
+public class GrayscaleMaskShaderControl : MonoBehaviour
 {
     [Range(0, 1)]public float threshold = 0.5f;
 

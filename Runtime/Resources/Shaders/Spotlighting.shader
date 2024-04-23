@@ -1,15 +1,13 @@
-Shader "Custom/TileShading"
+Shader "Atto/Spotlighting"
 {
     Properties
     {
         _MainTex("Texture", 2D) = "white" {}
         _NoiseTex("Noise", 2D) = "white" {}
-        _LightPoints("Light Points", Vector) = (0,0,0,0)
-        _LightRadius("Light Radius", Float) = 0.1
-        _Luminosity("Luminosity", Float) = 400
         _LightSteps("Light Steps", Int) = 4
-        _PixelsWide("Pixels Wide", Int) = 32
-        _PixelsHigh("Pixels High", Int) = 32
+        _PixelsWide("Pixels Wide", Int) = 8
+        _PixelsHigh("Pixels High", Int) = 8
+        _Color("Color", Color) = (1,1,1,1)
     }
 
     SubShader
@@ -45,11 +43,12 @@ Shader "Custom/TileShading"
         sampler2D _NoiseTex;
         float4 _MainTex_ST;
         float4 _LightPoints[10];
-        float _LightRadius;
-        float _Luminosity;
+        float _LightRadius[10];
+        float _LightLuminosity[10];
         int _PixelsWide;
         int _PixelsHigh;
         int _LightSteps;
+        float4 _Color;
 
         v2f vert(appdata v)
         {
@@ -72,9 +71,9 @@ Shader "Custom/TileShading"
             {
                 float2 lightPos = _LightPoints[j].xy;
                 float dist = distance(i.worldPos.xy, lightPos);
-                float value = _LightRadius - dist;
-                float light = clamp(value / _LightRadius, 0, 1);
-                exposure += light * _Luminosity;
+                float value = _LightRadius[j] - dist;
+                float light = clamp(value / _LightRadius[j], 0, 1);
+                exposure += light * _LightLuminosity[j];
             }
 
             float lightness = ceil(exposure * _LightSteps) / (_LightSteps);
@@ -83,7 +82,7 @@ Shader "Custom/TileShading"
 
             fixed4 dither = frac * round(tex2D(_NoiseTex, i.worldPos.xy / 2));
 
-            col.rgb = 0;
+            col.rgb = _Color;
             col.a = clamp(ceil((darkness + dither) * _LightSteps) / _LightSteps, 0, 1);
             return col;
         }
