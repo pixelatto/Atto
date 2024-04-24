@@ -8,6 +8,7 @@ using UnityEditor;
 [ExecuteAlways]
 public class PixelLight : MonoBehaviour
 {
+    public Color color = Color.white;
     public float overrideRadius = 0f;
     public float overrideBrightness = 0f;
     public float radius => (ldtkFields != null) ? ldtkFields.GetFloat("Radius") / 8f : overrideRadius / 8f;

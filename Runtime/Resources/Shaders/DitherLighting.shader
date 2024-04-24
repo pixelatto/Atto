@@ -7,7 +7,7 @@ Shader "Atto/DitherLighting"
         _LightSteps("Light Steps", Int) = 4
         _PixelsWide("Pixels Wide", Int) = 8
         _PixelsHigh("Pixels High", Int) = 8
-        _Color("Color", Color) = (1,1,1,1)
+        _FillColor("Fill Color", Color) = (1,1,1,1)
     }
 
     SubShader
@@ -38,17 +38,18 @@ Shader "Atto/DitherLighting"
             float4 vertex : SV_POSITION;
             float3 worldPos : TEXCOORD1;
         };
-
+        
         sampler2D _MainTex;
         sampler2D _NoiseTex;
         float4 _MainTex_ST;
         float4 _LightPoints[10];
+        float _LightBrightness[10];
         float _LightRadius[10];
-        float _LightLuminosity[10];
+        float4 _Colors[10];
+        float4 _FillColor;
         int _PixelsWide;
         int _PixelsHigh;
         int _LightSteps;
-        float4 _Color;
 
         v2f vert(appdata v)
         {
@@ -66,15 +67,23 @@ Shader "Atto/DitherLighting"
 
             fixed4 col = tex2D(_MainTex, i.uv);
             float exposure = 0.0;
+            float4 color = float4(1, 1, 1, 1);
 
             for (int j = 0; j < 10; j++)
             {
                 float2 lightPos = _LightPoints[j].xy;
-                float dist = distance(i.worldPos.xy, lightPos);
-                float value = _LightRadius[j] - dist;
-                float light = clamp(value / _LightRadius[j], 0, 1);
-                exposure += light * _LightLuminosity[j];
+                float distToCenterNormalized = distance(i.worldPos.xy, lightPos) / _LightRadius[j];
+                float distToBorder = (1 - distToCenterNormalized);
+                
+                float light = clamp(distToBorder, 0, 1);
+                float currentExposure = light * _LightBrightness[j];
+                exposure = max(currentExposure, exposure);
+                if (currentExposure > 0)
+                {
+                    color += light * _LightBrightness[j] * _Colors[j];
+                }
             }
+            color /= exposure;
 
             float lightness = ceil(exposure * _LightSteps) / (_LightSteps);
             float darkness = 1 - lightness;
@@ -82,8 +91,9 @@ Shader "Atto/DitherLighting"
 
             fixed4 dither = frac * round(tex2D(_NoiseTex, i.worldPos.xy / 2));
 
-            col.rgb = _Color;
             col.a = clamp(ceil((darkness + dither) * _LightSteps) / _LightSteps, 0, 1);
+            col.rgb = _FillColor;
+
             return col;
         }
         ENDCG

@@ -47,7 +47,7 @@ Material:
     m_Floats:
     - _LightLuminosity: 2
     - _LightRadius: 8
-    - _LightSteps: 8
+    - _LightSteps: 5
     - _Luminosity: 3
     - _NumTiles: 2
     - _PixelSize: 0.05
@@ -60,6 +60,7 @@ Material:
     - _TileSize: 2
     m_Colors:
     - _Color: {r: 0.13333334, g: 0.1254902, b: 0.20392159, a: 1}
+    - _FillColor: {r: 0.13333334, g: 0.1254902, b: 0.20392159, a: 1}
     - _LightPoints: {r: 10.9, g: 4.3, b: 0, a: 0}
     - _OutlineColor: {r: 0.13333334, g: 0.1254902, b: 0.20392159, a: 1}
     - _TopColor: {r: 1, g: 1, b: 1, a: 1}
