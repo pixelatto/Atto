@@ -1,4 +1,4 @@
-Shader "Atto/Spotlighting"
+Shader "Atto/DitherLighting"
 {
     Properties
     {

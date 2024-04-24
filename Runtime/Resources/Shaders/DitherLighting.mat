@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Spotlighting
+  m_Name: DitherLighting
   m_Shader: {fileID: 4800000, guid: b2285f35422fb7e488c6bce94880e757, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0

@@ -4,4 +4,3 @@
 [assembly: System.Reflection.AssemblyCopyright("See LICENSE")]
 [assembly: System.Reflection.AssemblyFileVersion("3.0.1.0")]
 [assembly: System.Reflection.AssemblyTitle("Hjson.dll")]
-[assembly: System.CLSCompliant(true)]

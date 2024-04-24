@@ -4,7 +4,36 @@ using UnityEngine;
 
 public static class ArrayExtensions
 {
-    
+    public static int CountNotNullElements<T>(this T[] array)
+    {
+        int count = 0;
+        for (int i = 0; i < array.Length; i++)
+        {
+            if (array[i] != null)
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public static T FirstNotNullElement<T>(this T[] array)
+    {
+        if (array == null)
+        {
+            return default(T);
+        }
+
+        for (int i = 0; i < array.Length; i++)
+        {
+            if (array[i] != null)
+            {
+                return array[i];
+            }
+        }
+        return default(T);
+    }
+
     public static T PickRandom<T>(this T[] array)
     {
         return array[Random.Range(0, array.Length)];
@@ -39,6 +68,21 @@ public static class ListExtensions
         return list[Random.Range(0, list.Count)];
     }
 
+    public static void AddIfNotListed<T>(this List<T> list, T item)
+    {
+        if (!list.Contains(item))
+        {
+            list.Add(item);
+        }
+    }
+
+    public static void RemoveIfListed<T>(this List<T> list, T item)
+    {
+        if (list.Contains(item))
+        {
+            list.Remove(item);
+        }
+    }
 }
 
 public static class DictionaryExtensions

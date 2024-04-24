@@ -1,19 +1,27 @@
 ﻿using UnityEngine;
 
-namespace Atto.Extensions
+public static class BehaviourExtensions
 {
-	public static class BehaviourExtensions
-	{
-		public static T GetOrAddComponent<T>(this Behaviour target) where T : Component
-		{
-			T result = target.GetComponent<T>();
+    public static T GetOrAddComponent<T>(this Behaviour target) where T : Component
+    {
+        T result = target.GetComponent<T>();
 
-			if (result == null)
-			{
-				result = target.gameObject.AddComponent<T>();
-			}
+        if (result == null)
+        {
+            result = target.gameObject.AddComponent<T>();
+        }
+        return result;
+    }
 
-			return result;
-		}
-	}
+    public static T GetOrAddComponent<T>(this GameObject target) where T : Component
+    {
+        T result = target.GetComponent<T>();
+
+        if (result == null)
+        {
+            result = target.gameObject.AddComponent<T>();
+        }
+
+        return result;
+    }
 }
