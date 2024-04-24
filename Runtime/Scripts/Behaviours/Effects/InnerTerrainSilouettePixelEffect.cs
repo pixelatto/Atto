@@ -6,7 +6,11 @@ public class InnerTerrainSilouettePixelEffect : PixelEffect
 {
     public LayerMask collisionLayer;
 
+    public bool reverse = false;
+
     public bool isDirty = true;
+
+    public bool updateAlways = false;
 
     Vector3Int lastIntPosition = Vector3Int.zero;
 
@@ -16,7 +20,7 @@ public class InnerTerrainSilouettePixelEffect : PixelEffect
     {
         base.Update();
         FixPosition();
-        if (isDirty)
+        if (isDirty || updateAlways)
         {
             UpdateSprite();
             Refresh();
@@ -54,6 +58,8 @@ public class InnerTerrainSilouettePixelEffect : PixelEffect
 
                 bool hit = CheckForCollision(worldX, worldY);
 
+                if (reverse) { hit = !hit; }
+
                 spriteTexture.SetPixel(x + spriteWidth / 2, y + spriteHeight / 2, !hit ? Color.clear : Color.white);
             }
         }
@@ -72,23 +78,23 @@ public class InnerTerrainSilouettePixelEffect : PixelEffect
 
         Vector2 checkPoint;
 
-        checkPoint = FitVector(-1, 1); if (!Physics2D.OverlapCircle(new Vector2(centerX + checkPoint.x * pixelCamera.worldPixelSize, centerY + checkPoint.y * pixelCamera.worldPixelSize), pixelCamera.worldPixelSize * 0.25f, collisionLayer)) { return false; }
-        checkPoint = FitVector(0, 1); if (!Physics2D.OverlapCircle(new Vector2(centerX + checkPoint.x * pixelCamera.worldPixelSize, centerY + checkPoint.y * pixelCamera.worldPixelSize), pixelCamera.worldPixelSize * 0.25f, collisionLayer)) { return false; }
-        checkPoint = FitVector(1, 1); if (!Physics2D.OverlapCircle(new Vector2(centerX + checkPoint.x * pixelCamera.worldPixelSize, centerY + checkPoint.y * pixelCamera.worldPixelSize), pixelCamera.worldPixelSize * 0.25f, collisionLayer)) { return false; }
+        //checkPoint = FitVector(-1, 1); if (!Physics2D.OverlapCircle(new Vector2(centerX + checkPoint.x * pixelCamera.worldPixelSize, centerY + checkPoint.y * pixelCamera.worldPixelSize), pixelCamera.worldPixelSize * 0.25f, collisionLayer)) { return false; }
+        //checkPoint = FitVector(0, 1); if (!Physics2D.OverlapCircle(new Vector2(centerX + checkPoint.x * pixelCamera.worldPixelSize, centerY + checkPoint.y * pixelCamera.worldPixelSize), pixelCamera.worldPixelSize * 0.25f, collisionLayer)) { return false; }
+        //checkPoint = FitVector(1, 1); if (!Physics2D.OverlapCircle(new Vector2(centerX + checkPoint.x * pixelCamera.worldPixelSize, centerY + checkPoint.y * pixelCamera.worldPixelSize), pixelCamera.worldPixelSize * 0.25f, collisionLayer)) { return false; }
 
-        checkPoint = FitVector(-1, 0); if (!Physics2D.OverlapCircle(new Vector2(centerX + checkPoint.x * pixelCamera.worldPixelSize, centerY + checkPoint.y * pixelCamera.worldPixelSize), pixelCamera.worldPixelSize * 0.25f, collisionLayer)) { return false; }
+        //checkPoint = FitVector(-1, 0); if (!Physics2D.OverlapCircle(new Vector2(centerX + checkPoint.x * pixelCamera.worldPixelSize, centerY + checkPoint.y * pixelCamera.worldPixelSize), pixelCamera.worldPixelSize * 0.25f, collisionLayer)) { return false; }
         checkPoint = FitVector(0, 0); if (!Physics2D.OverlapCircle(new Vector2(centerX + checkPoint.x * pixelCamera.worldPixelSize, centerY + checkPoint.y * pixelCamera.worldPixelSize), pixelCamera.worldPixelSize * 0.25f, collisionLayer)) { return false; }
-        checkPoint = FitVector(1, 0); if (!Physics2D.OverlapCircle(new Vector2(centerX + checkPoint.x * pixelCamera.worldPixelSize, centerY + checkPoint.y * pixelCamera.worldPixelSize), pixelCamera.worldPixelSize * 0.25f, collisionLayer)) { return false; }
+        //checkPoint = FitVector(1, 0); if (!Physics2D.OverlapCircle(new Vector2(centerX + checkPoint.x * pixelCamera.worldPixelSize, centerY + checkPoint.y * pixelCamera.worldPixelSize), pixelCamera.worldPixelSize * 0.25f, collisionLayer)) { return false; }
 
-        checkPoint = FitVector(-1, -1); if (!Physics2D.OverlapCircle(new Vector2(centerX + checkPoint.x * pixelCamera.worldPixelSize, centerY + checkPoint.y * pixelCamera.worldPixelSize), pixelCamera.worldPixelSize * 0.25f, collisionLayer)) { return false; }
-        checkPoint = FitVector(0, -1); if (!Physics2D.OverlapCircle(new Vector2(centerX + checkPoint.x * pixelCamera.worldPixelSize, centerY + checkPoint.y * pixelCamera.worldPixelSize), pixelCamera.worldPixelSize * 0.25f, collisionLayer)) { return false; }
-        checkPoint = FitVector(1, -1); if (!Physics2D.OverlapCircle(new Vector2(centerX + checkPoint.x * pixelCamera.worldPixelSize, centerY + checkPoint.y * pixelCamera.worldPixelSize), pixelCamera.worldPixelSize * 0.25f, collisionLayer)) { return false; }
+        //checkPoint = FitVector(-1, -1); if (!Physics2D.OverlapCircle(new Vector2(centerX + checkPoint.x * pixelCamera.worldPixelSize, centerY + checkPoint.y * pixelCamera.worldPixelSize), pixelCamera.worldPixelSize * 0.25f, collisionLayer)) { return false; }
+        //checkPoint = FitVector(0, -1); if (!Physics2D.OverlapCircle(new Vector2(centerX + checkPoint.x * pixelCamera.worldPixelSize, centerY + checkPoint.y * pixelCamera.worldPixelSize), pixelCamera.worldPixelSize * 0.25f, collisionLayer)) { return false; }
+        //checkPoint = FitVector(1, -1); if (!Physics2D.OverlapCircle(new Vector2(centerX + checkPoint.x * pixelCamera.worldPixelSize, centerY + checkPoint.y * pixelCamera.worldPixelSize), pixelCamera.worldPixelSize * 0.25f, collisionLayer)) { return false; }
 
-        checkPoint = FitVector(0, 2); if (!Physics2D.OverlapCircle(new Vector2(centerX + checkPoint.x * pixelCamera.worldPixelSize, centerY + checkPoint.y * pixelCamera.worldPixelSize), pixelCamera.worldPixelSize * 0.25f, collisionLayer)) { return false; }
-        checkPoint = FitVector(0, 3); if (!Physics2D.OverlapCircle(new Vector2(centerX + checkPoint.x * pixelCamera.worldPixelSize, centerY + checkPoint.y * pixelCamera.worldPixelSize), pixelCamera.worldPixelSize * 0.25f, collisionLayer)) { return false; }
-        checkPoint = FitVector(2, 0); if (!Physics2D.OverlapCircle(new Vector2(centerX + checkPoint.x * pixelCamera.worldPixelSize, centerY + checkPoint.y * pixelCamera.worldPixelSize), pixelCamera.worldPixelSize * 0.25f, collisionLayer)) { return false; }
-        checkPoint = FitVector(-2, 0); if (!Physics2D.OverlapCircle(new Vector2(centerX + checkPoint.x * pixelCamera.worldPixelSize, centerY + checkPoint.y * pixelCamera.worldPixelSize), pixelCamera.worldPixelSize * 0.25f, collisionLayer)) { return false; }
-        checkPoint = FitVector(0, -2); if (!Physics2D.OverlapCircle(new Vector2(centerX + checkPoint.x * pixelCamera.worldPixelSize, centerY + checkPoint.y * pixelCamera.worldPixelSize), pixelCamera.worldPixelSize * 0.25f, collisionLayer)) { return false; }
+        //checkPoint = FitVector(0, 2); if (!Physics2D.OverlapCircle(new Vector2(centerX + checkPoint.x * pixelCamera.worldPixelSize, centerY + checkPoint.y * pixelCamera.worldPixelSize), pixelCamera.worldPixelSize * 0.25f, collisionLayer)) { return false; }
+        //checkPoint = FitVector(0, 3); if (!Physics2D.OverlapCircle(new Vector2(centerX + checkPoint.x * pixelCamera.worldPixelSize, centerY + checkPoint.y * pixelCamera.worldPixelSize), pixelCamera.worldPixelSize * 0.25f, collisionLayer)) { return false; }
+        //checkPoint = FitVector(2, 0); if (!Physics2D.OverlapCircle(new Vector2(centerX + checkPoint.x * pixelCamera.worldPixelSize, centerY + checkPoint.y * pixelCamera.worldPixelSize), pixelCamera.worldPixelSize * 0.25f, collisionLayer)) { return false; }
+        //checkPoint = FitVector(-2, 0); if (!Physics2D.OverlapCircle(new Vector2(centerX + checkPoint.x * pixelCamera.worldPixelSize, centerY + checkPoint.y * pixelCamera.worldPixelSize), pixelCamera.worldPixelSize * 0.25f, collisionLayer)) { return false; }
+        //checkPoint = FitVector(0, -2); if (!Physics2D.OverlapCircle(new Vector2(centerX + checkPoint.x * pixelCamera.worldPixelSize, centerY + checkPoint.y * pixelCamera.worldPixelSize), pixelCamera.worldPixelSize * 0.25f, collisionLayer)) { return false; }
 
         return true;
     }
