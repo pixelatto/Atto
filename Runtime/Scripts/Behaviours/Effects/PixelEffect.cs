@@ -6,7 +6,8 @@ public class PixelEffect : MonoBehaviour
     public PixelCamera pixelCamera;
     public int spriteWidth => pixelCamera.pixelWidth;
     public int spriteHeight => pixelCamera.pixelHeight;
-    public Texture2D spriteTexture;
+    
+    protected Texture2D spriteTexture;
 
     protected virtual void Start()
     {
@@ -18,7 +19,7 @@ public class PixelEffect : MonoBehaviour
         TrackCamera();
     }
 
-    protected void UpdateSprite()
+    protected virtual void UpdateSprite()
     {
         spriteTexture = new Texture2D(spriteWidth, spriteHeight);
         spriteTexture.filterMode = FilterMode.Point;

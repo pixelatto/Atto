@@ -9,23 +9,37 @@ public class PixelPositioner : MonoBehaviour
     {
         if (Application.isPlaying)
         {
-            visualsBase.rotation = Quaternion.identity;
-            visualsBase.localPosition = Vector3.zero;
-            visualsBase.position =
-                new Vector3(
-                    Mathf.Round(visualsBase.position.x * 8f) / 8f,
-                    Mathf.Round(visualsBase.position.y * 8f) / 8f,
-                    Mathf.Round(visualsBase.position.z * 8f) / 8f
-                    );
+            if (visualsBase != null)
+            {
+                visualsBase.rotation = Quaternion.identity;
+                visualsBase.localPosition = Vector3.zero;
+                visualsBase.position =
+                    new Vector3(
+                        Mathf.Round(visualsBase.position.x * 8f) / 8f,
+                        Mathf.Round(visualsBase.position.y * 8f) / 8f,
+                        Mathf.Round(visualsBase.position.z * 8f) / 8f
+                        );
+            }
         }
         else
         {
-            transform.position =
-                new Vector3(
-                    Mathf.Round(visualsBase.position.x * 4f) / 4f,
-                    Mathf.Round(visualsBase.position.y * 4f) / 4f,
-                    Mathf.Round(visualsBase.position.z * 4f) / 4f
+            if (visualsBase != null)
+            {
+                transform.position =
+                    new Vector3(
+                        Mathf.Round(visualsBase.position.x * 4f) / 4f,
+                        Mathf.Round(visualsBase.position.y * 4f) / 4f,
+                        Mathf.Round(visualsBase.position.z * 4f) / 4f
+                        );
+            }
+            else
+            {
+                transform.position = new Vector3(
+                    Mathf.Round(transform.position.x * 8f) / 8f,
+                    Mathf.Round(transform.position.y * 8f) / 8f,
+                    Mathf.Round(transform.position.z * 8f) / 8f
                     );
+            }
         }
     }
 }
