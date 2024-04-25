@@ -40,7 +40,7 @@ public class DitherLightingPixelEffect : PixelEffect
             if (currentLight != null)
             {
                 lightPositions[i] = new Vector4(currentLight.transform.position.x, currentLight.transform.position.y, 0, 0);
-                lightRadius[i] = currentLight.radius;
+                lightRadius[i] = currentLight.radiusInUnits;
                 float blink = 0;
                 if (currentLight.blinkAmount != 0)
                 {

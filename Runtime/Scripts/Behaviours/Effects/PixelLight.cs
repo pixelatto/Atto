@@ -12,12 +12,14 @@ public class PixelLight : MonoBehaviour
     public Color color = Color.white;
     public float overrideRadius = 0f;
     public float overrideBrightness = 0f;
-    float radiusInUnits => (ldtkFields != null) ? (overrideRadius != 0 ? overrideRadius : ldtkFields.GetFloat("Radius")) : overrideRadius;
+    float radiusInPixels => (ldtkFields != null) ? (overrideRadius != 0 ? overrideRadius : ldtkFields.GetFloat("Radius")) : overrideRadius;
     public float brightness => (ldtkFields != null) ? (overrideBrightness != 0 ? overrideBrightness : ldtkFields.GetFloat("Brightness")) : overrideBrightness;
-    public float radius => radiusInUnits / 8f;
+    public float radiusInUnits => radiusInPixels / 8f;
 
     public float blinkFrequency = 0;
     public float blinkAmount = 0;
+
+    float runtimeRadius => radiusInUnits + Mathf.Sin(Time.time * blinkFrequency + phase) * blinkAmount;
 
     [HideInInspector] public float phase = 0;
 
@@ -30,7 +32,6 @@ public class PixelLight : MonoBehaviour
     private MeshFilter meshFilter;
     private MeshRenderer meshRenderer;
     public LayerMask collisionLayer;
-    public float lightPenetration = 0.25f;
     Material pixelLightMaterial;
 
     private void Start()
@@ -90,7 +91,7 @@ public class PixelLight : MonoBehaviour
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.white;
-        Gizmos.DrawWireSphere(transform.position, radius);
+        Gizmos.DrawWireSphere(transform.position, radiusInUnits);
     }
 
     void ScanAndCreateShadowMesh()
@@ -105,11 +106,9 @@ public class PixelLight : MonoBehaviour
         {
             float angle = -angleStep * i;
             Vector2 direction = AngleToVector2(angle);
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, radius, collisionLayer);
-            var penetrationVector = hit.normal * lightPenetration;
-            if (Vector2.Dot(direction, -penetrationVector) > 0) { penetrationVector = Vector2.zero; }
-            Vector2 hitPoint = hit.collider != null ? (Vector2)transform.position + hit.distance * direction - penetrationVector
-                                                   : (Vector2)transform.position + direction * radius;
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, runtimeRadius, collisionLayer);
+            Vector2 hitPoint = hit.collider != null ? (Vector2)transform.position + hit.distance * direction
+                                                   : (Vector2)transform.position + direction * runtimeRadius;
             vertices[i + 1] = transform.InverseTransformPoint(hitPoint);
 
             int baseIndex = i * 3;
@@ -129,7 +128,7 @@ public class PixelLight : MonoBehaviour
 
         meshFilter.mesh = mesh;
 
-        pixelLightMaterial.SetFloat("_Radius", radius);
+        pixelLightMaterial.SetFloat("_Radius", runtimeRadius);
     }
 
     Vector2 AngleToVector2(float angle)

@@ -4,6 +4,7 @@ Shader "Atto/PixelLight"
         _MainTex("Texture", 2D) = "white" {}
         _Color("Main Color", Color) = (1,1,1,1)
         _Radius("Radius", Float) = 5.0
+        _Brightness("Brightness", Float) = 1.0
     }
         SubShader
         {
@@ -40,6 +41,7 @@ Shader "Atto/PixelLight"
 
                 sampler2D _MainTex;
                 float _Radius;
+                float _Brightness;
                 float4 _MainTex_ST;
                 fixed4 _Color;
 
@@ -48,18 +50,19 @@ Shader "Atto/PixelLight"
                     v2f OUT;
                     OUT.uv = IN.uv;
                     OUT.vertex = UnityObjectToClipPos(IN.vertex);
-                    OUT.localPos = IN.vertex.xyz; // Use vertex position as local position
+                    OUT.localPos = IN.vertex.xyz;
                     OUT.color = IN.color;
                     return OUT;
                 }
 
                 fixed4 frag(v2f IN) : SV_Target
                 {
-                    float dist = length(IN.localPos); // Magnitude of the local position
-                    float alpha = saturate(1.0 - dist / _Radius); // Calculate alpha based on distance
+                    float darkness = length(IN.localPos / _Radius);
+                    float lightness = saturate(1.0 - darkness);
+                    float alpha = saturate(lightness * _Brightness);
 
                     fixed4 texColor = tex2D(_MainTex, IN.uv) * _Color;
-                    texColor.a *= alpha; // Apply alpha based on local position magnitude
+                    texColor.a *= alpha;
 
                     return texColor;
                 }

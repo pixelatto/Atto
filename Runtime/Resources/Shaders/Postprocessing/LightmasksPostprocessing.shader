@@ -3,7 +3,7 @@ Shader "Atto/LightmasksPostprocessing"
     Properties
     {
         _MainTex("Color (RGB)", 2D) = "white" {}
-        _LuminosityTex("Luminosity (Grayscale)", 2D) = "white" {}
+        _LuminosityTex("Luminosity", 2D) = "white" {}
     }
         SubShader
     {
@@ -46,7 +46,7 @@ Shader "Atto/LightmasksPostprocessing"
             {
                 fixed4 col = tex2D(_MainTex, i.uv);
                 fixed4 lum = tex2D(_LuminosityTex, i.uv);
-                return col * lum.r; // Modifica esta línea para cambiar la manera en que afecta la luminosidad
+                return col * lum;
             }
             ENDCG
         }
