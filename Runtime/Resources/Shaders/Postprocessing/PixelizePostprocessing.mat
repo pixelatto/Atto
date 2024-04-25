@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: GaussianBlurPostprocessing
-  m_Shader: {fileID: 4800000, guid: 2a9707e2566294f489cea73ed3ed0b5c, type: 3}
+  m_Name: PixelizePostprocessing
+  m_Shader: {fileID: 4800000, guid: 102ca57dbba2a3a419e23e42a470dda2, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -29,7 +29,6 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BlurSize: 10
-    m_Colors:
-    - _TextureSize: {r: 1920, g: 1080, b: 0, a: 0}
+    - _PixelSize: 1
+    m_Colors: []
   m_BuildTextureStacks: []

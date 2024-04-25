@@ -10,8 +10,13 @@ using UnityEditor;
 public class PixelLight : MonoBehaviour
 {
     public Color color = Color.white;
+    public float angle = -90f;
+    [Range(0f, 360f)] public float arc = 360f;
+
+    public Transform lookAtTarget = null;
     public float overrideRadius = 0f;
     public float overrideBrightness = 0f;
+
     float radiusInPixels => (ldtkFields != null) ? (overrideRadius != 0 ? overrideRadius : ldtkFields.GetFloat("Radius")) : overrideRadius;
     public float brightness => (ldtkFields != null) ? (overrideBrightness != 0 ? overrideBrightness : ldtkFields.GetFloat("Brightness")) : overrideBrightness;
     public float radiusInUnits => radiusInPixels / 8f;
@@ -19,7 +24,7 @@ public class PixelLight : MonoBehaviour
     public float blinkFrequency = 0;
     public float blinkAmount = 0;
 
-    float runtimeRadius => radiusInUnits + Mathf.Sin(Time.time * blinkFrequency + phase) * blinkAmount;
+    float runtimeBrightness => brightness + Mathf.Sin(Time.time * blinkFrequency + phase) * blinkAmount;
 
     [HideInInspector] public float phase = 0;
 
@@ -78,6 +83,11 @@ public class PixelLight : MonoBehaviour
                 ditherLightingPixelEffect.UnsubscribeLight(this);
             }
         }
+
+        if (lookAtTarget != null)
+        {
+            angle = Vector2.SignedAngle(Vector2.right, lookAtTarget.transform.position - transform.position);
+        }
     }
 
     private void OnDestroy()
@@ -99,16 +109,19 @@ public class PixelLight : MonoBehaviour
         Vector3[] vertices = new Vector3[numberOfRays + 1];
         int[] triangles = new int[numberOfRays * 3];
 
-        float angleStep = 360f / numberOfRays;
+        float angleStep = arc / numberOfRays;
         vertices[0] = Vector3.zero;
+
+        var startAngle = angle - arc / 2f;
+        var endAngle = startAngle + arc;
 
         for (int i = 0; i < numberOfRays; i++)
         {
-            float angle = -angleStep * i;
+            float angle = endAngle - angleStep * i;
             Vector2 direction = AngleToVector2(angle);
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, runtimeRadius, collisionLayer);
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, radiusInUnits, collisionLayer);
             Vector2 hitPoint = hit.collider != null ? (Vector2)transform.position + hit.distance * direction
-                                                   : (Vector2)transform.position + direction * runtimeRadius;
+                                                   : (Vector2)transform.position + direction * radiusInUnits;
             vertices[i + 1] = transform.InverseTransformPoint(hitPoint);
 
             int baseIndex = i * 3;
@@ -128,7 +141,8 @@ public class PixelLight : MonoBehaviour
 
         meshFilter.mesh = mesh;
 
-        pixelLightMaterial.SetFloat("_Radius", runtimeRadius);
+        pixelLightMaterial.SetFloat("_Radius", radiusInUnits);
+        pixelLightMaterial.SetFloat("_Brightness", runtimeBrightness);
     }
 
     Vector2 AngleToVector2(float angle)
