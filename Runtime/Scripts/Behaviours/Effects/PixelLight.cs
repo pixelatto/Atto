@@ -9,14 +9,15 @@ using UnityEditor;
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class PixelLight : MonoBehaviour
 {
-    public Color color = Color.white;
     public float angle = -90f;
     [Range(0f, 360f)] public float arc = 360f;
 
     public Transform lookAtTarget = null;
     public float overrideRadius = 0f;
     public float overrideBrightness = 0f;
+    public Color overrideColor = Color.clear;
 
+    Color color => (ldtkFields != null) ? (overrideColor != Color.clear ? overrideColor : (ldtkFields.GetColor("Color"))) : overrideColor;
     float radiusInPixels => (ldtkFields != null) ? (overrideRadius != 0 ? overrideRadius : ldtkFields.GetFloat("Radius")) : overrideRadius;
     public float brightness => (ldtkFields != null) ? (overrideBrightness != 0 ? overrideBrightness : ldtkFields.GetFloat("Brightness")) : overrideBrightness;
     public float radiusInUnits => radiusInPixels / 8f;
@@ -28,7 +29,6 @@ public class PixelLight : MonoBehaviour
 
     [HideInInspector] public float phase = 0;
 
-    DitherLightingPixelEffect ditherLightingPixelEffect;
     LDtkFields ldtkFields { get { if (_ldtkFields == null) { _ldtkFields = GetComponent<LDtkFields>(); } return _ldtkFields; } }
     LDtkFields _ldtkFields;
 
@@ -65,36 +65,9 @@ public class PixelLight : MonoBehaviour
 
         ScanAndCreateShadowMesh();
 
-        if (ditherLightingPixelEffect == null)
-        {
-            ditherLightingPixelEffect = FindObjectOfType<DitherLightingPixelEffect>();
-        }
-
-        if (ditherLightingPixelEffect != null)
-        {
-            if (ditherLightingPixelEffect.pixelCamera.worldRect.Contains(transform.position))
-            {
-                Draw.Circle(transform.position, 0.5f, Color.yellow);
-                ditherLightingPixelEffect.SubscribeLight(this);
-            }
-            else
-            {
-                Draw.Circle(transform.position, 0.5f, Color.red*0.25f);
-                ditherLightingPixelEffect.UnsubscribeLight(this);
-            }
-        }
-
         if (lookAtTarget != null)
         {
             angle = Vector2.SignedAngle(Vector2.right, lookAtTarget.transform.position - transform.position);
-        }
-    }
-
-    private void OnDestroy()
-    {
-        if (ditherLightingPixelEffect != null)
-        {
-            ditherLightingPixelEffect.UnsubscribeLight(this);
         }
     }
 
@@ -143,6 +116,7 @@ public class PixelLight : MonoBehaviour
 
         pixelLightMaterial.SetFloat("_Radius", radiusInUnits);
         pixelLightMaterial.SetFloat("_Brightness", runtimeBrightness);
+        pixelLightMaterial.SetColor("_Color", color);
     }
 
     Vector2 AngleToVector2(float angle)

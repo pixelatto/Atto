@@ -58,7 +58,7 @@ public class CharacterParameters : MonoBehaviour
         }
         foreach (var spriteRenderer in spriteRenderers)
         {
-            if (spriteRenderer.sharedMaterial.shader.name != "Atto/GrayscaleMask")
+            if (spriteRenderer.sharedMaterial == null || spriteRenderer.sharedMaterial.shader.name != "Atto/GrayscaleMask")
             {
                 var tempMaterial = Resources.Load<Material>("Shaders/GrayscaleMask");
                 spriteRenderer.sharedMaterial = tempMaterial;

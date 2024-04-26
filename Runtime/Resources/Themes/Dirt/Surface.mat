@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: GrayscaleMask
-  m_Shader: {fileID: 4800000, guid: e21390431903e6449a2968b2a784db36, type: 3}
+  m_Name: Surface
+  m_Shader: {fileID: 4800000, guid: a3407d61d9c10eb4dbdff6358abe81a7, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -28,8 +28,9 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
-    m_Floats:
-    - _Threshold: 0.925
+    m_Floats: []
     m_Colors:
-    - _Color: {r: 1, g: 0, b: 0, a: 1}
+    - _Color: {r: 0.50492215, g: 1, b: 0, a: 1}
+    - _MainColor: {r: 0.6, g: 0.8980393, b: 0.3137255, a: 1}
+    - _SecColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
