@@ -18,4 +18,12 @@ public static class VectorExtensions
         return new Vector2(vector.y, -vector.x);
     }
 
+    public static Vector2 AngleToVector(this Vector2 vector, float angle, float distance = 1f)
+    {
+        float angleInRadians = angle * Mathf.Deg2Rad;
+        return new Vector2(Mathf.Cos(angleInRadians), Mathf.Sin(angleInRadians)) * distance;
+    }
+
+
+
 }

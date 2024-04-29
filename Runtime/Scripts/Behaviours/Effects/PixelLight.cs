@@ -9,7 +9,7 @@ using UnityEditor;
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class PixelLight : MonoBehaviour
 {
-    public float angle = -90f;
+    public float orientation = 0;
     [Range(0f, 360f)] public float arc = 360f;
 
     public Transform lookAtTarget = null;
@@ -39,13 +39,15 @@ public class PixelLight : MonoBehaviour
     public LayerMask collisionLayer;
     Material pixelLightMaterial;
 
+    float angle => lookAtTarget != null ? Vector2.SignedAngle(Vector2.right, lookAtTarget.transform.position - transform.position) : orientation;
+
     private void Start()
     {
         phase = Random.value * 100;
         blinkFrequency += Random.Range(0.9f, 1.1f);
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         if (meshFilter == null)
         {
@@ -64,11 +66,6 @@ public class PixelLight : MonoBehaviour
         }
 
         ScanAndCreateShadowMesh();
-
-        if (lookAtTarget != null)
-        {
-            angle = Vector2.SignedAngle(Vector2.right, lookAtTarget.transform.position - transform.position);
-        }
     }
 
     void OnDrawGizmosSelected()

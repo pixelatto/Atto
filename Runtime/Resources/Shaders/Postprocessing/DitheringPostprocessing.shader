@@ -1,13 +1,14 @@
-Shader "Custom/GridTelexelShader"
+Shader "Atto/DitheringPostprocessing"
 {
     Properties
     {
         _MainTex("Base (RGB)", 2D) = "white" {}
         _TileTex("Tile Texture", 2D) = "white" {}
-        _NoiseTex("Noise Texture", 2D) = "white" {}
         _DitherTileSize("Dither Tile Size", float) = 4
         _DitheringLevels("Dithering Levels", float) = 8
         _LightLevels("Light Levels", float) = 4
+        _ScreenWidth("Screen Width", float) = 128
+        _ScreenHeight("Screen Height", float) = 72
     }
         SubShader
     {
@@ -23,10 +24,11 @@ Shader "Custom/GridTelexelShader"
 
             sampler2D _MainTex;
             sampler2D _TileTex;
-            sampler2D _NoiseTex;
             float _DitherTileSize;
             float _DitheringLevels;
             float _LightLevels;
+            float _ScreenWidth;
+            float _ScreenHeight;
 
             fixed4 frag(v2f_img i) : SV_Target
             {
@@ -40,7 +42,7 @@ Shader "Custom/GridTelexelShader"
 
                 float ditherAmount = floor(stepLight * _DitheringLevels) / (_DitheringLevels);
                 float texelSize = float2(_DitherTileSize, _DitherTileSize);
-                float2 screenSize = float2(128, 72) / texelSize;
+                float2 screenSize = float2(_ScreenWidth, _ScreenHeight) / texelSize;
                 float2 gridCoord = floor(i.uv * screenSize) / screenSize;
                 float2 gridCoordFrac = frac(i.uv * screenSize);
                 float2 baseUV = float2(ditherAmount, 0);
