@@ -41,6 +41,8 @@ public class PixelLight : MonoBehaviour
 
     float angle => lookAtTarget != null ? Vector2.SignedAngle(Vector2.right, lookAtTarget.transform.position - transform.position) : orientation;
 
+    public bool debugRays = false;
+
     private void Start()
     {
         phase = Random.value * 100;
@@ -90,6 +92,11 @@ public class PixelLight : MonoBehaviour
             float angle = endAngle - angleStep * i;
             Vector2 direction = AngleToVector2(angle);
             RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, radiusInUnits, collisionLayer);
+            if (debugRays)
+            {
+                Debug.DrawLine(transform.position, hit.point, Color.yellow);
+            }
+
             Vector2 hitPoint = hit.collider != null ? (Vector2)transform.position + hit.distance * direction
                                                    : (Vector2)transform.position + direction * radiusInUnits;
             vertices[i + 1] = transform.InverseTransformPoint(hitPoint);
