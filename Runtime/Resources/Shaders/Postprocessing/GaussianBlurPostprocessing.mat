@@ -31,5 +31,5 @@ Material:
     m_Floats:
     - _BlurSize: 10
     m_Colors:
-    - _TextureSize: {r: 1920, g: 1080, b: 0, a: 0}
+    - _TextureSize: {r: 192, g: 108, b: 0, a: 0}
   m_BuildTextureStacks: []
