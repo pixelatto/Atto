@@ -1,9 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using LDtkUnity;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 [ExecuteAlways]
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
