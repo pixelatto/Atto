@@ -40,6 +40,11 @@ public class PixelLight : MonoBehaviour
 
     public bool debugRays = false;
 
+    bool isDirty = true;
+
+    Vector3Int pixelPosition;
+    Vector3Int lastPixelPosition;
+
     private void Start()
     {
         phase = Random.value * 100;
@@ -64,7 +69,18 @@ public class PixelLight : MonoBehaviour
             meshRenderer.sharedMaterial = tempMaterial;
         }
 
-        ScanAndCreateShadowMesh();
+        pixelPosition = new Vector3Int(Mathf.RoundToInt(transform.position.x * 8f), Mathf.RoundToInt(transform.position.y * 8f), 0);
+        if (pixelPosition != lastPixelPosition)
+        {
+            isDirty = true;
+            lastPixelPosition = pixelPosition;
+        }
+
+        if (isDirty)
+        {
+            ScanAndCreateShadowMesh();
+            isDirty = false;
+        }
     }
 
     void OnDrawGizmosSelected()

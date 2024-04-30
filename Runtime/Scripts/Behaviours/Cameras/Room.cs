@@ -14,7 +14,7 @@ public class Room : MonoBehaviour
     public void OnTriggerEnter2D(Collider2D collision)
     {
         var target = collision.gameObject.GetComponent<CameraTarget>();
-        if (target != null)
+        if (target != null && cam != null)
         {
             cam.OnRoomEnter(this);
         }

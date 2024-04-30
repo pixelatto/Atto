@@ -4,25 +4,39 @@ using UnityEngine;
 
 public class RoomPixelCamera : PixelCamera
 {
-    Camera cam;
-    Room targetRoom = null;
+    public Room currentRoom = null;
+    [HideInInspector]public Camera cam;
+
+    public System.Action<Room> OnRoomEnterCallback;
 
     void Awake()
     {
         cam = GetComponent<Camera>();
     }
 
+    private void Start()
+    {
+        if (currentRoom != null)
+        {
+            OnRoomEnter(currentRoom);
+        }
+    }
+
     public void OnRoomEnter(Room room)
     {
-        targetRoom = room;
+        currentRoom = room;
         zoom = room.cameraZoom;
+        if (OnRoomEnterCallback != null)
+        {
+            OnRoomEnterCallback.Invoke(currentRoom);
+        }
     }
 
     void Update()
     {
-        if (targetRoom != null)
+        if (currentRoom != null)
         {
-            Vector2 error = (Vector3)targetRoom.rect.center - transform.position;
+            Vector2 error = (Vector3)currentRoom.rect.center - transform.position;
             transform.position += (Vector3)error;
             cam.orthographicSize = baseCameraSize * zoom;
         }
