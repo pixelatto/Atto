@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[ExecuteAlways]
 public class Character : MonoBehaviour, IControllable
 {
     public float pixelSize = 3;
@@ -48,14 +49,7 @@ public class Character : MonoBehaviour, IControllable
 
     LayerMask terrainMask => LayerMask.GetMask("Terrain");
 
-    void ChangeState(CharacterStates newState)
-    {
-        if (newState != characterState)
-        {
-            lastStateChangeTimestamp = Time.time;
-            characterState = newState;
-        }
-    }
+    CircleCollider2D mainCollider;
 
     void Awake()
     {
@@ -64,6 +58,24 @@ public class Character : MonoBehaviour, IControllable
     }
 
     void Update()
+    {
+        EditorUpdate();
+        if (Application.isPlaying)
+        {
+            RuntimeUpdate();
+        }
+    }
+
+    private void EditorUpdate()
+    {
+        if (mainCollider == null)
+        {
+            mainCollider = GetComponent<CircleCollider2D>();
+        }
+        mainCollider.radius = radius;
+    }
+
+    void RuntimeUpdate()
     {
         CalculateCollisions();
         UpdateMaterial();
@@ -98,6 +110,15 @@ public class Character : MonoBehaviour, IControllable
             {
                 ChangeState(CharacterStates.Fall);
             }
+        }
+    }
+
+    void ChangeState(CharacterStates newState)
+    {
+        if (newState != characterState)
+        {
+            lastStateChangeTimestamp = Time.time;
+            characterState = newState;
         }
     }
 

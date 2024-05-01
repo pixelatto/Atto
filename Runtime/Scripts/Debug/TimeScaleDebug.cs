@@ -9,7 +9,7 @@ public class TimeScaleDebug : MonoBehaviour
 
     void Update()
     {
-        if (Application.isEditor)
+        if (Debug.isDebugBuild)
         {
             if (Input.GetKeyDown(resetKey))
             {
