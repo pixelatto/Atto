@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 public static class RectIntExtensions
 {
-    public static Rect ToRect(this RectInt rect)
+    public static Rect ToRect(this RectInt rect, float scale = 1)
     {
-        return new Rect(rect.x, rect.y, rect.width, rect.height);
+        return new Rect(rect.x * scale, rect.y * scale, rect.width * scale, rect.height * scale);
     }
 
     public static RectInt Move(this RectInt rect, int x, int y)
@@ -43,5 +43,23 @@ public static class RectIntExtensions
     {
         if (distance == -1) { distance = rect.width; }
         return rect.Move(-distance, 0);
+    }
+
+    public static RectInt ExpandBounds(this RectInt currentBox, Vector2Int newPoint)
+    {
+        // Si currentBounds es (0,0,0,0), entonces consideramos que newPoint es el primer punto
+        if (currentBox.width == 0 && currentBox.height == 0)
+        {
+            return new RectInt(newPoint.x, newPoint.y, 1, 1);
+        }
+
+        // Calculamos los nuevos límites
+        int xMin = Mathf.Min(currentBox.xMin, newPoint.x);
+        int yMin = Mathf.Min(currentBox.yMin, newPoint.y);
+        int xMax = Mathf.Max(currentBox.xMax, newPoint.x);
+        int yMax = Mathf.Max(currentBox.yMax, newPoint.y);
+
+        // Creamos un nuevo RectInt con las nuevas dimensiones
+        return new RectInt(xMin, yMin, xMax - xMin, yMax - yMin);
     }
 }

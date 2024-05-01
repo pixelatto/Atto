@@ -2,14 +2,19 @@
 
 public static class Draw
 {
-    public static void RectInt(this RectInt rect, Color color)
+    public static void Rect(this RectInt rect, Color color)
+    {
+        Rect(rect.ToRect(1), color);
+    }
+
+    public static void Rect(this Rect rect, Color color)
     {
         Gizmos.color = color;
 
-        Vector3 topLeft = new Vector3(rect.xMin, 0, rect.yMin);
-        Vector3 topRight = new Vector3(rect.xMax, 0, rect.yMin);
-        Vector3 bottomLeft = new Vector3(rect.xMin, 0, rect.yMax);
-        Vector3 bottomRight = new Vector3(rect.xMax, 0, rect.yMax);
+        Vector3 topLeft = new Vector3(rect.xMin, rect.yMin, 0);
+        Vector3 topRight = new Vector3(rect.xMax, rect.yMin, 0);
+        Vector3 bottomLeft = new Vector3(rect.xMin, rect.yMax, 0);
+        Vector3 bottomRight = new Vector3(rect.xMax, rect.yMax, 0);
 
         Gizmos.DrawLine(topLeft, topRight);
         Gizmos.DrawLine(topRight, bottomRight);
