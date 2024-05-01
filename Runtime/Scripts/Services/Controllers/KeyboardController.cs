@@ -5,5 +5,7 @@ public class KeyboardController : AController
     public KeyCode jumpKey = KeyCode.Z;
 
     override public bool wantsToJump => Input.GetKeyDown(jumpKey);
+    override public bool wantsToWalk => horizontalAxis != 0;
+
     override public float horizontalAxis => Input.GetAxis("Horizontal");
 }

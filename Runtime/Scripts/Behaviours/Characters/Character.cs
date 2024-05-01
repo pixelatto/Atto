@@ -13,7 +13,11 @@ public class Character : MonoBehaviour, IControllable
     public Momentum horizontalMomentum = Momentum.None;
     public Momentum verticalMomentum = Momentum.None;
 
+    public PhysicsMaterial2D stickyMaterial;
+    public PhysicsMaterial2D slipperyMaterial;
+
     public bool isGrounded = false;
+    public bool isWalking = false;
     [HideInInspector] public Rigidbody2D rb;
     [HideInInspector] public bool isMovingRight => rb.velocity.x > slowMomentumThreeshold;
     [HideInInspector] public bool isMovingLeft => rb.velocity.x < -slowMomentumThreeshold;
@@ -40,8 +44,6 @@ public class Character : MonoBehaviour, IControllable
     float timeWithoutContact => Time.time - lastGroundTime;
     float lastGroundTime = 0;
 
-    //Vector2 contactNormal;
-    //public Vector2 contactTangent => new Vector2(contactNormal.y, -contactNormal.x);
     public bool canJump => isGrounded || timeWithoutContact < coyoteTime;
 
     LayerMask terrainMask => LayerMask.GetMask("Terrain");
@@ -65,11 +67,6 @@ public class Character : MonoBehaviour, IControllable
     {
         CalculateCollisions();
         UpdateMaterial();
-
-        if (isGrounded)
-        {
-            lastGroundTime = Time.time;
-        }
 
         UpdateMomentum();
 
@@ -106,7 +103,23 @@ public class Character : MonoBehaviour, IControllable
 
     void UpdateMaterial()
     {
+        if (isGrounded)
+        {
+            //TODO: If over slippery material (EG: Ice), set material to slippery
 
+            if (isWalking)
+            {
+                rb.sharedMaterial = null;
+            }
+            else
+            {
+                rb.sharedMaterial = stickyMaterial;
+            }
+        }
+        else
+        {
+            rb.sharedMaterial = slipperyMaterial;
+        }
     }
 
     void CalculateCollisions()
@@ -114,6 +127,11 @@ public class Character : MonoBehaviour, IControllable
         isGrounded = false;
         var groundHits = Scan.RaycastArc(transform.position, -90, radius+1/8f, terrainMask, 45f, 8);
         isGrounded = groundHits.Length > 0;
+
+        if (isGrounded)
+        {
+            lastGroundTime = Time.time;
+        }
     }
 
     private void UpdateMomentum()
@@ -158,7 +176,9 @@ public class Character : MonoBehaviour, IControllable
 
     public void Control(AController controller)
     {
-        if (controller.horizontalAxis != 0)
+        isWalking = controller.horizontalAxis != 0;
+
+        if (isWalking)
         {
             float moveHorizontal = controller.horizontalAxis * speed;
             rb.velocity = new Vector2(moveHorizontal, rb.velocity.y);
@@ -174,7 +194,7 @@ public class Character : MonoBehaviour, IControllable
 
         if (controller.wantsToJump && canJump)
         {
-            rb.AddForce(new Vector2(0, jumpForce));
+            rb.velocity = new Vector2(0, jumpForce);
         }
     }
 
