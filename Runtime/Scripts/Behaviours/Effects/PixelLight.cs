@@ -45,6 +45,8 @@ public class PixelLight : MonoBehaviour
     Vector3Int pixelPosition;
     Vector3Int lastPixelPosition;
 
+    float lastRadiusInUnits = 0;
+
     private void Start()
     {
         phase = Random.value * 100;
@@ -70,9 +72,10 @@ public class PixelLight : MonoBehaviour
         }
 
         pixelPosition = new Vector3Int(Mathf.RoundToInt(transform.position.x * 8f), Mathf.RoundToInt(transform.position.y * 8f), 0);
-        if (pixelPosition != lastPixelPosition)
+        if (pixelPosition != lastPixelPosition || radiusInUnits != lastRadiusInUnits)
         {
             isDirty = true;
+            lastRadiusInUnits = radiusInUnits;
             lastPixelPosition = pixelPosition;
         }
 

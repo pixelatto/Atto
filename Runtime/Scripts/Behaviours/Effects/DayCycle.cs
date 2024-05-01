@@ -11,6 +11,7 @@ public class DayCycle : MonoBehaviour
     public float orbitalRadius = 100f;
     public float sunBrightness = 8;
     public float moonBrightness = 4;
+    [Range(0, 5)]public float dayAmbientLight = 4;
     public int anglesSubdivision = 360;
     public float maxIntensityBoost = 1.5f;
 
@@ -64,7 +65,7 @@ public class DayCycle : MonoBehaviour
 
         //Ambient light
         float ambientLightFactor = Mathf.Clamp01((normalizedSunHeight - 0.15f) * 10);
-        ambientLight.targetBrightness = Mathf.Lerp(0, 4, ambientLightFactor);
+        ambientLight.targetBrightness = Mathf.Lerp(0, dayAmbientLight, ambientLightFactor);
 
         colorRampMaterial.SetFloat("_Daytime", normalizedDayPhase);
         lightmasksMaterial.SetFloat("_Intensify", Mathf.Lerp(1f, maxIntensityBoost, Mathf.Sqrt(normalizedSunHeight))); ;

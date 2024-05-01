@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Character : MonoBehaviour, IControllable
 {
+    public float pixelSize = 3;
     public float speed = 5.0f;
     public float jumpForce = 300f;
     public float coyoteTime = 0.1f;
@@ -22,6 +23,7 @@ public class Character : MonoBehaviour, IControllable
     public float horizontalSpeed = 0;
     public float verticalSpeed = 0;
     public float currentStateTime => Time.time - lastStateChangeTimestamp;
+    public float radius => pixelSize / 8f;
     float lastStateChangeTimestamp = 0;
 
     const float slowMomentumThreeshold = 0.5f;
@@ -37,11 +39,12 @@ public class Character : MonoBehaviour, IControllable
 
     float timeWithoutContact => Time.time - lastGroundTime;
     float lastGroundTime = 0;
-    bool hasContact = false;
-    Vector2 contactNormal;
-    Vector2 contactPoint;
-    public Vector2 contactTangent => new Vector2(contactNormal.y, -contactNormal.x);
+
+    //Vector2 contactNormal;
+    //public Vector2 contactTangent => new Vector2(contactNormal.y, -contactNormal.x);
     public bool canJump => isGrounded || timeWithoutContact < coyoteTime;
+
+    LayerMask terrainMask => LayerMask.GetMask("Terrain");
 
     void ChangeState(CharacterStates newState)
     {
@@ -60,7 +63,9 @@ public class Character : MonoBehaviour, IControllable
 
     void Update()
     {
-        isGrounded = (hasContact && contactNormal.y > -0.1f);
+        CalculateCollisions();
+        UpdateMaterial();
+
         if (isGrounded)
         {
             lastGroundTime = Time.time;
@@ -97,6 +102,18 @@ public class Character : MonoBehaviour, IControllable
                 ChangeState(CharacterStates.Fall);
             }
         }
+    }
+
+    void UpdateMaterial()
+    {
+
+    }
+
+    void CalculateCollisions()
+    {
+        isGrounded = false;
+        var groundHits = Scan.RaycastArc(transform.position, -90, radius+1/8f, terrainMask, 45f, 8);
+        isGrounded = groundHits.Length > 0;
     }
 
     private void UpdateMomentum()
@@ -161,22 +178,4 @@ public class Character : MonoBehaviour, IControllable
         }
     }
 
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        hasContact = true;
-        contactNormal = Vector2.zero;
-        contactPoint = Vector2.zero;
-        foreach (var contact in collision.contacts)
-        {
-            contactNormal += contact.normal;
-            contactPoint += contact.point;
-        }
-        contactNormal = contactNormal.normalized;
-        contactPoint = contactPoint / collision.contactCount;
-    }
-
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        hasContact = false;
-    }
 }
