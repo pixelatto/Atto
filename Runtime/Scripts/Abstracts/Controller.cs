@@ -1,11 +1,10 @@
 ﻿using UnityEngine;
 
-public abstract class AController : MonoBehaviour
+public abstract class Controller : MonoBehaviour
 {
     public GameObject overrideControllable;
     IControllable target;
 
-    public abstract bool horizontalHeld { get; }
     public abstract bool jumpPressed { get; }
     public abstract bool jumpHeld { get; }
     public abstract float horizontalAxis { get; }

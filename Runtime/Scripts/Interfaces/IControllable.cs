@@ -1,4 +1,4 @@
 ﻿public interface IControllable
 {
-    public void Control(AController controller);
+    public void Control(Controller controller);
 }
