@@ -7,6 +7,9 @@ public abstract class Controller : MonoBehaviour
 
     public abstract bool jumpPressed { get; }
     public abstract bool jumpHeld { get; }
+    public abstract bool actionHeld { get; }
+    public abstract bool actionPressed { get; }
+
     public abstract float horizontalAxis { get; }
 
     private void Start()
