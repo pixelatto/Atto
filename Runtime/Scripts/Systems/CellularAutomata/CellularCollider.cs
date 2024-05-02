@@ -84,7 +84,7 @@ public class CellularCollider : MonoBehaviour
                             else if (leftTile && topTile) { tilemap.SetTile(new Vector3Int(i, j, 0), brTile); }
                             break;
                         case 1:
-                            tilemap.SetTile(new Vector3Int(i, j, 0), solidTile);
+                            tilemap.SetTile(new Vector3Int(i, j, 0), emptyTile);
                             break;
                         case 0:
                             tilemap.SetTile(new Vector3Int(i, j, 0), emptyTile);
