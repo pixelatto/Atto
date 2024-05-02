@@ -2,7 +2,8 @@ Shader "Atto/GrayscaleMask"
 {
     Properties{
         _MainTex("Texture", 2D) = "white" {}
-        _Threshold("Threshold", Float) = 0.5
+        _TopThreshold("Top Threshold", Float) = 0.5
+        _LowThreshold("Low Threshold", Float) = 0
         _Color("Color", Color) = (1,1,1,1)
     }
         SubShader{
@@ -33,7 +34,8 @@ Shader "Atto/GrayscaleMask"
                 };
 
                 sampler2D _MainTex;
-                float _Threshold;
+                float _TopThreshold;
+                float _LowThreshold;
 
                 v2f vert(appdata v) {
                     v2f o;
@@ -49,7 +51,7 @@ Shader "Atto/GrayscaleMask"
 
                     // Calculate alpha based on the threshold
 
-                    float alpha = grayScale <= _Threshold ? 1.0 : 0.0;
+                    float alpha = ((grayScale <= _TopThreshold) && (grayScale >= _LowThreshold)) ? 1.0 : 0.0;
                     return fixed4(i.color.rgb, alpha * texColor.a);
                 }
                 ENDCG
