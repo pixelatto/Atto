@@ -4,8 +4,10 @@ public class KeyboardController : AController
 {
     public KeyCode jumpKey = KeyCode.Z;
 
-    override public bool wantsToJump => Input.GetKeyDown(jumpKey);
-    override public bool wantsToWalk => horizontalAxis != 0;
+    override public bool jumpHeld => Input.GetKey(jumpKey);
+    override public bool jumpPressed => Input.GetKeyDown(jumpKey);
 
-    override public float horizontalAxis => Input.GetAxis("Horizontal");
+    override public bool horizontalHeld => horizontalAxis != 0;
+
+    override public float horizontalAxis => Input.GetAxisRaw("Horizontal");
 }

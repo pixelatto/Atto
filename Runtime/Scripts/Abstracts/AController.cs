@@ -5,8 +5,9 @@ public abstract class AController : MonoBehaviour
     public GameObject overrideControllable;
     IControllable target;
 
-    public abstract bool wantsToWalk { get; }
-    public abstract bool wantsToJump { get; }
+    public abstract bool horizontalHeld { get; }
+    public abstract bool jumpPressed { get; }
+    public abstract bool jumpHeld { get; }
     public abstract float horizontalAxis { get; }
 
     private void Start()
