@@ -29,7 +29,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BlurSize: 50
+    - _BlurSize: 10
     m_Colors:
     - _TextureSize: {r: 1920, g: 1080, b: 0, a: 0}
   m_BuildTextureStacks: []

@@ -86,8 +86,11 @@ public class PixelLight : MonoBehaviour
 
     void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.white;
-        Gizmos.DrawWireSphere(transform.position, radiusInUnits);
+        if (type == PixelLightType.Point)
+        {
+            Gizmos.color = Color.white;
+            Gizmos.DrawWireSphere(transform.position, radiusInUnits);
+        }
     }
 
     void CreatePointLightMesh()
