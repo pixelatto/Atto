@@ -17,12 +17,12 @@ public class CellularChunk
         cells = cloneFrom.cells;
     }
 
-    public CellularChunk(Vector2 position, Vector2Int size, string chunkName = "")
+    public CellularChunk(Vector2 position, Vector2Int size, CellMaterial[,] cells = null, string chunkName = "")
     {
         this.worldPosition = position;
         this.pixelSize = size;
         this.chunkName = chunkName;
-        ClearCells();
+        if (cells != null) { this.cells = cells; } else { ClearCells(); }
     }
 
     void ClearCells()

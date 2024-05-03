@@ -33,25 +33,28 @@ public class CellularCollider : MonoBehaviour
 
     private void Start()
     {
-        RecalculateFullCollider();
+
     }
 
     void Update()
     {
-        if (Time.time - lastUpdateTime > updateRate)
+        if (automata.currentChunk != null)
         {
-            isDirty = true;
-        }
+            if (Time.time - lastUpdateTime > updateRate)
+            {
+                isDirty = true;
+            }
 
-        if (isDirty)
-        {
-            RecalculateFullCollider();
-            compositeCollider.GenerateGeometry();
-            isDirty = false;
-            lastUpdateTime = Time.time;
-        }
+            if (isDirty)
+            {
+                RecalculateFullCollider();
+                compositeCollider.GenerateGeometry();
+                isDirty = false;
+                lastUpdateTime = Time.time;
+            }
 
-        tilemap.transform.localPosition = -((Vector2)(automata.currentChunk.pixelSize) / 8f) / 2f;
+            tilemap.transform.localPosition = -((Vector2)(automata.currentChunk.pixelSize) / 8f) / 2f;
+        }
     }
 
     private void RecalculateFullCollider()

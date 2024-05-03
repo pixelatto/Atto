@@ -12,7 +12,7 @@ public class CellularAutomata : MonoBehaviour
 
     public static LayerMask layerMask => LayerMask.GetMask("Terrain");
 
-    [HideInInspector]public CellularChunk currentChunk;
+    public CellularChunk currentChunk;
 
     float lastUpdateTime = 0;
     SpriteRenderer spriteRenderer;
@@ -87,31 +87,9 @@ public class CellularAutomata : MonoBehaviour
         return currentChunk.cells;
     }
 
-    public static CellMaterial[,] RasterWorld(Vector2 worldPosition, Vector2Int pixelSize)
-    {
-        CellMaterial[,] result = new CellMaterial[pixelSize.x, pixelSize.y];
-        for (int i = 0; i < pixelSize.x; i++)
-        {
-            for (int j = 0; j < pixelSize.y; j++)
-            {
-                var position = worldPosition + new Vector2((i + 0.5f) / 8f, (j + 0.5f) / 8f);
-                var hit = Physics2D.OverlapPoint(position, layerMask);
-                result[i, j] = hit != null ? CellMaterial.Rock : CellMaterial.None;
-            }
-        }
-        return result;
-    }
-
     public void LoadData(Vector2 worldPosition, Vector2Int pixelSize, CellMaterial[,] cells)
     {
-        if (currentChunk == null)
-        {
-            currentChunk = new CellularChunk(Vector2.zero, pixelSize);
-        }
-
-        currentChunk.pixelSize = pixelSize;
-        currentChunk.worldPosition = worldPosition;
-        currentChunk.OverrideCells(cells);
+        currentChunk = new CellularChunk(worldPosition, pixelSize, cells);
     }
 
     bool[,] usedPositions;
@@ -323,6 +301,26 @@ public class CellularAutomata : MonoBehaviour
         else
         {
             return materials.FindMaterial(cellType).color;
+        }
+    }
+
+    public void PixelsToSolids(Texture2D terrainRaster)
+    {
+        for (int i = 0; i < terrainRaster.width; i++)
+        {
+            for (int j = 0; j < terrainRaster.height; j++)
+            {
+                var position = new Vector2Int(i, j);
+                var color = terrainRaster.GetPixel(i, j);
+                if (color.r == 0 && color.g == 0 && color.b == 0)
+                {
+                    currentChunk.SetValue(position, CellMaterial.None);
+                }
+                else
+                {
+                    currentChunk.SetValue(position, CellMaterial.Rock);
+                }
+            }
         }
     }
 
