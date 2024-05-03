@@ -5,6 +5,7 @@ Shader "Atto/TilemapSurfaces"
         _MainTex("Texture", 2D) = "white" {}
         _MainColor("MainColor", Color) = (1,1,1,1)
         _SecColor("SecColor", Color) = (1,1,1,1)
+        _Opacity("Opacity", Float) = 1
     }
         SubShader
         {
@@ -39,6 +40,7 @@ Shader "Atto/TilemapSurfaces"
                 float4 _MainTex_ST;
                 float4 _MainColor;
                 float4 _SecColor;
+                float _Opacity;
 
                 v2f vert(appdata_t v)
                 {
@@ -52,7 +54,7 @@ Shader "Atto/TilemapSurfaces"
                 {
                     fixed4 col = tex2D(_MainTex, i.uv);
                     fixed4 o = col.b* _MainColor + col.g * _SecColor;
-                    o.a = col.a;
+                    o.a = col.a * _Opacity;
                     return o;
                 }
                 ENDCG

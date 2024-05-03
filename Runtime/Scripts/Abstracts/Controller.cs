@@ -11,6 +11,7 @@ public abstract class Controller : MonoBehaviour
     public abstract bool actionPressed { get; }
 
     public abstract float horizontalAxis { get; }
+    public abstract float verticalAxis { get; }
 
     private void Start()
     {
