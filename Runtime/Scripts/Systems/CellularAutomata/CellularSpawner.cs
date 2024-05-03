@@ -26,7 +26,7 @@ public class CellularSpawner : MonoBehaviour
         {
             for (float j = -spawnRadius/2f; j < spawnRadius/2f; j += 0.5f)
             {
-                CellularAutomata.instance.currentChunk.SetValue(pixelPosition + new Vector2Int(Mathf.RoundToInt(i), Mathf.RoundToInt(j)), cellMaterial);
+                CellularAutomata.instance.currentChunk.SetValue(pixelPosition + new Vector2Int(Mathf.RoundToInt(i), Mathf.RoundToInt(j)), new Cell(cellMaterial));
             }
         }
     }

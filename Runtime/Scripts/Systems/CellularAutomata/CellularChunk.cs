@@ -7,17 +7,9 @@ public class CellularChunk
     public string chunkName = "";
     [HideInInspector] public Vector2 worldPosition;
     [HideInInspector] public Vector2Int pixelSize;
-    public CellMaterial[,] cells { get; private set; }
+    public Cell[,] cells { get; private set; }
 
-    public CellularChunk(CellularChunk cloneFrom)
-    {
-        this.worldPosition = cloneFrom.worldPosition;
-        this.pixelSize = cloneFrom.pixelSize;
-        this.chunkName = cloneFrom.chunkName;
-        cells = cloneFrom.cells;
-    }
-
-    public CellularChunk(Vector2 position, Vector2Int size, CellMaterial[,] cells = null, string chunkName = "")
+    public CellularChunk(Vector2 position, Vector2Int size, Cell[,] cells = null, string chunkName = "")
     {
         this.worldPosition = position;
         this.pixelSize = size;
@@ -27,22 +19,22 @@ public class CellularChunk
 
     void ClearCells()
     {
-        cells = new CellMaterial[pixelSize.x, pixelSize.y];
+        cells = new Cell[pixelSize.x, pixelSize.y];
         for (int i = 0; i < pixelSize.x; i++)
         {
             for (int j = 0; j < pixelSize.y; j++)
             {
-                cells[i, j] = CellMaterial.None;
+                cells[i, j] = new Cell(CellMaterial.None);
             }
         }
     }
 
-    public void SetValue(Vector2Int position, CellMaterial value)
+    public void SetValue(Vector2Int position, Cell value)
     {
         SetValue(position.x, position.y, value);
     }
 
-    void SetValue(int x, int y, CellMaterial value)
+    void SetValue(int x, int y, Cell cell)
     {
         if (x < 0 || y < 0 || x > pixelSize.x - 1 || y > pixelSize.y - 1)
         {
@@ -50,20 +42,20 @@ public class CellularChunk
         }
         else
         {
-            cells[x, y] = value;
+            cells[x, y] = cell;
         }
     }
 
-    public CellMaterial GetValue(Vector2Int position)
+    public Cell GetCell(Vector2Int position)
     {
-        return GetValue(position.x, position.y);
+        return GetCell(position.x, position.y);
     }
 
-    CellMaterial GetValue(int x, int y)
+    Cell GetCell(int x, int y)
     {
         if (x < 0 || y < 0 || x > pixelSize.x - 1 || y > pixelSize.y - 1)
         {
-            return CellMaterial.None;
+            return new Cell(CellMaterial.None);
         }
         else
         {
@@ -76,69 +68,67 @@ public class CellularChunk
         return new Vector2Int(Mathf.RoundToInt((position.x - worldPosition.x) * 8f), Mathf.RoundToInt((position.y - worldPosition.y) * 8f));
     }
 
-    public void OverrideCells(CellMaterial[,] cells)
+    public void OverrideCellMaterial(Cell[,] cells)
     {
         this.cells = cells;
     }
 
     public bool IsEmpty(Vector2Int position)
     {
-        return GetValue(position) == CellMaterial.None;
+        return GetCell(position).material == CellMaterial.None;
     }
 
     public bool IsStatic(Vector2Int position)
     {
-        var material = GetValue(position);
-        if (material == CellMaterial.None) { return false; }
-        var movement = CellularAutomata.instance.materials.FindMaterial(material).movement;
+        var cell = GetCell(position);
+        if (cell.material == CellMaterial.None) { return false; }
+        var movement = cell.movement;
         return movement == CellMovement.Static;
     }
 
     public bool IsSolid(Vector2Int position)
     {
-        var material = GetValue(position);
-        if (material == CellMaterial.None) { return false; }
-        var movement = CellularAutomata.instance.materials.FindMaterial(material).movement;
+        var cell = GetCell(position);
+        if (cell.material == CellMaterial.None) { return false; }
+        var movement = cell.movement;
         return movement == CellMovement.Static || movement == CellMovement.Granular;
     }
 
     public bool IsGranular(Vector2Int position)
     {
-        var material = GetValue(position);
-        if (material == CellMaterial.None) { return false; }
-        var movement = CellularAutomata.instance.materials.FindMaterial(material).movement;
+        var cell = GetCell(position);
+        if (cell.material == CellMaterial.None) { return false; }
+        var movement = cell.movement;
         return movement == CellMovement.Granular;
     }
 
     public bool IsLiquid(Vector2Int position)
     {
-        var material = GetValue(position);
-        if (material == CellMaterial.None) { return false; }
-        var movement = CellularAutomata.instance.materials.FindMaterial(material).movement;
+        var cell = GetCell(position);
+        if (cell.material == CellMaterial.None) { return false; }
+        var movement = cell.movement;
         return movement == CellMovement.Fluid;
     }
 
     public bool CanDisplace(Vector2Int origin, Vector2Int target)
     {
-        var originMaterial = GetValue(origin);
-        var targetMaterial = GetValue(target);
-        if (targetMaterial == originMaterial)
+        var originCell = GetCell(origin);
+        var targetCell = GetCell(target);
+        if (targetCell == originCell)
         {
             return false;
         }
-        else if (targetMaterial == CellMaterial.None)
+        else if (targetCell.material == CellMaterial.None)
         {
             return true;
         }
         else
         {
-            var originMaterialProps = CellularAutomata.instance.materials.FindMaterial(originMaterial);
-            var targetMaterialProps = CellularAutomata.instance.materials.FindMaterial(targetMaterial);
-            if (targetMaterialProps.movement == CellMovement.Static)
+            if (targetCell.movement == CellMovement.Static)
             {
                 return false;
             }
-            else if (originMaterialProps.movement == CellMovement.Granular && targetMaterialProps.movement == CellMovement.Fluid)
+            else if (originCell.movement == CellMovement.Granular && targetCell.movement == CellMovement.Fluid)
             {
                 return true;
             }

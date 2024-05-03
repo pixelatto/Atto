@@ -8,15 +8,6 @@ public class CellularMaterials : ScriptableObject
 
     Dictionary<CellMaterial, CellMaterialProperties> lookupDictionary = new Dictionary<CellMaterial, CellMaterialProperties>();
 
-    [System.Serializable]
-    public class CellMaterialProperties
-    {
-        public CellMaterial cellMaterial = CellMaterial.None;
-        public CellMovement movement = CellMovement.Undefined;
-        public Color color = Color.white;
-        public int fluidity = 1;
-    }
-
     public CellMaterialProperties FindMaterial(CellMaterial cellMaterial)
     {
         if (cellMaterial == CellMaterial.None) { return null; }
@@ -26,4 +17,13 @@ public class CellularMaterials : ScriptableObject
         }
         return lookupDictionary[cellMaterial];
     }
+}
+
+[System.Serializable]
+public class CellMaterialProperties
+{
+    public CellMaterial cellMaterial = CellMaterial.None;
+    public CellMovement movement = CellMovement.Undefined;
+    public Color color = Color.white;
+    public int fluidity = 1;
 }

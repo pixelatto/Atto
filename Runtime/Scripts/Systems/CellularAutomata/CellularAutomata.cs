@@ -12,7 +12,7 @@ public class CellularAutomata : MonoBehaviour
 
     public static LayerMask layerMask => LayerMask.GetMask("Terrain");
 
-    public CellularChunk currentChunk;
+    public CellularChunk currentChunk { get; private set; }
 
     float lastUpdateTime = 0;
     SpriteRenderer spriteRenderer;
@@ -55,6 +55,11 @@ public class CellularAutomata : MonoBehaviour
         }
     }
 
+    public void BuildChunk(Vector2 worldPosition, Vector2Int pixelSize)
+    {
+        currentChunk = new CellularChunk(worldPosition, pixelSize);
+    }
+
     private void DebugControls()
     {
         int brushSize = 3;
@@ -66,7 +71,7 @@ public class CellularAutomata : MonoBehaviour
             {
                 for (int j = -brushSize; j < brushSize; j++)
                 {
-                    currentChunk.SetValue(pixelPosition + new Vector2Int(i, j), mouseSpawnMaterial);
+                    currentChunk.SetValue(pixelPosition + new Vector2Int(i, j), new Cell(mouseSpawnMaterial));
                 }
             }
         }
@@ -76,20 +81,10 @@ public class CellularAutomata : MonoBehaviour
             {
                 for (int j = -brushSize; j < brushSize; j++)
                 {
-                    currentChunk.SetValue(pixelPosition + new Vector2Int(i, j), CellMaterial.None);
+                    currentChunk.SetValue(pixelPosition + new Vector2Int(i, j), new Cell(CellMaterial.None));
                 }
             }
         }
-    }
-
-    public CellMaterial[,] CurrentCellData()
-    {
-        return currentChunk.cells;
-    }
-
-    public void LoadData(Vector2 worldPosition, Vector2Int pixelSize, CellMaterial[,] cells)
-    {
-        currentChunk = new CellularChunk(worldPosition, pixelSize, cells);
     }
 
     bool[,] usedPositions;
@@ -112,13 +107,13 @@ public class CellularAutomata : MonoBehaviour
                 int x = flip ? (currentChunk.pixelSize.x - 1 - i) : i;
                 int y = j;
                 var currentPosition = new Vector2Int(x, y);
-                var currentMaterial = currentChunk.GetValue(currentPosition);
+                var currentCell = currentChunk.GetCell(currentPosition);
 
                 bool usedPosition = usedPositions[x, y];
 
-                if (!usedPosition && currentMaterial != CellMaterial.None)
+                if (!usedPosition && currentCell.material != CellMaterial.None)
                 {
-                    var movementType = materials.FindMaterial(currentMaterial).movement;
+                    var movementType = currentCell.movement;
 
                     if (movementType == CellMovement.Static)
                     {
@@ -183,7 +178,7 @@ public class CellularAutomata : MonoBehaviour
                                 {
                                     if (Random.value > 0.95)
                                     {
-                                        DestroyCell(currentPosition);
+                                        EmptyCell(currentPosition);
                                     }
                                     else
                                     {
@@ -194,7 +189,7 @@ public class CellularAutomata : MonoBehaviour
                                 {
                                     int distance = 0;
                                     int fall = 0;
-                                    var fluidity = materials.FindMaterial(currentMaterial).fluidity;
+                                    var fluidity = currentCell.fluidity;
                                     for (int spread = 1; spread < fluidity; spread++)
                                     {
                                         var spreadPosition = currentPosition + new Vector2Int(spread * direction, 0);
@@ -222,9 +217,9 @@ public class CellularAutomata : MonoBehaviour
         }
     }
 
-    void DestroyCell(Vector2Int position)
+    void EmptyCell(Vector2Int position)
     {
-        currentChunk.SetValue(position, CellMaterial.None);
+        currentChunk.SetValue(position, new Cell(CellMaterial.None));
     }
 
     void SwapCells(Vector2Int oldPosition, Vector2Int newPosition)
@@ -238,10 +233,10 @@ public class CellularAutomata : MonoBehaviour
             }
             else
             {
-                var material = currentChunk.GetValue(oldPosition);
-                var otherMaterial = currentChunk.GetValue(newPosition);
-                currentChunk.SetValue(newPosition, material);
-                currentChunk.SetValue(oldPosition, otherMaterial);
+                var cell = currentChunk.GetCell(oldPosition);
+                var otherCell = currentChunk.GetCell(newPosition);
+                currentChunk.SetValue(newPosition, cell);
+                currentChunk.SetValue(oldPosition, otherCell);
                 usedPositions[newPosition.x, newPosition.y] = true;
                 hasChanged = true;
             }
@@ -285,42 +280,40 @@ public class CellularAutomata : MonoBehaviour
             for (int j = 0; j < currentChunk.pixelSize.y; j++)
             {
                 int index = j * currentChunk.pixelSize.x + i;
-                result[index] = Cell2Color(currentChunk.cells[i, j]);
+                result[index] = currentChunk.cells[i, j].GetColor();
             }
         }
 
         return result;
     }
 
-    public Color32 Cell2Color(CellMaterial cellType)
+    public void PixelsToCells(Texture2D terrainRaster, CellMaterial cellMaterial)
     {
-        if (cellType == CellMaterial.None)
+        if (currentChunk != null)
         {
-            return Color.clear;
+            for (int i = 0; i < terrainRaster.width; i++)
+            {
+                for (int j = 0; j < terrainRaster.height; j++)
+                {
+                    var position = new Vector2Int(i, j);
+                    var color = terrainRaster.GetPixel(i, j);
+                    var newCell = new Cell(CellMaterial.None);
+                    if (color.r == 0 && color.g == 0 && color.b == 0)
+                    {
+                        newCell.material = CellMaterial.None;
+                    }
+                    else
+                    {
+                        newCell.material = cellMaterial;
+                        newCell.color = color;
+                    }
+                    currentChunk.SetValue(position, newCell);
+                }
+            }
         }
         else
         {
-            return materials.FindMaterial(cellType).color;
-        }
-    }
-
-    public void PixelsToSolids(Texture2D terrainRaster)
-    {
-        for (int i = 0; i < terrainRaster.width; i++)
-        {
-            for (int j = 0; j < terrainRaster.height; j++)
-            {
-                var position = new Vector2Int(i, j);
-                var color = terrainRaster.GetPixel(i, j);
-                if (color.r == 0 && color.g == 0 && color.b == 0)
-                {
-                    currentChunk.SetValue(position, CellMaterial.None);
-                }
-                else
-                {
-                    currentChunk.SetValue(position, CellMaterial.Rock);
-                }
-            }
+            Debug.LogError("Can't render cells if there's not a current chunk loaded");
         }
     }
 
