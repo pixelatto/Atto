@@ -45,4 +45,9 @@ public static class RectExtensions
         if (distance == -1) { distance = rect.width; }
         return rect.Move(-distance, 0);
     }
+
+    public static Rect Shrink(this Rect rect, float amount = 1)
+    {
+        return new Rect(rect.x + amount, rect.y + amount, rect.width - amount * 2f, rect.height - amount * 2f);
+    }
 }

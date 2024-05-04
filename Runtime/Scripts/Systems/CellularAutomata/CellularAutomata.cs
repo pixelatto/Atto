@@ -19,9 +19,17 @@ public class CellularAutomata : MonoBehaviour
     Texture2D texture;
 
     public static CellularAutomata instance { get { if (instance_ == null) { instance_ = FindObjectOfType<CellularAutomata>(); } return instance_; } }
+
     static CellularAutomata instance_;
 
+    public List<CellularCollider> cellularColliders { get { if (cellularColliders_ == null) { cellularColliders_ = GetComponentsInChildren<CellularCollider>().ToList(); } return cellularColliders_; } }
+    List<CellularCollider> cellularColliders_;
+
     public bool hasChanged = false;
+
+    bool[,] usedPositions;
+
+    bool flip = false;
 
     private void Update()
     {
@@ -111,10 +119,6 @@ public class CellularAutomata : MonoBehaviour
             }
         }
     }
-
-    bool[,] usedPositions;
-
-    bool flip = false;
 
     void Step()
     {
@@ -360,6 +364,20 @@ public class CellularAutomata : MonoBehaviour
         }
     }
 
+    public void SetColliders(bool active)
+    {
+        foreach (var cellularCollider in cellularColliders)
+        {
+            cellularCollider.tilemapCollider.enabled = active;
+            cellularCollider.compositeCollider.enabled = active;
+            cellularCollider.enabled = active;
+            cellularCollider.gameObject.SetActive(active);
+            if (active)
+            {
+                cellularCollider.RecalculateFullCollider();
+            }
+        }
+    }
 }
 
 public enum CellMaterial { None = 0, Rock = 1, Dirt = 2, Water = 3 }

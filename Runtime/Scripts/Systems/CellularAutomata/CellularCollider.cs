@@ -17,7 +17,9 @@ public class CellularCollider : MonoBehaviour
 
     CellularAutomata automata;
     Tilemap tilemap;
-    CompositeCollider2D compositeCollider;
+
+    [HideInInspector] public CompositeCollider2D compositeCollider;
+    [HideInInspector] public TilemapCollider2D tilemapCollider;
 
     public float updateRate = 0.1f;
 
@@ -30,6 +32,7 @@ public class CellularCollider : MonoBehaviour
         automata = GetComponentInParent<CellularAutomata>();
         tilemap = GetComponentInChildren<Tilemap>();
         compositeCollider = GetComponentInChildren<CompositeCollider2D>();
+        tilemapCollider = GetComponentInChildren<TilemapCollider2D>();
     }
 
     private void Start()
@@ -49,7 +52,6 @@ public class CellularCollider : MonoBehaviour
             if (isDirty)
             {
                 RecalculateFullCollider();
-                compositeCollider.GenerateGeometry();
                 isDirty = false;
                 lastUpdateTime = Time.time;
             }
@@ -58,7 +60,7 @@ public class CellularCollider : MonoBehaviour
         }
     }
 
-    private void RecalculateFullCollider()
+    public void RecalculateFullCollider()
     {
         bool current = false, top = false, bottom = false, left = false, right = false;
 
@@ -128,6 +130,7 @@ public class CellularCollider : MonoBehaviour
                 }
             }
         }
+        compositeCollider.GenerateGeometry();
     }
 
 }
