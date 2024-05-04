@@ -69,7 +69,7 @@ Shader "Atto/TilemapDecorations"
 
                 fixed4 result;
 
-                result.rgb = ((1 - col.r)* texSec.rgb + col.r * texMain.rgb)* _Tint;
+                result.rgb = ((1 - col.b)* texSec.rgb + col.b * texMain.rgb)* _Tint;
                 result.a = texMain.a * _Tint.a;
 
                 return result;

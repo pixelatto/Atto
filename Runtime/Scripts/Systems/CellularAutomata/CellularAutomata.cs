@@ -55,6 +55,31 @@ public class CellularAutomata : MonoBehaviour
         }
     }
 
+    public void PaintSurfacePixels(Color mainSurfaceColor)
+    {
+        if (mainSurfaceColor == Color.clear)
+        {
+            return;
+        }
+
+        for (int i = 0; i < currentChunk.pixelSize.x; i++)
+        {
+            for (int j = currentChunk.pixelSize.y - 1; j >= 0; j--)
+            {
+                var position = new Vector2Int(i, j);
+                var cell = currentChunk.GetCell(position);
+                if (cell.IsSolid())
+                {
+                    if (j != currentChunk.pixelSize.y - 1)
+                    {
+                        cell.color = mainSurfaceColor;
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
     public void BuildChunk(Vector2 worldPosition, Vector2Int pixelSize)
     {
         currentChunk = new CellularChunk(worldPosition, pixelSize);
