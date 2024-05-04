@@ -73,43 +73,6 @@ public class CellularChunk
         this.cells = cells;
     }
 
-    public bool IsEmpty(Vector2Int position)
-    {
-        return GetCell(position).material == CellMaterial.None;
-    }
-
-    public bool IsStatic(Vector2Int position)
-    {
-        var cell = GetCell(position);
-        if (cell.material == CellMaterial.None) { return false; }
-        var movement = cell.movement;
-        return movement == CellMovement.Static;
-    }
-
-    public bool IsSolid(Vector2Int position)
-    {
-        var cell = GetCell(position);
-        if (cell.material == CellMaterial.None) { return false; }
-        var movement = cell.movement;
-        return movement == CellMovement.Static || movement == CellMovement.Granular;
-    }
-
-    public bool IsGranular(Vector2Int position)
-    {
-        var cell = GetCell(position);
-        if (cell.material == CellMaterial.None) { return false; }
-        var movement = cell.movement;
-        return movement == CellMovement.Granular;
-    }
-
-    public bool IsLiquid(Vector2Int position)
-    {
-        var cell = GetCell(position);
-        if (cell.material == CellMaterial.None) { return false; }
-        var movement = cell.movement;
-        return movement == CellMovement.Fluid;
-    }
-
     public bool CanDisplace(Vector2Int origin, Vector2Int target)
     {
         var originCell = GetCell(origin);

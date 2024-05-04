@@ -71,7 +71,7 @@ public class CellularAutomata : MonoBehaviour
             {
                 for (int j = -brushSize; j < brushSize; j++)
                 {
-                    currentChunk.SetValue(pixelPosition + new Vector2Int(i, j), new Cell(mouseSpawnMaterial));
+                    currentChunk.SetValue(pixelPosition + new Vector2Int(i, j), new Cell(mouseSpawnMaterial) { blocksLight = true });
                 }
             }
         }
@@ -314,6 +314,24 @@ public class CellularAutomata : MonoBehaviour
         else
         {
             Debug.LogError("Can't render cells if there's not a current chunk loaded");
+        }
+    }
+
+    public void RasterLightBlockers()
+    {
+        var lightBlockersLayerMask = LayerMask.GetMask("LightBlockers");
+        for (int i = 0; i < currentChunk.pixelSize.x; i++)
+        {
+            for (int j = 0; j < currentChunk.pixelSize.y; j++)
+            {
+                var cellPosition = new Vector2Int(i, j);
+                var cell = currentChunk.GetCell(cellPosition);
+                var position = currentChunk.worldPosition + new Vector2(i + 0.5f, j + 0.5f) / 8f;
+
+                var hit = Physics2D.OverlapPoint(position, lightBlockersLayerMask);
+
+                cell.blocksLight = hit != null;
+            }
         }
     }
 
