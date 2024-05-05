@@ -1,101 +1,159 @@
-﻿using System;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public class CellularChunk
+public class CellularChunk : MonoBehaviour
 {
-    public string chunkName = "";
-    [HideInInspector] public Vector2 worldPosition;
-    [HideInInspector] public Vector2Int pixelSize;
-    public Cell[,] cells { get; private set; }
+    public Cell[] cells;
 
-    public CellularChunk(Vector2 position, Vector2Int size, Cell[,] cells = null, string chunkName = "")
-    {
-        this.worldPosition = position;
-        this.pixelSize = size;
-        this.chunkName = chunkName;
-        if (cells != null) { this.cells = cells; } else { ClearCells(); }
-    }
+    public Vector2Int pixelPosition;
+    public Vector2Int pixelSize;
+    public Color surfaceColor;
 
-    void ClearCells()
+    public Vector2 worldPosition => new Vector2(pixelPosition.x / 8f, pixelPosition.y / 8f);
+    public Vector2 worldSize => new Vector2(pixelSize.x / 8f, pixelSize.y / 8f);
+
+    SpriteRenderer spriteRenderer;
+    Texture2D texture;
+
+    public void InitChunk()
     {
-        cells = new Cell[pixelSize.x, pixelSize.y];
+        cells = new Cell[pixelSize.x * pixelSize.y];
         for (int i = 0; i < pixelSize.x; i++)
         {
             for (int j = 0; j < pixelSize.y; j++)
             {
-                cells[i, j] = new Cell(CellMaterial.None);
+                cells[Index(i, j)] = new Cell(CellMaterial.None);
+            }
+        }
+
+        var currentTerrainRaster = CellularRasterizer.instance.RasterChunk(this);
+        PixelsToCells(currentTerrainRaster, CellMaterial.Rock);
+        PaintSurfacePixels(surfaceColor);
+        RasterLightBlockers();
+        CheckTexture();
+        RenderChunk();
+        GetComponent<Room>().ReplaceWithChunk(this);
+    }
+
+    public Cell this[int x, int y]
+    {
+        get { var index = Index(x, y); if (index < 0 || index > cells.Length - 1) { /*Debug.Log(x + "," + y + " index outofbounds -> " + index);*/ return CellularAutomata.emptyCell; }; return cells[index]; }
+        set { var index = Index(x, y); if (index < 0 || index > cells.Length - 1) { /*Debug.Log(x + "," + y + " index outofbounds -> " + index);*/ return; }; cells[index] = value; }
+    }
+
+    private int Index(int x, int y)
+    {
+        return y * pixelSize.x + x;
+    }
+
+    public void PixelsToCells(Texture2D terrainRaster, CellMaterial cellMaterial)
+    {
+        for (int i = 0; i < terrainRaster.width; i++)
+        {
+            for (int j = 0; j < terrainRaster.height; j++)
+            {
+                var position = new Vector2Int(i, j);
+                var color = terrainRaster.GetPixel(i, j);
+                var newCell = new Cell(CellMaterial.None);
+                if (color.r == 0 && color.g == 0 && color.b == 0)
+                {
+                    newCell.material = CellMaterial.None;
+                }
+                else
+                {
+                    newCell.material = cellMaterial;
+                    newCell.color = color;
+                }
+                cells[Index(i, j)] = newCell;
             }
         }
     }
 
-    public void SetValue(Vector2Int position, Cell value)
+    public void PaintSurfacePixels(Color mainSurfaceColor)
     {
-        SetValue(position.x, position.y, value);
-    }
-
-    void SetValue(int x, int y, Cell cell)
-    {
-        if (x < 0 || y < 0 || x > pixelSize.x - 1 || y > pixelSize.y - 1)
+        if (mainSurfaceColor == Color.clear)
         {
             return;
         }
-        else
-        {
-            cells[x, y] = cell;
-        }
-    }
 
-    public Cell GetCell(Vector2Int position)
-    {
-        return GetCell(position.x, position.y);
-    }
-
-    Cell GetCell(int x, int y)
-    {
-        if (x < 0 || y < 0 || x > pixelSize.x - 1 || y > pixelSize.y - 1)
+        for (int i = 0; i < pixelSize.x; i++)
         {
-            return new Cell(CellMaterial.None);
-        }
-        else
-        {
-            return cells[x, y];
-        }
-    }
-
-    public Vector2Int WorldToPixelPosition(Vector3 position)
-    {
-        return new Vector2Int(Mathf.RoundToInt((position.x - worldPosition.x) * 8f), Mathf.RoundToInt((position.y - worldPosition.y) * 8f));
-    }
-
-    public void OverrideCellMaterial(Cell[,] cells)
-    {
-        this.cells = cells;
-    }
-
-    public bool CanDisplace(Vector2Int origin, Vector2Int target)
-    {
-        var originCell = GetCell(origin);
-        var targetCell = GetCell(target);
-        if (targetCell == originCell)
-        {
-            return false;
-        }
-        else if (targetCell.material == CellMaterial.None)
-        {
-            return true;
-        }
-        else
-        {
-            if (targetCell.movement == CellMovement.Static)
+            for (int j = pixelSize.y - 1; j >= 0; j--)
             {
-                return false;
-            }
-            else if (originCell.movement == CellMovement.Granular && targetCell.movement == CellMovement.Fluid)
-            {
-                return true;
+                var cell = this[i, j];
+                if (cell.IsSolid())
+                {
+                    if (j != pixelSize.y - 1)
+                    {
+                        cell.color = mainSurfaceColor;
+                    }
+                    break;
+                }
             }
         }
-        return false;
+    }
+
+    public void RasterLightBlockers()
+    {
+        var lightBlockersLayerMask = LayerMask.GetMask("LightBlockers");
+        for (int i = 0; i < pixelSize.x; i++)
+        {
+            for (int j = 0; j < pixelSize.y; j++)
+            {
+                var cell = cells[Index(i,j)];
+                var position = worldPosition + new Vector2(i + 0.5f, j + 0.5f) / 8f;
+                var hit = Physics2D.OverlapPoint(position, lightBlockersLayerMask);
+                cell.blocksLight = hit != null;
+            }
+        }
+    }
+
+    private void RenderChunk()
+    {
+        texture.SetPixels32(ChunkToColorArray());
+        texture.Apply();
+    }
+
+    private void CheckTexture()
+    {
+        if (spriteRenderer == null)
+        {
+            var childObject = new GameObject("ChunkRenderer");
+            childObject.transform.SetParent(transform);
+            childObject.transform.localPosition = new Vector3(pixelSize.x / 8f / 2f, pixelSize.y / 8f / 2f, 0);
+            spriteRenderer = childObject.AddComponent<SpriteRenderer>();
+        }
+        if (spriteRenderer.sprite == null || spriteRenderer.sprite.texture.width != pixelSize.x || spriteRenderer.sprite.texture.height != pixelSize.y)
+        {
+            texture = new Texture2D(pixelSize.x, pixelSize.y);
+            texture.filterMode = FilterMode.Point;
+            for (int i = 0; i < pixelSize.x; i++)
+            {
+                for (int j = 0; j < pixelSize.y; j++)
+                {
+                    texture.SetPixel(i, j, Color.clear);
+                }
+            }
+            texture.Apply();
+            spriteRenderer.sprite = Sprite.Create(texture, new Rect(0, 0, pixelSize.x, pixelSize.y), Vector2.one * 0.5f, 8f);
+        }
+    }
+
+    public Color32[] ChunkToColorArray()
+    {
+        Color32[] result = new Color32[pixelSize.x * pixelSize.y];
+
+        for (int i = 0; i < pixelSize.x; i++)
+        {
+            for (int j = 0; j < pixelSize.y; j++)
+            {
+                int index = j * pixelSize.x + i;
+                result[index] = cells[Index(i, j)].GetColor();
+            }
+        }
+
+        return result;
     }
 }

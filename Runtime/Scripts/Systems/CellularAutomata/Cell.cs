@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+[System.Serializable]
 public class Cell
 {
     public CellMaterial material = CellMaterial.None;

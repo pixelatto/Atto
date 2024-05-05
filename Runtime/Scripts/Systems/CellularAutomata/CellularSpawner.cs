@@ -21,13 +21,16 @@ public class CellularSpawner : MonoBehaviour
 
     void Spawn()
     {
-        var pixelPosition = CellularAutomata.instance.currentChunk.WorldToPixelPosition(transform.position);
+        /*
+        var pixelPosition = CellularAutomata.instance.currentViewport.WorldToPixelPosition(transform.position);
         for (float i = -spawnRadius/2f; i < spawnRadius/2f; i += 0.5f)
         {
             for (float j = -spawnRadius/2f; j < spawnRadius/2f; j += 0.5f)
             {
-                CellularAutomata.instance.currentChunk.SetValue(pixelPosition + new Vector2Int(Mathf.RoundToInt(i), Mathf.RoundToInt(j)), new Cell(cellMaterial));
+                CellularAutomata.instance.currentViewport.SetValue(pixelPosition + new Vector2Int(Mathf.RoundToInt(i), Mathf.RoundToInt(j)), new Cell(cellMaterial));
             }
         }
+        */
+        Debug.Log("Disabled");
     }
 }

@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(SpriteRenderer))]
 public class CellularAutomata : MonoBehaviour
 {
     public CellularMaterials materials;
@@ -12,11 +11,7 @@ public class CellularAutomata : MonoBehaviour
 
     public static LayerMask layerMask => LayerMask.GetMask("Terrain");
 
-    public CellularChunk currentChunk { get; private set; }
-
     float lastUpdateTime = 0;
-    SpriteRenderer spriteRenderer;
-    Texture2D texture;
 
     public static CellularAutomata instance { get { if (instance_ == null) { instance_ = FindObjectOfType<CellularAutomata>(); } return instance_; } }
 
@@ -27,84 +22,66 @@ public class CellularAutomata : MonoBehaviour
 
     public bool hasChanged = false;
 
-    bool[,] usedPositions;
+    //bool[,] usedPositions;
 
     bool flip = false;
 
+    public static Vector2Int roomPixelSize = new Vector2Int(128, 72);
+    public static Vector2 roomWorldSize = new Vector2(128 / 8f, 72 / 8f);
+
+    public Vector3 cameraBottomLeft => Camera.main.transform.position + new Vector3(-Camera.main.orthographicSize * 16f / 9f, -Camera.main.orthographicSize, 0);
+    public Vector2Int pixelBottomLeft => new Vector2Int(Mathf.FloorToInt(cameraBottomLeft.x * 8f), Mathf.FloorToInt(cameraBottomLeft.y * 8f));
+    public RectInt viewPortRect => new RectInt(pixelBottomLeft.x, pixelBottomLeft.y, roomPixelSize.x, roomPixelSize.y);
+
+    public static Cell emptyCell = new Cell(CellMaterial.None);
+
+    private void Start()
+    {
+        var chunks = FindObjectsOfType<CellularChunk>();
+        foreach (var chunk in chunks)
+        {
+            chunk.InitChunk();
+        }
+    }
+
     private void Update()
     {
-        if (currentChunk != null)
+
+        switch (updateType)
         {
-            CheckTexture();
-
-            switch (updateType)
-            {
-                case UpdateType.Manual:
-                    if (Input.GetKeyDown(KeyCode.Return))
-                    {
-                        Step();
-                        RenderChunk();
-                    }
-                    break;
-                case UpdateType.Automatic:
-                    if (Time.time - lastUpdateTime > updateRate)
-                    {
-                        lastUpdateTime = Time.time;
-                        Step();
-                        RenderChunk();
-                    }
-                    break;
-            }
-
-            if (Debug.isDebugBuild)
-            {
-                DebugControls();
-            }
-        }
-    }
-
-    public void PaintSurfacePixels(Color mainSurfaceColor)
-    {
-        if (mainSurfaceColor == Color.clear)
-        {
-            return;
-        }
-
-        for (int i = 0; i < currentChunk.pixelSize.x; i++)
-        {
-            for (int j = currentChunk.pixelSize.y - 1; j >= 0; j--)
-            {
-                var position = new Vector2Int(i, j);
-                var cell = currentChunk.GetCell(position);
-                if (cell.IsSolid())
+            case UpdateType.Manual:
+                if (Input.GetKeyDown(KeyCode.Return))
                 {
-                    if (j != currentChunk.pixelSize.y - 1)
-                    {
-                        cell.color = mainSurfaceColor;
-                    }
-                    break;
+                    Step();
                 }
-            }
+                break;
+            case UpdateType.Automatic:
+                if (Time.time - lastUpdateTime > updateRate)
+                {
+                    lastUpdateTime = Time.time;
+                    Step();
+                }
+                break;
         }
-    }
 
-    public void BuildChunk(Vector2 worldPosition, Vector2Int pixelSize)
-    {
-        currentChunk = new CellularChunk(worldPosition, pixelSize);
+        if (Debug.isDebugBuild)
+        {
+            DebugControls();
+        }
     }
 
     private void DebugControls()
     {
         int brushSize = 3;
         var worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        var pixelPosition = currentChunk.WorldToPixelPosition(worldPosition);
+        var pixelPosition = WorldToPixelPosition(worldPosition);
         if (Input.GetMouseButton(0))
         {
             for (int i = -brushSize; i < brushSize; i++)
             {
                 for (int j = -brushSize; j < brushSize; j++)
                 {
-                    currentChunk.SetValue(pixelPosition + new Vector2Int(i, j), new Cell(mouseSpawnMaterial) { blocksLight = true });
+                    SetValue(pixelPosition + new Vector2Int(i, j), new Cell(mouseSpawnMaterial) { blocksLight = true });
                 }
             }
         }
@@ -114,7 +91,7 @@ public class CellularAutomata : MonoBehaviour
             {
                 for (int j = -brushSize; j < brushSize; j++)
                 {
-                    currentChunk.SetValue(pixelPosition + new Vector2Int(i, j), new Cell(CellMaterial.None));
+                    SetValue(pixelPosition + new Vector2Int(i, j), new Cell(CellMaterial.None));
                 }
             }
         }
@@ -124,21 +101,22 @@ public class CellularAutomata : MonoBehaviour
     {
         hasChanged = false;
 
-        usedPositions = new bool[currentChunk.pixelSize.x, currentChunk.pixelSize.y];
-        usedPositions.Fill(false);
+        //usedPositions = new bool[currentViewport.pixelSize.x, currentViewport.pixelSize.y];
+        //usedPositions.Fill(false);
 
         flip = !flip;
 
-        for (int j = 0; j < currentChunk.pixelSize.y; j++)
+        for (int j = viewPortRect.y; j < viewPortRect.y + viewPortRect.height; j++)
         {
-            for (int i = 0; i < currentChunk.pixelSize.x; i++)
+            for (int i = viewPortRect.x; i < viewPortRect.x + viewPortRect.width; i++)
             {
-                int x = flip ? (currentChunk.pixelSize.x - 1 - i) : i;
+                int x = flip ? (viewPortRect.x + viewPortRect.width - 1 - i) : i;
                 int y = j;
                 var currentPosition = new Vector2Int(x, y);
-                var currentCell = currentChunk.GetCell(currentPosition);
+                var currentCell = GetCell(currentPosition);
 
-                bool usedPosition = usedPositions[x, y];
+                bool usedPosition = false;
+                //bool usedPosition = usedPositions[x, y];
 
                 if (!usedPosition && currentCell.material != CellMaterial.None)
                 {
@@ -153,15 +131,15 @@ public class CellularAutomata : MonoBehaviour
                         var bottomPosition = new Vector2Int(x, y - 1);
                         var bottomLeftPosition = new Vector2Int(x - 1, y - 1);
                         var bottomRightPosition = new Vector2Int(x + 1, y - 1);
-                        var canFallDown = currentChunk.CanDisplace(currentPosition, bottomPosition);
+                        var canFallDown = CanDisplace(currentPosition, bottomPosition);
                         if (canFallDown)
                         {
                             SwapCells(currentPosition, bottomPosition);
                         }
                         else
                         {
-                            var canFallLeft = currentChunk.CanDisplace(currentPosition, bottomLeftPosition);
-                            var canFallRight = currentChunk.CanDisplace(currentPosition, bottomRightPosition);
+                            var canFallLeft = CanDisplace(currentPosition, bottomLeftPosition);
+                            var canFallRight = CanDisplace(currentPosition, bottomRightPosition);
                             if (canFallLeft || canFallRight)
                             {
                                 int direction = (canFallLeft ? -1 : 0) + (canFallRight ? 1 : 0);
@@ -178,7 +156,7 @@ public class CellularAutomata : MonoBehaviour
                         var bottomPosition = new Vector2Int(x, y - 1);
                         var bottomLeftPosition = new Vector2Int(x - 1, y - 1);
                         var bottomRightPosition = new Vector2Int(x + 1, y - 1);
-                        var canFallDown = currentChunk.CanDisplace(currentPosition, bottomPosition);
+                        var canFallDown = CanDisplace(currentPosition, bottomPosition);
                         if (canFallDown)
                         {
                             SwapCells(currentPosition, bottomPosition);
@@ -187,10 +165,10 @@ public class CellularAutomata : MonoBehaviour
                         {
                             var leftPosition = new Vector2Int(x - 1, y);
                             var rightPosition = new Vector2Int(x + 1, y);
-                            var canFallLeft = currentChunk.CanDisplace(currentPosition, bottomLeftPosition);
-                            var canFallRight = currentChunk.CanDisplace(currentPosition, bottomRightPosition);
-                            var canSlideLeft = currentChunk.CanDisplace(currentPosition, leftPosition);
-                            var canSlideRight = currentChunk.CanDisplace(currentPosition, rightPosition);
+                            var canFallLeft = CanDisplace(currentPosition, bottomLeftPosition);
+                            var canFallRight = CanDisplace(currentPosition, bottomRightPosition);
+                            var canSlideLeft = CanDisplace(currentPosition, leftPosition);
+                            var canSlideRight = CanDisplace(currentPosition, rightPosition);
                             if (canFallLeft || canFallRight)
                             {
                                 int direction = (canFallLeft ? -1 : 0) + (canFallRight ? 1 : 0);
@@ -207,7 +185,7 @@ public class CellularAutomata : MonoBehaviour
                                 {
                                     if (Random.value > 0.95)
                                     {
-                                        EmptyCell(currentPosition);
+                                        DestroyCell(currentPosition);
                                     }
                                     else
                                     {
@@ -223,13 +201,13 @@ public class CellularAutomata : MonoBehaviour
                                     {
                                         var spreadPosition = currentPosition + new Vector2Int(spread * direction, 0);
                                         var spreadPositionBottom = currentPosition + new Vector2Int(spread * direction, -1);
-                                        if (currentChunk.CanDisplace(currentPosition, spreadPositionBottom))
+                                        if (CanDisplace(currentPosition, spreadPositionBottom))
                                         {
                                             distance = spread;
                                             fall = -1;
                                             break;
                                         }
-                                        else if (!currentChunk.CanDisplace(currentPosition, spreadPosition))
+                                        else if (!CanDisplace(currentPosition, spreadPosition))
                                         {
                                             distance = spread - 1;
                                             break;
@@ -246,121 +224,26 @@ public class CellularAutomata : MonoBehaviour
         }
     }
 
-    void EmptyCell(Vector2Int position)
+    void DestroyCell(Vector2Int position)
     {
-        currentChunk.SetValue(position, new Cell(CellMaterial.None));
+        SetValue(position, new Cell(CellMaterial.None));
     }
 
     void SwapCells(Vector2Int oldPosition, Vector2Int newPosition)
     {
         if (oldPosition == newPosition) { return; }
-        if (newPosition.x >= 0 && newPosition.y >= 0 && newPosition.x <= currentChunk.pixelSize.x - 1 && newPosition.y <= currentChunk.pixelSize.y - 1)
+        if (false/*usedPositions[newPosition.x, newPosition.y]*/)
         {
-            if (usedPositions[newPosition.x, newPosition.y])
-            {
-                return;
-            }
-            else
-            {
-                var cell = currentChunk.GetCell(oldPosition);
-                var otherCell = currentChunk.GetCell(newPosition);
-                currentChunk.SetValue(newPosition, cell);
-                currentChunk.SetValue(oldPosition, otherCell);
-                usedPositions[newPosition.x, newPosition.y] = true;
-                hasChanged = true;
-            }
-        }
-    }
-
-    private void CheckTexture()
-    {
-        if (spriteRenderer == null)
-        {
-            spriteRenderer = this.GetOrAddComponent<SpriteRenderer>();
-        }
-        if (spriteRenderer.sprite == null || spriteRenderer.sprite.texture.width != currentChunk.pixelSize.x || spriteRenderer.sprite.texture.height != currentChunk.pixelSize.y)
-        {
-            texture = new Texture2D(currentChunk.pixelSize.x, currentChunk.pixelSize.y);
-            texture.filterMode = FilterMode.Point;
-            for (int i = 0; i < currentChunk.pixelSize.x; i++)
-            {
-                for (int j = 0; j < currentChunk.pixelSize.y; j++)
-                {
-                    texture.SetPixel(i, j, Color.clear);
-                }
-            }
-            texture.Apply();
-            spriteRenderer.sprite = Sprite.Create(texture, new Rect(0, 0, currentChunk.pixelSize.x, currentChunk.pixelSize.y), Vector2.one * 0.5f, 8f);
-        }
-    }
-
-    private void RenderChunk()
-    {
-        texture.SetPixels32(ChunkToColorArray());
-        texture.Apply();
-    }
-
-    public Color32[] ChunkToColorArray()
-    {
-        Color32[] result = new Color32[currentChunk.pixelSize.x * currentChunk.pixelSize.y];
-
-        for (int i = 0; i < currentChunk.pixelSize.x; i++)
-        {
-            for (int j = 0; j < currentChunk.pixelSize.y; j++)
-            {
-                int index = j * currentChunk.pixelSize.x + i;
-                result[index] = currentChunk.cells[i, j].GetColor();
-            }
-        }
-
-        return result;
-    }
-
-    public void PixelsToCells(Texture2D terrainRaster, CellMaterial cellMaterial)
-    {
-        if (currentChunk != null)
-        {
-            for (int i = 0; i < terrainRaster.width; i++)
-            {
-                for (int j = 0; j < terrainRaster.height; j++)
-                {
-                    var position = new Vector2Int(i, j);
-                    var color = terrainRaster.GetPixel(i, j);
-                    var newCell = new Cell(CellMaterial.None);
-                    if (color.r == 0 && color.g == 0 && color.b == 0)
-                    {
-                        newCell.material = CellMaterial.None;
-                    }
-                    else
-                    {
-                        newCell.material = cellMaterial;
-                        newCell.color = color;
-                    }
-                    currentChunk.SetValue(position, newCell);
-                }
-            }
+            return;
         }
         else
         {
-            Debug.LogError("Can't render cells if there's not a current chunk loaded");
-        }
-    }
-
-    public void RasterLightBlockers()
-    {
-        var lightBlockersLayerMask = LayerMask.GetMask("LightBlockers");
-        for (int i = 0; i < currentChunk.pixelSize.x; i++)
-        {
-            for (int j = 0; j < currentChunk.pixelSize.y; j++)
-            {
-                var cellPosition = new Vector2Int(i, j);
-                var cell = currentChunk.GetCell(cellPosition);
-                var position = currentChunk.worldPosition + new Vector2(i + 0.5f, j + 0.5f) / 8f;
-
-                var hit = Physics2D.OverlapPoint(position, lightBlockersLayerMask);
-
-                cell.blocksLight = hit != null;
-            }
+            var cell = GetCell(oldPosition);
+            var otherCell = GetCell(newPosition);
+            SetValue(newPosition, cell);
+            SetValue(oldPosition, otherCell);
+            //usedPositions[newPosition.x, newPosition.y] = true;
+            hasChanged = true;
         }
     }
 
@@ -377,6 +260,95 @@ public class CellularAutomata : MonoBehaviour
                 cellularCollider.RecalculateFullCollider();
             }
         }
+    }
+
+    public CellularChunk FindChunk(Vector2 chunkLocation)
+    {
+        var worldLocation = new Vector2(chunkLocation.x * roomWorldSize.x + 0.5f, chunkLocation.y * roomWorldSize.y + 0.5f);
+        Draw.Circle(worldLocation, 0.25f, Color.magenta);
+        var collider = Physics2D.OverlapPoint(worldLocation, LayerMask.GetMask("Background"));
+        if (collider != null)
+        {
+            var chunk = collider.GetComponent<CellularChunk>();
+            if (chunk == null)
+            {
+                Debug.Log("Can't find chunk at " + worldLocation);
+            }
+            else
+            {
+                return chunk;
+            }
+        }
+        return null;
+    }
+
+    public void SetValue(Vector2Int position, Cell value)
+    {
+        SetValue(position.x, position.y, value);
+    }
+
+    void SetValue(int x, int y, Cell cell)
+    {
+        Vector2Int chunkLocation = new Vector2Int(Mathf.FloorToInt(x / roomPixelSize.x), Mathf.FloorToInt(y / roomPixelSize.y));
+        CellularChunk targetChunk = CellularAutomata.instance.FindChunk(chunkLocation);
+
+        if (targetChunk == null)
+        {
+            Debug.Log("Cant find chunk at " + chunkLocation);
+            return;
+        }
+
+        targetChunk[x, y] = cell;
+    }
+
+    public Cell GetCell(Vector2Int position)
+    {
+        return GetCell(position.x, position.y);
+    }
+
+    Cell GetCell(int x, int y)
+    {
+        var chunkLocation = new Vector2(Mathf.FloorToInt(x / roomPixelSize.x), Mathf.FloorToInt(y / roomPixelSize.y));
+        CellularChunk targetChunk = FindChunk(chunkLocation);
+
+        if (targetChunk == null)
+        {
+            //Debug.Log("Cant find chunk at " + chunkLocation);
+            return CellularAutomata.emptyCell;
+        }
+
+        return targetChunk[x, y];
+    }
+
+    public Vector2Int WorldToPixelPosition(Vector3 position)
+    {
+        return new Vector2Int(Mathf.FloorToInt(position.x * 8f), Mathf.FloorToInt(position.y * 8f));
+    }
+
+    public bool CanDisplace(Vector2Int origin, Vector2Int target)
+    {
+        var originCell = GetCell(origin);
+        var targetCell = GetCell(target);
+        if (targetCell == originCell)
+        {
+            return false;
+        }
+        else if (targetCell.material == CellMaterial.None)
+        {
+            return true;
+        }
+        else
+        {
+            if (targetCell.movement == CellMovement.Static)
+            {
+                return false;
+            }
+            else if (originCell.movement == CellMovement.Granular && targetCell.movement == CellMovement.Fluid)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
 

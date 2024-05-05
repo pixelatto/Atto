@@ -42,34 +42,33 @@ public class CellularCollider : MonoBehaviour
 
     void Update()
     {
-        if (automata.currentChunk != null)
+        if (Time.time - lastUpdateTime > updateRate)
         {
-            if (Time.time - lastUpdateTime > updateRate)
-            {
-                isDirty = true;
-            }
-
-            if (isDirty)
-            {
-                RecalculateFullCollider();
-                isDirty = false;
-                lastUpdateTime = Time.time;
-            }
-
-            tilemap.transform.localPosition = -((Vector2)(automata.currentChunk.pixelSize) / 8f) / 2f;
+            isDirty = true;
         }
+
+        if (isDirty)
+        {
+            RecalculateFullCollider();
+            isDirty = false;
+            lastUpdateTime = Time.time;
+        }
+
+        tilemap.transform.localPosition = -((Vector2)(CellularAutomata.roomPixelSize) / 8f) / 2f;
     }
 
     public void RecalculateFullCollider()
     {
         bool current = false, top = false, bottom = false, left = false, right = false;
 
-        for (int i = 0; i < automata.currentChunk.pixelSize.x; i++)
+        for (int i = CellularAutomata.instance.viewPortRect.x; i < CellularAutomata.instance.viewPortRect.x + CellularAutomata.instance.viewPortRect.width; i++)
         {
-            for (int j = 0; j < automata.currentChunk.pixelSize.y; j++)
+            for (int j = CellularAutomata.instance.viewPortRect.y; j < CellularAutomata.instance.viewPortRect.y + CellularAutomata.instance.viewPortRect.height; j++)
             {
-                var currentPosition = new Vector2Int(i, j);
-                var currentCell = automata.currentChunk.GetCell(currentPosition);
+                var currentLocalPosition = new Vector3Int(i - CellularAutomata.instance.viewPortRect.x, j - CellularAutomata.instance.viewPortRect.y, 0);
+
+                var currentGlobalPosition = new Vector2Int(i, j);
+                var currentCell = CellularAutomata.instance.GetCell(currentGlobalPosition);
                 switch (cellularColliderType)
                 {
                     case CellularColliderType.Main:
@@ -81,10 +80,10 @@ public class CellularCollider : MonoBehaviour
                 }
                 if (current)
                 {
-                    var topCell = automata.currentChunk.GetCell(currentPosition + Vector2Int.up);
-                    var bottomCell = automata.currentChunk.GetCell(currentPosition + Vector2Int.down);
-                    var leftCell = automata.currentChunk.GetCell(currentPosition + Vector2Int.left);
-                    var rightCell = automata.currentChunk.GetCell(currentPosition + Vector2Int.right);
+                    var topCell = CellularAutomata.instance.GetCell(currentGlobalPosition + Vector2Int.up);
+                    var bottomCell = CellularAutomata.instance.GetCell(currentGlobalPosition + Vector2Int.down);
+                    var leftCell = CellularAutomata.instance.GetCell(currentGlobalPosition + Vector2Int.left);
+                    var rightCell = CellularAutomata.instance.GetCell(currentGlobalPosition + Vector2Int.right);
 
                     switch (cellularColliderType)
                     {
@@ -105,28 +104,28 @@ public class CellularCollider : MonoBehaviour
                     switch (neighbourCount)
                     {
                         case 4:
-                            tilemap.SetTile(new Vector3Int(i, j, 0), solidTile);
+                            tilemap.SetTile(currentLocalPosition, solidTile);
                             break;
                         case 3:
-                            tilemap.SetTile(new Vector3Int(i, j, 0), solidTile);
+                            tilemap.SetTile(currentLocalPosition, solidTile);
                             break;
                         case 2:
-                            if (top && right) { tilemap.SetTile(new Vector3Int(i, j, 0), blTile); }
-                            else if (right && bottom) { tilemap.SetTile(new Vector3Int(i, j, 0), ulTile); }
-                            else if (bottom && left) { tilemap.SetTile(new Vector3Int(i, j, 0), urTile); }
-                            else if (left && top) { tilemap.SetTile(new Vector3Int(i, j, 0), brTile); }
+                            if (top && right) { tilemap.SetTile(currentLocalPosition, blTile); }
+                            else if (right && bottom) { tilemap.SetTile(currentLocalPosition, ulTile); }
+                            else if (bottom && left) { tilemap.SetTile(currentLocalPosition, urTile); }
+                            else if (left && top) { tilemap.SetTile(currentLocalPosition, brTile); }
                             break;
                         case 1:
-                            tilemap.SetTile(new Vector3Int(i, j, 0), emptyTile);
+                            tilemap.SetTile(currentLocalPosition, emptyTile);
                             break;
                         case 0:
-                            tilemap.SetTile(new Vector3Int(i, j, 0), emptyTile);
+                            tilemap.SetTile(currentLocalPosition, emptyTile);
                             break;
                     }
                 }
                 else
                 {
-                    tilemap.SetTile(new Vector3Int(i, j, 0), emptyTile);
+                    tilemap.SetTile(currentLocalPosition, emptyTile);
                 }
             }
         }
