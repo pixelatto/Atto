@@ -20,14 +20,13 @@ public class CellularChunk : MonoBehaviour
 
     public static Dictionary<int, Dictionary<int, CellularChunk>> chunkDirectory = new Dictionary<int, Dictionary<int, CellularChunk>>();
 
-    bool textureDirty = false;
+    public bool textureDirty = false;
 
     private void Update()
     {
         if (textureDirty)
         {
             RenderChunk();
-            //spriteRenderer.sprite = Sprite.Create(texture, new Rect(0, 0, pixelSize.x, pixelSize.y), Vector2.one * 0.5f, 8f);
             textureDirty = false;
         }
     }

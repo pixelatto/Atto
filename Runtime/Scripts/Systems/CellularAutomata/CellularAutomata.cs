@@ -87,7 +87,7 @@ public class CellularAutomata : MonoBehaviour
                 {
                     var globalPixelPosition = pixelPosition + new Vector2Int(i, j);
                     var newCell = new Cell(mouseSpawnMaterial) { blocksLight = true };
-                    /*
+                    
                     Vector2Int chunkAddress = GetPixelChunkAddress(globalPixelPosition.x, globalPixelPosition.y);
                     FindChunk(chunkAddress);
                     switch (chunkAddress.x)
@@ -102,7 +102,11 @@ public class CellularAutomata : MonoBehaviour
                             newCell.color = Color.blue;
                             break;
                     }
-                    */
+                    if (chunkAddress.y != 0)
+                    {
+                        newCell.color = Color.magenta;
+                    }
+                    
                     SetCell(globalPixelPosition, newCell);
                 }
             }
@@ -325,7 +329,9 @@ public class CellularAutomata : MonoBehaviour
             return;
         }
 
-        targetChunk[x, y] = cell;
+        Vector2Int localChunkCoords = new Vector2Int(x - targetChunk.pixelPosition.x, y - targetChunk.pixelPosition.y);
+
+        targetChunk[localChunkCoords.x, localChunkCoords.y] = cell;
     }
 
     public Cell GetCell(Vector2Int position)
@@ -344,13 +350,14 @@ public class CellularAutomata : MonoBehaviour
         }
         else
         {
-            return targetChunk[x, y];
+            Vector2Int localChunkCoords = new Vector2Int(x - targetChunk.pixelPosition.x, y - targetChunk.pixelPosition.y);
+            return targetChunk[localChunkCoords.x, localChunkCoords.y];
         }
     }
 
     public Vector2Int WorldToPixelPosition(Vector3 position)
     {
-        return new Vector2Int(Mathf.FloorToInt(position.x * 8f), Mathf.FloorToInt(position.y * 8f));
+        return new Vector2Int(Mathf.RoundToInt(position.x * 8f), Mathf.RoundToInt(position.y * 8f));
     }
 
     public bool CanDisplace(Vector2Int origin, Vector2Int target)
