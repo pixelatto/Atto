@@ -36,7 +36,7 @@ public class Room : MonoBehaviour
         {
             if (cam.currentRoom != this && roomRect.Shrink(0.25f).Contains(collider.transform.position))
             {
-                //cam.OnRoomEnter(target, this);
+                cam.OnRoomEnter(target, this);
             }
         }
     }

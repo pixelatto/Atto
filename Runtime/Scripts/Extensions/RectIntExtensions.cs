@@ -72,4 +72,21 @@ public static class RectIntExtensions
         // Creamos un nuevo RectInt con las nuevas dimensiones
         return new RectInt(xMin, yMin, xMax - xMin, yMax - yMin);
     }
+
+    public static Rect OverlapWith(this Rect rect, Rect otherRect)
+    {
+        float xMin = Mathf.Max(rect.xMin, otherRect.xMin);
+        float xMax = Mathf.Min(rect.xMax, otherRect.xMax);
+        float yMin = Mathf.Max(rect.yMin, otherRect.yMin);
+        float yMax = Mathf.Min(rect.yMax, otherRect.yMax);
+
+        if (xMin < xMax && yMin < yMax)
+        {
+            return new Rect(xMin, yMin, xMax - xMin, yMax - yMin);
+        }
+        else
+        {
+            return Rect.zero;
+        }
+    }
 }

@@ -7,7 +7,6 @@ public class CellularAutomata : MonoBehaviour
     public CellularMaterials materials;
     public float updateRate = 0.1f;
     public UpdateType updateType = UpdateType.Manual; public enum UpdateType { Manual, Automatic }
-    public CellMaterial mouseSpawnMaterial = CellMaterial.Dirt;
 
     public static LayerMask layerMask => LayerMask.GetMask("Terrain");
 
@@ -63,60 +62,6 @@ public class CellularAutomata : MonoBehaviour
                     Step();
                 }
                 break;
-        }
-
-        if (Debug.isDebugBuild)
-        {
-            DebugControls();
-        }
-    }
-
-    private void DebugControls()
-    {
-        int brushSize = 3;
-        var worldPosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-        var pixelPosition = WorldToPixelPosition(worldPosition);
-        if (Input.GetMouseButton(0))
-        {
-            for (int i = -brushSize; i < brushSize; i++)
-            {
-                for (int j = -brushSize; j < brushSize; j++)
-                {
-                    var globalPixelPosition = pixelPosition + new Vector2Int(i, j);
-                    var newCell = new Cell(mouseSpawnMaterial) { blocksLight = true };
-                    
-                    Vector2Int chunkAddress = GetPixelChunkAddress(globalPixelPosition.x, globalPixelPosition.y);
-                    FindChunk(chunkAddress);
-                    switch (chunkAddress.x)
-                    {
-                        case -1:
-                            newCell.color = Color.red;
-                            break;
-                        case 0:
-                            newCell.color = Color.green;
-                            break;
-                        case 1:
-                            newCell.color = Color.blue;
-                            break;
-                    }
-                    if (chunkAddress.y != 0)
-                    {
-                        newCell.color = Color.magenta;
-                    }
-                    
-                    SetCell(globalPixelPosition, newCell);
-                }
-            }
-        }
-        if (Input.GetMouseButton(1))
-        {
-            for (int i = -brushSize; i < brushSize; i++)
-            {
-                for (int j = -brushSize; j < brushSize; j++)
-                {
-                    SetCell(pixelPosition + new Vector2Int(i, j), new Cell(CellMaterial.None));
-                }
-            }
         }
     }
 
@@ -278,12 +223,12 @@ public class CellularAutomata : MonoBehaviour
         }
     }
 
-    Vector2Int GetPixelChunkAddress(int x, int y)
+    public static Vector2Int GetPixelChunkAddress(int x, int y)
     {
         return new Vector2Int(Mathf.FloorToInt((float)x / roomPixelSize.x), Mathf.FloorToInt((float)y / roomPixelSize.y));
     }
 
-    public CellularChunk FindChunk(Vector2Int chunkAddress)
+    public static CellularChunk FindChunk(Vector2Int chunkAddress)
     {
         if (CellularChunk.chunkDirectory.ContainsKey(chunkAddress.x) && CellularChunk.chunkDirectory[chunkAddress.x].ContainsKey(chunkAddress.y))
         {
@@ -337,7 +282,7 @@ public class CellularAutomata : MonoBehaviour
         }
     }
 
-    public Vector2Int WorldToPixelPosition(Vector3 position)
+    public static Vector2Int WorldToPixelPosition(Vector3 position)
     {
         return new Vector2Int(Mathf.RoundToInt(position.x * 8f), Mathf.RoundToInt(position.y * 8f));
     }
@@ -371,3 +316,4 @@ public class CellularAutomata : MonoBehaviour
 
 public enum CellMaterial { None = 0, Rock = 1, Dirt = 2, Water = 3 }
 public enum CellMovement { Undefined, Static, Granular, Fluid }
+
