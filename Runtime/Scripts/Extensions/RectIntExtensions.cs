@@ -45,6 +45,16 @@ public static class RectIntExtensions
         return rect.Move(-distance, 0);
     }
 
+    public static RectInt Grow(this RectInt rect, int amount)
+    {
+        return new RectInt(rect.x - amount, rect.y - amount, rect.width + 2 * amount, rect.height + 2 * amount);
+    }
+
+    public static Rect Grow(this Rect rect, float amount)
+    {
+        return new Rect(rect.x - amount, rect.y - amount, rect.width + 2f * amount, rect.height + 2f * amount);
+    }
+
     public static RectInt ExpandBounds(this RectInt currentBox, Vector2Int newPoint)
     {
         // Si currentBounds es (0,0,0,0), entonces consideramos que newPoint es el primer punto

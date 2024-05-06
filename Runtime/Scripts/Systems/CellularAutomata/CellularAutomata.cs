@@ -85,7 +85,25 @@ public class CellularAutomata : MonoBehaviour
             {
                 for (int j = -brushSize; j < brushSize; j++)
                 {
-                    SetCell(pixelPosition + new Vector2Int(i, j), new Cell(mouseSpawnMaterial) { blocksLight = true });
+                    var globalPixelPosition = pixelPosition + new Vector2Int(i, j);
+                    var newCell = new Cell(mouseSpawnMaterial) { blocksLight = true };
+                    /*
+                    Vector2Int chunkAddress = GetPixelChunkAddress(globalPixelPosition.x, globalPixelPosition.y);
+                    FindChunk(chunkAddress);
+                    switch (chunkAddress.x)
+                    {
+                        case -1:
+                            newCell.color = Color.red;
+                            break;
+                        case 0:
+                            newCell.color = Color.green;
+                            break;
+                        case 1:
+                            newCell.color = Color.blue;
+                            break;
+                    }
+                    */
+                    SetCell(globalPixelPosition, newCell);
                 }
             }
         }
@@ -110,10 +128,11 @@ public class CellularAutomata : MonoBehaviour
 
         flip = !flip;
 
+        int viewPortLookaheadPixels = 32;
         cameraBottomLeft = mainCamera.transform.position + new Vector3(-mainCamera.orthographicSize * 16f / 9f, -mainCamera.orthographicSize, 0);
-        pixelBottomLeft =  new Vector2Int(Mathf.FloorToInt(cameraBottomLeft.x * 8f), Mathf.FloorToInt(cameraBottomLeft.y * 8f));
-        viewPortPixelRect = new RectInt(pixelBottomLeft.x, pixelBottomLeft.y, roomPixelSize.x, roomPixelSize.y);
-        viewPortWorldRect = new Rect(cameraBottomLeft.x, cameraBottomLeft.y, roomPixelSize.x/8f, roomPixelSize.y / 8f);
+        pixelBottomLeft =  new Vector2Int(Mathf.RoundToInt(cameraBottomLeft.x * 8f), Mathf.RoundToInt(cameraBottomLeft.y * 8f));
+        viewPortPixelRect = new RectInt(pixelBottomLeft.x, pixelBottomLeft.y, roomPixelSize.x, roomPixelSize.y).Grow(viewPortLookaheadPixels);
+        viewPortWorldRect = new Rect(cameraBottomLeft.x, cameraBottomLeft.y, roomPixelSize.x/8f, roomPixelSize.y / 8f).Grow(viewPortLookaheadPixels / 8f);
 
         Draw.Rect(viewPortWorldRect, Color.cyan);
 
@@ -121,7 +140,8 @@ public class CellularAutomata : MonoBehaviour
         {
             for (int i = viewPortPixelRect.x; i <= viewPortPixelRect.x + viewPortPixelRect.width; i++)
             {
-                int x = flip ? (viewPortPixelRect.x + viewPortPixelRect.width - i) : i;
+                int x = flip ? (viewPortPixelRect.x + viewPortPixelRect.width - (i - viewPortPixelRect.x)) : i;
+
                 int y = j;
                 var currentPosition = new Vector2Int(x, y);
                 var currentCell = GetCell(currentPosition);
@@ -272,6 +292,11 @@ public class CellularAutomata : MonoBehaviour
         }
     }
 
+    Vector2Int GetPixelChunkAddress(int x, int y)
+    {
+        return new Vector2Int(Mathf.FloorToInt((float)x / roomPixelSize.x), Mathf.FloorToInt((float)y / roomPixelSize.y));
+    }
+
     public CellularChunk FindChunk(Vector2Int chunkAddress)
     {
         if (CellularChunk.chunkDirectory.ContainsKey(chunkAddress.x) && CellularChunk.chunkDirectory[chunkAddress.x].ContainsKey(chunkAddress.y))
@@ -291,7 +316,7 @@ public class CellularAutomata : MonoBehaviour
 
     void SetCell(int x, int y, Cell cell)
     {
-        Vector2Int chunkAddress = new Vector2Int(Mathf.FloorToInt((float)x / roomPixelSize.x), Mathf.FloorToInt((float)y / roomPixelSize.y));
+        Vector2Int chunkAddress = GetPixelChunkAddress(x, y);
         CellularChunk targetChunk = FindChunk(chunkAddress);
 
         if (targetChunk == null)
@@ -310,16 +335,17 @@ public class CellularAutomata : MonoBehaviour
 
     Cell GetCell(int x, int y)
     {
-        var chunkAddress = new Vector2Int(Mathf.FloorToInt((float)x / roomPixelSize.x), Mathf.FloorToInt((float)y / roomPixelSize.y));
+        Vector2Int chunkAddress = GetPixelChunkAddress(x, y);
         CellularChunk targetChunk = FindChunk(chunkAddress);
 
         if (targetChunk == null)
         {
-            //Debug.Log("Can't find chunk at " + chunkAddress + " for pixel " + x + "," + y);
             return emptyCell;
         }
-
-        return targetChunk[x, y];
+        else
+        {
+            return targetChunk[x, y];
+        }
     }
 
     public Vector2Int WorldToPixelPosition(Vector3 position)
