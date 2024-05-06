@@ -26,11 +26,13 @@ public class Cell
         }
         else if (overrideColor != Color.clear)
         {
+            overrideColor.a = materialProperties.opacity;
             return overrideColor;
         }
         else if (materialProperties.appearance != null)
         {
             overrideColor = materialProperties.appearance.texture.GetPixel(Random.Range(0, 32), Random.Range(0, 32));
+            overrideColor.a = materialProperties.opacity;
             return overrideColor;
         }
         else

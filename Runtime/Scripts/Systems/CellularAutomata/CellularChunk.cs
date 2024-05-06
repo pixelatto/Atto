@@ -174,9 +174,16 @@ public class CellularChunk : MonoBehaviour
             for (int j = 0; j < pixelSize.y; j++)
             {
                 var cell = cells[Index(i,j)];
-                var position = worldPosition + new Vector2(i + 0.5f, j + 0.5f) / 8f;
-                var hit = Physics2D.OverlapPoint(position, lightBlockersLayerMask);
-                cell.blocksLight = hit != null;
+                if (cell.IsLiquid())
+                {
+                    cell.blocksLight = false;
+                }
+                else
+                {
+                    var position = worldPosition + new Vector2(i + 0.5f, j + 0.5f) / 8f;
+                    var hit = Physics2D.OverlapPoint(position, lightBlockersLayerMask);
+                    cell.blocksLight = hit != null;
+                }
             }
         }
     }
