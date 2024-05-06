@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class CellularChunk : MonoBehaviour
 {
@@ -22,12 +23,30 @@ public class CellularChunk : MonoBehaviour
 
     public bool textureDirty = false;
 
+    Grid tilemapGrid;
+    Tilemap tilemap;
+    TilemapCollider2D tilemapCollider;
+    CompositeCollider2D compositeCollider;
+    TilemapRenderer tilemapRenderer;
+    Rigidbody2D rb2d;
+
+    public CellularColliderType cellularColliderType = CellularColliderType.Main; public enum CellularColliderType { Main, Lights }
+
+    TileBase emptyTile;
+    TileBase fullTile;
+    TileBase ulTile;
+    TileBase urTile;
+    TileBase blTile;
+    TileBase brTile;
+
     private void Update()
     {
         if (textureDirty)
         {
             RenderChunk();
             textureDirty = false;
+
+            RecalculateFullCollider();
         }
     }
 
@@ -49,6 +68,7 @@ public class CellularChunk : MonoBehaviour
         CheckTexture();
         RenderChunk();
         GetComponent<Room>().ReplaceWithChunk(this);
+        SetupColliders();
 
         chunkAddress = new Vector2Int(Mathf.RoundToInt(pixelPosition.x / CellularAutomata.roomPixelSize.x), Mathf.RoundToInt(pixelPosition.y / CellularAutomata.roomPixelSize.y));
         if (!chunkDirectory.ContainsKey(chunkAddress.x))
@@ -200,4 +220,108 @@ public class CellularChunk : MonoBehaviour
 
         return result;
     }
+
+    public void SetupColliders()
+    {
+        GameObject tilemapObject = new GameObject("Tilemap");
+        tilemapObject.transform.parent = transform;
+        tilemapObject.transform.localPosition = Vector3.zero;
+        tilemapGrid = tilemapObject.GetOrAddComponent<Grid>();
+        tilemap = tilemapObject.GetOrAddComponent<Tilemap>();
+        tilemapCollider = tilemapObject.GetOrAddComponent<TilemapCollider2D>();
+        compositeCollider = tilemapObject.GetOrAddComponent<CompositeCollider2D>();
+        tilemapRenderer = tilemapObject.GetOrAddComponent<TilemapRenderer>();
+        rb2d = tilemapObject.GetOrAddComponent<Rigidbody2D>();
+
+        tilemapObject.layer = LayerMask.NameToLayer("Terrain");
+        tilemapRenderer.enabled = false;
+        tilemapGrid.cellSize = new Vector3(1f / 8f, 1f / 8f, 1);
+        tilemapCollider.usedByComposite = true;
+        rb2d.bodyType = RigidbodyType2D.Static;
+        compositeCollider.geometryType = CompositeCollider2D.GeometryType.Polygons;
+
+        RecalculateFullCollider();
+    }
+
+    public void RecalculateFullCollider()
+    {
+        if (emptyTile == null) { emptyTile = Resources.Load<TileBase>("Tiles/Tile_Empty"); }
+        if (fullTile == null)  { fullTile  = Resources.Load<TileBase>("Tiles/Tile_Full"); }
+        if (ulTile == null)    { ulTile    = Resources.Load<TileBase>("Tiles/Tile_UL"); }
+        if (urTile == null)    { urTile    = Resources.Load<TileBase>("Tiles/Tile_UR"); }
+        if (blTile == null)    { blTile    = Resources.Load<TileBase>("Tiles/Tile_BL"); }
+        if (brTile == null)    { brTile    = Resources.Load<TileBase>("Tiles/Tile_BR"); }
+
+        bool current = false, top = false, bottom = false, left = false, right = false;
+
+        for (int i = 0; i < CellularAutomata.roomPixelSize.x; i++)
+        {
+            for (int j = 0; j < CellularAutomata.roomPixelSize.y; j++)
+            {
+                var currentPosition = new Vector2Int(i, j);
+                var currentTilePosition = new Vector3Int(i, j, 0);
+                var currentCell = this[currentPosition.x, currentPosition.y];
+                switch (cellularColliderType)
+                {
+                    case CellularColliderType.Main:
+                        current = currentCell.IsSolid();
+                        break;
+                    case CellularColliderType.Lights:
+                        current = currentCell.blocksLight;
+                        break;
+                }
+                if (current)
+                {
+                    var topCell = this[currentPosition.x, currentPosition.y + 1];
+                    var bottomCell = this[currentPosition.x, currentPosition.y - 1];
+                    var leftCell = this[currentPosition.x - 1, currentPosition.y];
+                    var rightCell = this[currentPosition.x + 1, currentPosition.y];
+
+                    switch (cellularColliderType)
+                    {
+                        case CellularColliderType.Main:
+                            top = topCell.IsSolid();
+                            bottom = bottomCell.IsSolid();
+                            left = leftCell.IsSolid();
+                            right = rightCell.IsSolid();
+                            break;
+                        case CellularColliderType.Lights:
+                            top = topCell.blocksLight;
+                            bottom = bottomCell.blocksLight;
+                            left = leftCell.blocksLight;
+                            right = rightCell.blocksLight;
+                            break;
+                    }
+                    int neighbourCount = (top ? 1 : 0) + (bottom ? 1 : 0) + (left ? 1 : 0) + (right ? 1 : 0);
+                    switch (neighbourCount)
+                    {
+                        case 4:
+                            tilemap.SetTile(currentTilePosition, fullTile);
+                            break;
+                        case 3:
+                            tilemap.SetTile(currentTilePosition, fullTile);
+                            break;
+                        case 2:
+                            if (top && right) { tilemap.SetTile(currentTilePosition, blTile); }
+                            else if (right && bottom) { tilemap.SetTile(currentTilePosition, ulTile); }
+                            else if (bottom && left) { tilemap.SetTile(currentTilePosition, urTile); }
+                            else if (left && top) { tilemap.SetTile(currentTilePosition, brTile); }
+                            break;
+                        case 1:
+                            tilemap.SetTile(currentTilePosition, emptyTile);
+                            break;
+                        case 0:
+                            tilemap.SetTile(currentTilePosition, emptyTile);
+                            break;
+                    }
+                }
+                else
+                {
+                    tilemap.SetTile(currentTilePosition, emptyTile);
+                }
+            }
+        }
+        compositeCollider.GenerateGeometry();
+    }
+
 }

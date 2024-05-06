@@ -17,9 +17,6 @@ public class CellularAutomata : MonoBehaviour
 
     static CellularAutomata instance_;
 
-    public List<CellularCollider> cellularColliders { get { if (cellularColliders_ == null) { cellularColliders_ = GetComponentsInChildren<CellularCollider>().ToList(); } return cellularColliders_; } }
-    List<CellularCollider> cellularColliders_;
-
     public bool hasChanged = false;
 
     bool[,] usedPositions;
@@ -278,21 +275,6 @@ public class CellularAutomata : MonoBehaviour
             SetCell(oldPosition, otherCell);
             //usedPositions[newPosition.x - viewPortRect.x, newPosition.y - viewPortRect.y] = true;
             hasChanged = true;
-        }
-    }
-
-    public void SetColliders(bool active)
-    {
-        foreach (var cellularCollider in cellularColliders)
-        {
-            cellularCollider.tilemapCollider.enabled = active;
-            cellularCollider.compositeCollider.enabled = active;
-            cellularCollider.enabled = active;
-            cellularCollider.gameObject.SetActive(active);
-            if (active)
-            {
-                cellularCollider.RecalculateFullCollider();
-            }
         }
     }
 
