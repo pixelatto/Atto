@@ -29,14 +29,17 @@ public class CellularAutomata : MonoBehaviour
     public static Vector2Int roomPixelSize = new Vector2Int(128, 72);
     public static Vector2 roomWorldSize = new Vector2(128 / 8f, 72 / 8f);
 
-    public Vector3 cameraBottomLeft => Camera.main.transform.position + new Vector3(-Camera.main.orthographicSize * 16f / 9f, -Camera.main.orthographicSize, 0);
-    public Vector2Int pixelBottomLeft => new Vector2Int(Mathf.FloorToInt(cameraBottomLeft.x * 8f), Mathf.FloorToInt(cameraBottomLeft.y * 8f));
-    public RectInt viewPortRect => new RectInt(pixelBottomLeft.x, pixelBottomLeft.y, roomPixelSize.x, roomPixelSize.y);
+    public Vector3 cameraBottomLeft { get; private set; }
+    public Vector2Int pixelBottomLeft { get; private set; }
+    public RectInt viewPortRect { get; private set; }
 
     public static Cell emptyCell = new Cell(CellMaterial.None);
 
+    Camera mainCamera;
+
     private void Start()
     {
+        mainCamera = Camera.main;
         var chunks = FindObjectsOfType<CellularChunk>();
         foreach (var chunk in chunks)
         {
@@ -73,7 +76,7 @@ public class CellularAutomata : MonoBehaviour
     private void DebugControls()
     {
         int brushSize = 3;
-        var worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        var worldPosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
         var pixelPosition = WorldToPixelPosition(worldPosition);
         if (Input.GetMouseButton(0))
         {
@@ -81,7 +84,7 @@ public class CellularAutomata : MonoBehaviour
             {
                 for (int j = -brushSize; j < brushSize; j++)
                 {
-                    SetValue(pixelPosition + new Vector2Int(i, j), new Cell(mouseSpawnMaterial) { blocksLight = true });
+                    SetCell(pixelPosition + new Vector2Int(i, j), new Cell(mouseSpawnMaterial) { blocksLight = true });
                 }
             }
         }
@@ -91,7 +94,7 @@ public class CellularAutomata : MonoBehaviour
             {
                 for (int j = -brushSize; j < brushSize; j++)
                 {
-                    SetValue(pixelPosition + new Vector2Int(i, j), new Cell(CellMaterial.None));
+                    SetCell(pixelPosition + new Vector2Int(i, j), new Cell(CellMaterial.None));
                 }
             }
         }
@@ -101,10 +104,14 @@ public class CellularAutomata : MonoBehaviour
     {
         hasChanged = false;
 
-        //usedPositions = new bool[currentViewport.pixelSize.x, currentViewport.pixelSize.y];
+        //usedPositions = new bool[viewPortRect.width, viewPortRect.height];
         //usedPositions.Fill(false);
 
         flip = !flip;
+
+        cameraBottomLeft = mainCamera.transform.position + new Vector3(-mainCamera.orthographicSize * 16f / 9f, -mainCamera.orthographicSize, 0);
+        pixelBottomLeft =  new Vector2Int(Mathf.FloorToInt(cameraBottomLeft.x * 8f), Mathf.FloorToInt(cameraBottomLeft.y * 8f));
+        viewPortRect = new RectInt(pixelBottomLeft.x, pixelBottomLeft.y, roomPixelSize.x, roomPixelSize.y);
 
         for (int j = viewPortRect.y; j < viewPortRect.y + viewPortRect.height; j++)
         {
@@ -115,10 +122,9 @@ public class CellularAutomata : MonoBehaviour
                 var currentPosition = new Vector2Int(x, y);
                 var currentCell = GetCell(currentPosition);
 
-                bool usedPosition = false;
-                //bool usedPosition = usedPositions[x, y];
+                //bool usedPosition = usedPositions[x - viewPortRect.x, y - viewPortRect.y];
 
-                if (!usedPosition && currentCell.material != CellMaterial.None)
+                if (/*!usedPosition && */currentCell.material != CellMaterial.None)
                 {
                     var movementType = currentCell.movement;
 
@@ -226,13 +232,13 @@ public class CellularAutomata : MonoBehaviour
 
     void DestroyCell(Vector2Int position)
     {
-        SetValue(position, new Cell(CellMaterial.None));
+        SetCell(position, new Cell(CellMaterial.None));
     }
 
     void SwapCells(Vector2Int oldPosition, Vector2Int newPosition)
     {
         if (oldPosition == newPosition) { return; }
-        if (false/*usedPositions[newPosition.x, newPosition.y]*/)
+        if (/*usedPositions[newPosition.x, newPosition.y]*/ false)
         {
             return;
         }
@@ -240,9 +246,9 @@ public class CellularAutomata : MonoBehaviour
         {
             var cell = GetCell(oldPosition);
             var otherCell = GetCell(newPosition);
-            SetValue(newPosition, cell);
-            SetValue(oldPosition, otherCell);
-            //usedPositions[newPosition.x, newPosition.y] = true;
+            SetCell(newPosition, cell);
+            SetCell(oldPosition, otherCell);
+            //usedPositions[newPosition.x - viewPortRect.x, newPosition.y - viewPortRect.y] = true;
             hasChanged = true;
         }
     }
@@ -265,7 +271,7 @@ public class CellularAutomata : MonoBehaviour
     public CellularChunk FindChunk(Vector2 chunkLocation)
     {
         var worldLocation = new Vector2(chunkLocation.x * roomWorldSize.x + 0.5f, chunkLocation.y * roomWorldSize.y + 0.5f);
-        Draw.Circle(worldLocation, 0.25f, Color.magenta);
+        
         var collider = Physics2D.OverlapPoint(worldLocation, LayerMask.GetMask("Background"));
         if (collider != null)
         {
@@ -282,12 +288,12 @@ public class CellularAutomata : MonoBehaviour
         return null;
     }
 
-    public void SetValue(Vector2Int position, Cell value)
+    public void SetCell(Vector2Int position, Cell value)
     {
-        SetValue(position.x, position.y, value);
+        SetCell(position.x, position.y, value);
     }
 
-    void SetValue(int x, int y, Cell cell)
+    void SetCell(int x, int y, Cell cell)
     {
         Vector2Int chunkLocation = new Vector2Int(Mathf.FloorToInt(x / roomPixelSize.x), Mathf.FloorToInt(y / roomPixelSize.y));
         CellularChunk targetChunk = CellularAutomata.instance.FindChunk(chunkLocation);
