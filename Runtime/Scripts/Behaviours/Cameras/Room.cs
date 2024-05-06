@@ -16,6 +16,7 @@ public class Room : MonoBehaviour
     public Transform backgroundLayer;
     public Transform decorationsLayer;
     public Transform lightsLayer;
+    public Transform blendsLayer;
 
     private void Awake()
     {
@@ -36,7 +37,7 @@ public class Room : MonoBehaviour
         {
             if (cam.currentRoom != this && roomRect.Shrink(0.25f).Contains(collider.transform.position))
             {
-                cam.OnRoomEnter(target, this);
+                cam.OnRoomEnter(this);
             }
         }
     }
@@ -63,5 +64,11 @@ public class Room : MonoBehaviour
     {
         if (lightsLayer != null)
             lightsLayer.gameObject.SetActive(active);
+    }
+
+    public void SetBlendsLayer(bool active)
+    {
+        if (blendsLayer != null)
+            blendsLayer.gameObject.SetActive(active);
     }
 }

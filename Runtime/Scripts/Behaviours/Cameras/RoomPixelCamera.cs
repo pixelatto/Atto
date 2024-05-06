@@ -17,18 +17,12 @@ public class RoomPixelCamera : PixelCamera
     {
         if (currentRoom != null)
         {
-            OnRoomEnter(null, currentRoom);
+            OnRoomEnter(currentRoom);
         }
     }
 
-    public void OnRoomEnter(CameraTarget target, Room room)
+    public void OnRoomEnter(Room room)
     {
-        var previousRoom = currentRoom;
-        if (previousRoom != null)
-        {
-            previousRoom.SetMainLayer(true);
-        }
-
         currentRoom = room;
 
         zoom = room.cameraZoom;
