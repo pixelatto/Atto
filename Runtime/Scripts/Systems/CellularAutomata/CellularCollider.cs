@@ -61,11 +61,13 @@ public class CellularCollider : MonoBehaviour
     {
         bool current = false, top = false, bottom = false, left = false, right = false;
 
-        for (int i = CellularAutomata.instance.viewPortRect.x; i < CellularAutomata.instance.viewPortRect.x + CellularAutomata.instance.viewPortRect.width; i++)
+        var pixelRect = CellularAutomata.instance.viewPortPixelRect;
+
+        for (int i = pixelRect.x; i <= pixelRect.x + pixelRect.width; i++)
         {
-            for (int j = CellularAutomata.instance.viewPortRect.y; j < CellularAutomata.instance.viewPortRect.y + CellularAutomata.instance.viewPortRect.height; j++)
+            for (int j = pixelRect.y; j <= pixelRect.y + pixelRect.height; j++)
             {
-                var currentLocalPosition = new Vector3Int(i - CellularAutomata.instance.viewPortRect.x, j - CellularAutomata.instance.viewPortRect.y, 0);
+                var currentLocalPosition = new Vector3Int(i - pixelRect.x, j - pixelRect.y, 0);
 
                 var currentGlobalPosition = new Vector2Int(i, j);
                 var currentCell = CellularAutomata.instance.GetCell(currentGlobalPosition);

@@ -16,10 +16,10 @@ public static class Draw
         Vector3 bottomLeft = new Vector3(rect.xMin, rect.yMax, 0);
         Vector3 bottomRight = new Vector3(rect.xMax, rect.yMax, 0);
 
-        Gizmos.DrawLine(topLeft, topRight);
-        Gizmos.DrawLine(topRight, bottomRight);
-        Gizmos.DrawLine(bottomRight, bottomLeft);
-        Gizmos.DrawLine(bottomLeft, topLeft);
+        Debug.DrawLine(topLeft, topRight, color);
+        Debug.DrawLine(topRight, bottomRight, color);
+        Debug.DrawLine(bottomRight, bottomLeft, color);
+        Debug.DrawLine(bottomLeft, topLeft, color);
     }
 
     public static void WireBox(Vector3 center, Vector3 halfExtents, Color color)

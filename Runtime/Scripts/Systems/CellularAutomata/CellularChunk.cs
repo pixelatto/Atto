@@ -7,6 +7,7 @@ public class CellularChunk : MonoBehaviour
 {
     public Cell[] cells;
 
+    public Vector2Int chunkAddress;
     public Vector2Int pixelPosition;
     public Vector2Int pixelSize;
     public Color surfaceColor;
@@ -16,6 +17,8 @@ public class CellularChunk : MonoBehaviour
 
     SpriteRenderer spriteRenderer;
     Texture2D texture;
+
+    public static Dictionary<int, Dictionary<int, CellularChunk>> chunkDirectory = new Dictionary<int, Dictionary<int, CellularChunk>>();
 
     public void InitChunk()
     {
@@ -35,6 +38,20 @@ public class CellularChunk : MonoBehaviour
         CheckTexture();
         RenderChunk();
         GetComponent<Room>().ReplaceWithChunk(this);
+
+        chunkAddress = new Vector2Int(Mathf.RoundToInt(pixelPosition.x / CellularAutomata.roomPixelSize.x), Mathf.RoundToInt(pixelPosition.y / CellularAutomata.roomPixelSize.y));
+        if (!chunkDirectory.ContainsKey(chunkAddress.x))
+        {
+            chunkDirectory.Add(chunkAddress.x, new Dictionary<int, CellularChunk>());
+        }
+        if (!chunkDirectory[chunkAddress.x].ContainsKey(chunkAddress.y))
+        {
+            chunkDirectory[chunkAddress.x].Add(chunkAddress.y, this);
+        }
+        else
+        {
+            chunkDirectory[chunkAddress.x][chunkAddress.y] = this;
+        }
     }
 
     public Cell this[int x, int y]
