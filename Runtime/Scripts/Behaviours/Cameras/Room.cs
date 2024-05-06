@@ -14,9 +14,9 @@ public class Room : MonoBehaviour
 
     public Transform mainLayer;
     public Transform backgroundLayer;
-    public Transform decorationsLayer;
     public Transform lightsLayer;
     public Transform blendsLayer;
+    public Transform liquidsLayer;
 
     private void Awake()
     {
@@ -26,8 +26,9 @@ public class Room : MonoBehaviour
     public void ReplaceWithChunk(CellularChunk chunk)
     {
         SetMainLayer(false);
-        SetDecorationsLayer(false);
         SetLightsLayer(false);
+        SetBlendsLayer(false);
+        SetLiquidsLayer(false);
     }
 
     public void OnTriggerStay2D(Collider2D collider)
@@ -54,10 +55,10 @@ public class Room : MonoBehaviour
             backgroundLayer.gameObject.SetActive(active);
     }
 
-    public void SetDecorationsLayer(bool active)
+    public void SetLiquidsLayer(bool active)
     {
-        if (decorationsLayer != null)
-            decorationsLayer.gameObject.SetActive(active);
+        if (liquidsLayer != null)
+            liquidsLayer.gameObject.SetActive(active);
     }
 
     public void SetLightsLayer(bool active)

@@ -18,7 +18,7 @@ public class CellularAutomata : MonoBehaviour
 
     public bool hasChanged = false;
 
-    bool[,] usedPositions;
+    //bool[,] usedPositions;
 
     bool flip = false;
 

@@ -18,12 +18,3 @@ public class CellularMaterials : ScriptableObject
         return lookupDictionary[cellMaterial];
     }
 }
-
-[System.Serializable]
-public class CellMaterialProperties
-{
-    public CellMaterial cellMaterial = CellMaterial.None;
-    public CellMovement movement = CellMovement.Undefined;
-    public Color color = Color.white;
-    public int fluidity = 1;
-}

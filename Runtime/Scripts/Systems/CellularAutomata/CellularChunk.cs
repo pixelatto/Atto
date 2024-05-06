@@ -51,7 +51,7 @@ public class CellularChunk : MonoBehaviour
         }
 
         var currentTerrainRaster = CellularRasterizer.instance.RasterChunk(this);
-        PixelsToCells(currentTerrainRaster, CellMaterial.Rock);
+        PixelsToCells(currentTerrainRaster);
         PaintSurfacePixels(surfaceColor);
         RasterLightBlockers();
         CheckTexture();
@@ -109,13 +109,13 @@ public class CellularChunk : MonoBehaviour
         return y * pixelSize.x + x;
     }
 
-    public void PixelsToCells(Texture2D terrainRaster, CellMaterial cellMaterial)
+    public void PixelsToCells(Texture2D terrainRaster)
     {
         for (int i = 0; i < terrainRaster.width; i++)
         {
             for (int j = 0; j < terrainRaster.height; j++)
             {
-                var color = terrainRaster.GetPixel(i, j);
+                Color32 color = terrainRaster.GetPixel(i, j);
                 var newCell = new Cell(CellMaterial.None);
                 if (color.r == 0 && color.g == 0 && color.b == 0)
                 {
@@ -123,8 +123,19 @@ public class CellularChunk : MonoBehaviour
                 }
                 else
                 {
-                    newCell.material = cellMaterial;
-                    newCell.color = color;
+                    bool found = false;
+                    foreach (var material in CellularAutomata.instance.materials.materials)
+                    {
+                        if (color.r == material.identifierColor.r && color.g == material.identifierColor.g && color.b == material.identifierColor.b)
+                        {
+                            newCell.material = material.cellMaterial;
+                            found = true;
+                        }
+                    }
+                    if (!found)
+                    {
+                        Debug.Log("Material color identifier not defined: " + color);
+                    }
                 }
                 cells[Index(i, j)] = newCell;
             }
@@ -147,7 +158,7 @@ public class CellularChunk : MonoBehaviour
                 {
                     if (j != pixelSize.y - 1)
                     {
-                        cell.color = mainSurfaceColor;
+                        cell.overrideColor = mainSurfaceColor;
                     }
                     break;
                 }

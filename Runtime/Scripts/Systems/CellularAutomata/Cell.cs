@@ -4,7 +4,7 @@
 public class Cell
 {
     public CellMaterial material = CellMaterial.None;
-    public Color color = Color.clear;
+    public Color overrideColor = Color.clear;
     public bool blocksLight = false;
     
     public CellMovement movement => material == CellMaterial.None ? CellMovement.Static : materialProperties.movement;
@@ -24,13 +24,18 @@ public class Cell
         {
             return Color.clear;
         }
-        else if (color != Color.clear)
+        else if (overrideColor != Color.clear)
         {
-            return color;
+            return overrideColor;
+        }
+        else if (materialProperties.appearance != null)
+        {
+            overrideColor = materialProperties.appearance.texture.GetPixel(Random.Range(0, 32), Random.Range(0, 32));
+            return overrideColor;
         }
         else
         {
-            return CellularAutomata.instance.materials.FindMaterial(material).color;
+            return materialProperties.identifierColor;
         }
     }
 
