@@ -20,6 +20,7 @@ MonoBehaviour:
     identifierColor:
       serializedVersion: 2
       rgba: 4283586137
+    opacity: 1
   - cellMaterial: 2
     movement: 2
     fluidity: 1
@@ -27,10 +28,12 @@ MonoBehaviour:
     identifierColor:
       serializedVersion: 2
       rgba: 4282078863
+    opacity: 1
   - cellMaterial: 3
     movement: 3
-    fluidity: 20
+    fluidity: 10000
     appearance: {fileID: 21300000, guid: 83aeb07c9de90554b981d23def81bd5d, type: 3}
     identifierColor:
       serializedVersion: 2
       rgba: 4292963931
+    opacity: 0.5
