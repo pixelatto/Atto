@@ -20,6 +20,18 @@ public class CellularChunk : MonoBehaviour
 
     public static Dictionary<int, Dictionary<int, CellularChunk>> chunkDirectory = new Dictionary<int, Dictionary<int, CellularChunk>>();
 
+    bool textureDirty = false;
+
+    private void Update()
+    {
+        if (textureDirty)
+        {
+            RenderChunk();
+            //spriteRenderer.sprite = Sprite.Create(texture, new Rect(0, 0, pixelSize.x, pixelSize.y), Vector2.one * 0.5f, 8f);
+            textureDirty = false;
+        }
+    }
+
     public void InitChunk()
     {
         cells = new Cell[pixelSize.x * pixelSize.y];
@@ -56,8 +68,25 @@ public class CellularChunk : MonoBehaviour
 
     public Cell this[int x, int y]
     {
-        get { var index = Index(x, y); if (index < 0 || index > cells.Length - 1) { /*Debug.Log(x + "," + y + " index outofbounds -> " + index);*/ return CellularAutomata.emptyCell; }; return cells[index]; }
-        set { var index = Index(x, y); if (index < 0 || index > cells.Length - 1) { /*Debug.Log(x + "," + y + " index outofbounds -> " + index);*/ return; }; cells[index] = value; }
+        get
+        {
+            var index = Index(x, y);
+            if (index < 0 || index > cells.Length - 1)
+            {
+                return CellularAutomata.emptyCell;
+            };
+            return cells[index];
+        }
+        set
+        {
+            var index = Index(x, y);
+            if (index < 0 || index > cells.Length - 1)
+            {
+                return;
+            };
+            textureDirty = true;
+            cells[index] = value;
+        }
     }
 
     private int Index(int x, int y)
@@ -71,7 +100,6 @@ public class CellularChunk : MonoBehaviour
         {
             for (int j = 0; j < terrainRaster.height; j++)
             {
-                var position = new Vector2Int(i, j);
                 var color = terrainRaster.GetPixel(i, j);
                 var newCell = new Cell(CellMaterial.None);
                 if (color.r == 0 && color.g == 0 && color.b == 0)
