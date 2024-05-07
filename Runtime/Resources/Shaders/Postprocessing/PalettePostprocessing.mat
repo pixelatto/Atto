@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: DitheringPostprocessing
-  m_Shader: {fileID: 4800000, guid: e27c3466f0d9b5a4cac76e033ccf71ac, type: 3}
+  m_Name: PalettePostprocessing
+  m_Shader: {fileID: 4800000, guid: ae77721c1c1e53846a11b4fd4ee95e53, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -23,32 +23,15 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _DitherTex:
-        m_Texture: {fileID: 2800000, guid: e1a80e0ba683b4946ab06fc51d9e0a29, type: 3}
+    - _LUT:
+        m_Texture: {fileID: 2800000, guid: a46cce902e697724a9a80e42a50af40e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _NoiseTex:
-        m_Texture: {fileID: 2800000, guid: 7539dc5ccf0ae7043ae96ec749b9c11e, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _TileTex:
-        m_Texture: {fileID: 2800000, guid: 4a5b75e397f091f408767f5177352f59, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     m_Ints: []
-    m_Floats:
-    - _DitherLevels: 8
-    - _DitherTextureSize: 3
-    - _DitherTileSize: 4
-    - _DitheringLevels: 17
-    - _Levels: 17
-    - _LightLevels: 32
-    - _ScreenHeight: 72
-    - _ScreenWidth: 128
-    - _TileSize: 4
+    m_Floats: []
     m_Colors: []
   m_BuildTextureStacks: []
