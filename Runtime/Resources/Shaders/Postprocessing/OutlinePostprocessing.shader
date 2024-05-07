@@ -13,7 +13,7 @@ Shader "Atto/OutlinePostprocessing"
             Pass
             {
                 ZTest Always Cull Off ZWrite Off
-                Blend SrcAlpha OneMinusSrcAlpha // Para manejar la transparencia
+                //Blend SrcAlpha OneMinusSrcAlpha // Para manejar la transparencia
 
                 CGPROGRAM
                 #pragma vertex vert
@@ -50,10 +50,17 @@ Shader "Atto/OutlinePostprocessing"
                     float2 offsetRight = float2(1.0 / 128.0, 0);
                     float2 offsetDown  = float2(0,-1.0 / 72.0);
                     float2 offsetLeft  = float2(-1.0 / 128.0, 0);
-                    float4 texColor = ((tex2D(_MainTex, i.uv + offsetUp) + tex2D(_MainTex, i.uv + offsetRight) + tex2D(_MainTex, i.uv + offsetDown) + tex2D(_MainTex, i.uv + offsetLeft)) / 4.0);
-                    texColor = texColor - tex2D(_MainTex, i.uv);
-                    texColor = clamp(ceil(texColor.a), 0, 1) * _OutlineColor;
-                    return texColor;
+
+                    float4 center = tex2D(_MainTex, i.uv);
+                    float4 up   = tex2D(_MainTex, i.uv + offsetUp);
+                    float4 down = tex2D(_MainTex, i.uv + offsetDown);
+                    float4 left = tex2D(_MainTex, i.uv + offsetLeft);
+                    float4 right= tex2D(_MainTex, i.uv + offsetRight);
+
+                    float4 texColor = (up + down + left + right + center);
+                    float value = ceil(texColor.r + texColor.g + texColor.b);
+                    
+                    return 1-value;
                 }
                 ENDCG
             }

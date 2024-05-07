@@ -242,6 +242,7 @@ public class CellularChunk : MonoBehaviour
         if (spriteRenderer == null)
         {
             var childObject = new GameObject("ChunkRenderer");
+            childObject.layer = LayerMask.NameToLayer("Terrain");
             childObject.transform.SetParent(transform);
             childObject.transform.localPosition = new Vector3(pixelSize.x / 8f / 2f, pixelSize.y / 8f / 2f, 0);
             spriteRenderer = childObject.AddComponent<SpriteRenderer>();

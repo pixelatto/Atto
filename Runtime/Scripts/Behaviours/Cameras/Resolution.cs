@@ -6,7 +6,7 @@ using UnityEngine;
 public class Resolution : MonoBehaviour
 {
     public Material ditheringMaterial;
-    public RenderTexture renderTexture;
+    public RenderTexture lightRenderTexture;
 
     PixelCamera pixelCam;
 
@@ -47,12 +47,12 @@ public class Resolution : MonoBehaviour
         ditheringMaterial.SetFloat("_ScreenWidth", pixelCam.pixelWidth);
         ditheringMaterial.SetFloat("_ScreenHeight", pixelCam.pixelHeight);
 
-        if (renderTexture.width != pixelCam.pixelWidth)
+        if (lightRenderTexture.width != pixelCam.pixelWidth)
         {
-            renderTexture.Release();
-            renderTexture.width = pixelCam.pixelWidth;
-            renderTexture.height = pixelCam.pixelHeight;
-            renderTexture.Create();
+            lightRenderTexture.Release();
+            lightRenderTexture.width = pixelCam.pixelWidth;
+            lightRenderTexture.height = pixelCam.pixelHeight;
+            lightRenderTexture.Create();
         }
     }
 }
