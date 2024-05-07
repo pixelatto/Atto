@@ -180,9 +180,6 @@ public class CellularChunk : MonoBehaviour
                 }
                 else
                 {
-                    //var position = worldPosition + new Vector2(i + 0.5f, j + 0.5f) / 8f;
-                    //var hit = Physics2D.OverlapPoint(position, lightBlockersLayerMask);
-                    //cell.blocksLight = hit != null;
                     int distanceToEmpty = GetDistanceToEmpty(i, j);
                     cell.blocksLight = distanceToEmpty >= 3;
                 }
@@ -195,40 +192,34 @@ public class CellularChunk : MonoBehaviour
         int width = pixelSize.x;
         int height = pixelSize.y;
 
-        // Initialize a queue for BFS and a visited array
         Queue<(int, int, int)> queue = new Queue<(int, int, int)>();
         bool[,] visited = new bool[width, height];
 
-        // Enqueue the starting cell and mark it as visited
         queue.Enqueue((x, y, 0));
         visited[x, y] = true;
 
-        // Define possible movements (left, right, up, down)
-        int[][] directions = new int[][] {
-        new int[] { -1, 0 },
-        new int[] { 1, 0 },
-        new int[] { 0, -1 },
-        new int[] { 0, 1 }
-    };
+        int[][] directions = new int[][]
+        {
+            new int[] { -1, 0 },
+            new int[] { 1, 0 },
+            new int[] { 0, -1 },
+            new int[] { 0, 1 }
+        };
 
-        // BFS to find the nearest empty cell
         while (queue.Count > 0)
         {
             var (currentX, currentY, distance) = queue.Dequeue();
 
-            // If an empty cell is found, return the distance
             if (!this[currentX, currentY].IsSolid())
             {
                 return distance;
             }
 
-            // Explore neighboring cells
             foreach (var dir in directions)
             {
                 int newX = currentX + dir[0];
                 int newY = currentY + dir[1];
 
-                // Check if the new cell is within bounds and not visited
                 if (newX >= 0 && newX < width && newY >= 0 && newY < height && !visited[newX, newY])
                 {
                     queue.Enqueue((newX, newY, distance + 1));
@@ -237,7 +228,6 @@ public class CellularChunk : MonoBehaviour
             }
         }
 
-        // If no empty cell is found, return a large number indicating no reachable empty cell
         return int.MaxValue;
     }
 

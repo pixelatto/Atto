@@ -3,9 +3,9 @@ using System.IO;
 
 public class LutGenerator : MonoBehaviour
 {
-    public Texture2D paletteTexture; // Textura de la paleta, asignar en el inspector
-    public int lutSize = 32; // Tamaño del LUT
-    public string outputFileName = "LUTTexture.png"; // Nombre del archivo
+    public Texture2D paletteTexture;
+    public int lutSize = 32;
+    public string outputFileName = "LUTTexture.png";
 
     void Start()
     {
@@ -16,7 +16,6 @@ public class LutGenerator : MonoBehaviour
 
     Texture2D GenerateLutTexture(Texture2D palette, int size)
     {
-        // Crear textura LUT con dimensiones (size * size) x size para formato horizontal
         Texture2D lutTexture = new Texture2D(size * size, size, TextureFormat.RGB24, false);
 
         Color[] paletteColors = palette.GetPixels();
@@ -28,10 +27,8 @@ public class LutGenerator : MonoBehaviour
             {
                 for (int b = 0; b < size; b++)
                 {
-                    // Intercambia R y G en la definición del color
                     Color targetColor = new Color(g / (float)(size - 1), r / (float)(size - 1), b / (float)(size - 1));
                     Color closestColor = FindClosestColor(paletteColors, paletteLength, targetColor);
-                    // Invierte Y y ajusta la asignación de los píxeles
                     lutTexture.SetPixel(r + b * size, g, closestColor);
                 }
             }

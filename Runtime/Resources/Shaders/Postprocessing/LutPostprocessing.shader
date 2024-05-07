@@ -1,4 +1,4 @@
-Shader "Atto/PalettePostprocessing"
+Shader "Atto/LutPostprocessing"
 {
     Properties
     {
