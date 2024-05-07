@@ -4,7 +4,6 @@ Shader "Atto/LightmasksPostprocessing"
     {
         _MainTex("Color (RGB)", 2D) = "white" {}
         _LuminosityTex("Luminosity", 2D) = "white" {}
-        _Intensify("Intensify", float) = 1
     }
         SubShader
     {
@@ -34,7 +33,6 @@ Shader "Atto/LightmasksPostprocessing"
             sampler2D _LuminosityTex;
             float4 _MainTex_ST;
             float4 _LuminosityTex_ST;
-            float _Intensify;
 
             v2f vert(appdata v)
             {
@@ -47,7 +45,7 @@ Shader "Atto/LightmasksPostprocessing"
             fixed4 frag(v2f i) : SV_Target
             {
                 fixed4 col = tex2D(_MainTex, i.uv);
-                fixed4 lum = tex2D(_LuminosityTex, i.uv)* _Intensify;
+                fixed4 lum = tex2D(_LuminosityTex, i.uv);
                 return col * lum;
             }
             ENDCG
