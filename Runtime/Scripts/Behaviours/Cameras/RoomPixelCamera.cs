@@ -2,9 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class RoomPixelCamera : PixelCamera
 {
+    public Ease transition;
+    public float transitionTime = 0.35f;
     public Room currentRoom = null;
     [HideInInspector]public Camera cam;
 
@@ -26,8 +29,10 @@ public class RoomPixelCamera : PixelCamera
         currentRoom = room;
 
         zoom = room.cameraZoom;
-        Vector2 error = (Vector3)currentRoom.roomRect.center - transform.position;
-        transform.position += (Vector3)error;
-        cam.orthographicSize = baseCameraSize * zoom;
+
+        cam.orthographicSize = baseCameraSize * zoom; //TODO: Tween
+
+        var targetPosition = new Vector3(currentRoom.roomRect.center.x, currentRoom.roomRect.center.y, cam.transform.position.z);
+        transform.DOMove(targetPosition, transitionTime).SetEase(transition);
     }
 }

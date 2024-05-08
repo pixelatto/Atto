@@ -23,7 +23,7 @@ public class Room : MonoBehaviour
         cam = FindObjectOfType<RoomPixelCamera>();
     }
 
-    public void ReplaceWithChunk(CellularChunk chunk)
+    public void Hide()
     {
         SetMainLayer(false);
         SetLightsLayer(false);
