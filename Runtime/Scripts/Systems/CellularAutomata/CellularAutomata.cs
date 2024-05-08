@@ -18,8 +18,6 @@ public class CellularAutomata : MonoBehaviour
 
     public bool hasChanged = false;
 
-    //bool[,] usedPositions;
-
     bool flip = false;
 
     public static Vector2Int roomPixelSize = new Vector2Int(128, 72);
@@ -34,8 +32,11 @@ public class CellularAutomata : MonoBehaviour
 
     Camera mainCamera;
 
+    public static uint currrentTick = 0;
+
     private void Start()
     {
+        currrentTick = 0;
         mainCamera = Camera.main;
         var chunks = FindObjectsOfType<CellularChunk>();
         foreach (var chunk in chunks)
@@ -67,12 +68,8 @@ public class CellularAutomata : MonoBehaviour
 
     void Step()
     {
+        currrentTick++;
         hasChanged = false;
-
-        //usedPositions = new bool[viewPortRect.width, viewPortRect.height];
-        //usedPositions.Fill(false);
-
-        flip = !flip;
 
         int viewPortLookaheadPixels = 32;
         cameraBottomLeft = mainCamera.transform.position + new Vector3(-mainCamera.orthographicSize * 16f / 9f, -mainCamera.orthographicSize, 0);
@@ -92,9 +89,7 @@ public class CellularAutomata : MonoBehaviour
                 var currentPosition = new Vector2Int(x, y);
                 var currentCell = GetCell(currentPosition);
 
-                //bool usedPosition = usedPositions[x - viewPortRect.x, y - viewPortRect.y];
-
-                if (/*!usedPosition && */currentCell.material != CellMaterial.None)
+                if (currentCell.material != CellMaterial.None && !currentCell.wasUpdatedThisTick)
                 {
                     var movementType = currentCell.movement;
 
@@ -156,19 +151,27 @@ public class CellularAutomata : MonoBehaviour
                             }
                             else if (canSlideLeft || canSlideRight)
                             {
+                                bool disperse = false;
                                 int direction = (canSlideLeft ? -1 : 0) + (canSlideRight ? 1 : 0);
                                 if (direction == 0)
                                 {
-                                    if (Random.value > 0.95)
+                                    direction = (Random.value > 0.5f) ? 1 : -1;
+
+                                    if (Random.value > 0.5f)
                                     {
-                                        DestroyCell(currentPosition);
-                                    }
-                                    else
-                                    {
-                                        direction = (Random.value > 0.5f) ? 1 : -1;
+                                        disperse = true;
+                                        if (Random.value > 0.5f)
+                                        {
+                                            DestroyCell(currentPosition);
+                                        }
+                                        else
+                                        {
+                                            CreateCell(leftPosition, currentCell.material);
+                                            CreateCell(rightPosition, currentCell.material);
+                                        }
                                     }
                                 }
-                                if (direction != 0)
+                                if (!disperse)
                                 {
                                     int distance = 0;
                                     int fall = 0;
@@ -189,7 +192,7 @@ public class CellularAutomata : MonoBehaviour
                                             break;
                                         }
                                     }
-                                    distance = Mathf.Max(0, distance);
+                                    distance = Mathf.Max(1, distance);
                                     SwapCells(currentPosition, currentPosition + new Vector2Int(direction * distance, fall));
                                 }
                             }
@@ -205,22 +208,19 @@ public class CellularAutomata : MonoBehaviour
         SetCell(position, new Cell(CellMaterial.None));
     }
 
+    void CreateCell(Vector2Int position, CellMaterial material)
+    {
+        SetCell(position, new Cell(material));
+    }
+
     void SwapCells(Vector2Int oldPosition, Vector2Int newPosition)
     {
         if (oldPosition == newPosition) { return; }
-        if (/*usedPositions[newPosition.x, newPosition.y]*/ false)
-        {
-            return;
-        }
-        else
-        {
-            var cell = GetCell(oldPosition);
-            var otherCell = GetCell(newPosition);
-            SetCell(newPosition, cell);
-            SetCell(oldPosition, otherCell);
-            //usedPositions[newPosition.x - viewPortRect.x, newPosition.y - viewPortRect.y] = true;
-            hasChanged = true;
-        }
+        var cell = GetCell(oldPosition);
+        var otherCell = GetCell(newPosition);
+        SetCell(newPosition, cell);
+        SetCell(oldPosition, otherCell);
+        hasChanged = true;
     }
 
     public static Vector2Int GetPixelChunkAddress(int x, int y)
@@ -240,9 +240,9 @@ public class CellularAutomata : MonoBehaviour
         }
     }
 
-    public void SetCell(Vector2Int position, Cell value)
+    public void SetCell(Vector2Int position, Cell cell)
     {
-        SetCell(position.x, position.y, value);
+        SetCell(position.x, position.y, cell);
     }
 
     void SetCell(int x, int y, Cell cell)
@@ -258,6 +258,7 @@ public class CellularAutomata : MonoBehaviour
 
         Vector2Int localChunkCoords = new Vector2Int(x - targetChunk.pixelPosition.x, y - targetChunk.pixelPosition.y);
 
+        cell.lastUpdateTick = currrentTick;
         targetChunk[localChunkCoords.x, localChunkCoords.y] = cell;
     }
 

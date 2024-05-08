@@ -13,6 +13,10 @@ public class Cell
     CellMaterialProperties materialProperties { get { if (_materialProperties == null) { _materialProperties = CellularAutomata.instance.materials.FindMaterial(material); }; return _materialProperties; } }
     CellMaterialProperties _materialProperties;
 
+    public uint lastUpdateTick = 0;
+
+    public bool wasUpdatedThisTick => lastUpdateTick == CellularAutomata.currrentTick;
+
     public Cell(CellMaterial material)
     {
         this.material = material;
