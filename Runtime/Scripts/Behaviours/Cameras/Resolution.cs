@@ -10,6 +10,7 @@ public class Resolution : MonoBehaviour
 
     PixelCamera pixelCam;
 
+
     void Update()
     {
         if (Debug.isDebugBuild)

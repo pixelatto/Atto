@@ -59,8 +59,8 @@ Shader "Atto/TilemapMain"
 
                 float noiseValue = tex2D(_NoiseTex, worldPos.xy/256).r;
                 int spriteIndex = (int)(noiseValue * 16); // Asume que hay 16 sprites (4x4 en una textura 32x32)
-                int spriteX = spriteIndex % 4;
-                int spriteY = spriteIndex / 4;
+                uint spriteX = spriteIndex % (uint)4;
+                uint spriteY = spriteIndex / (uint)4;
                 float2 spriteUV = frac(worldPos.xy) + float2(spriteX, spriteY);
 
                 fixed4 texMain = tex2D(_VariantsMain, spriteUV / 4);
