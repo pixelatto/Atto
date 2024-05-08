@@ -32,7 +32,18 @@ public class RoomPixelCamera : PixelCamera
 
         cam.orthographicSize = baseCameraSize * zoom; //TODO: Tween
 
+
+        var sequence = DOTween.Sequence();
+
         var targetPosition = new Vector3(currentRoom.roomRect.center.x, currentRoom.roomRect.center.y, cam.transform.position.z);
-        transform.DOMove(targetPosition, transitionTime).SetEase(transition);
+
+        sequence.AppendCallback(() => Fader.instance.FadeOut());
+        sequence.AppendInterval(Fader.instance.duration);
+        sequence.AppendInterval(0.2f);
+        //sequence.AppendCallback(() => transform.DOMove(targetPosition, transitionTime).SetEase(transition));
+        sequence.AppendCallback(() => { transform.position = targetPosition; });
+        sequence.AppendCallback(() => Fader.instance.FadeIn());
+
+
     }
 }

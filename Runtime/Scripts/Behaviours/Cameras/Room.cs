@@ -36,7 +36,7 @@ public class Room : MonoBehaviour
         var target = collider.gameObject.GetComponent<CameraTarget>();
         if (target != null)
         {
-            if (cam.currentRoom != this && roomRect.Shrink(0.25f).Contains(collider.transform.position))
+            if (cam.currentRoom != this && roomRect.Contains(collider.transform.position))
             {
                 cam.OnRoomEnter(this);
             }

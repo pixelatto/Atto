@@ -3,7 +3,8 @@ Shader "Hidden/PixelizePostprocessing"
     Properties
     {
         _MainTex("Texture", 2D) = "white" {}
-        _PixelSize("Pixel Size", Int) = 100
+        _Width("Width", Int) = 128
+        _Height("Height", Int) = 72
     }
         SubShader
         {
@@ -28,7 +29,8 @@ Shader "Hidden/PixelizePostprocessing"
 
                 sampler2D _MainTex;
                 float4 _MainTex_TexelSize;
-                int _PixelSize;
+                int _Width;
+                int _Height;
 
                 v2f vert(appdata v)
                 {
@@ -40,7 +42,8 @@ Shader "Hidden/PixelizePostprocessing"
 
                 fixed4 frag(v2f i) : SV_Target
                 {
-                    float2 pixelUv = i.uv - fmod(i.uv, _PixelSize * _MainTex_TexelSize.xy);
+                    float2 pixelSize = float2(_Width, _Height);
+                    float2 pixelUv = floor(i.uv * pixelSize) / pixelSize + 0.5f / pixelSize;
                     return tex2D(_MainTex, pixelUv);
                 }
                 ENDCG

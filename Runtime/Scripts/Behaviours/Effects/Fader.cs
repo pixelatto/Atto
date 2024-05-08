@@ -7,17 +7,25 @@ using DG.Tweening;
 public class Fader : MonoBehaviour
 {
     public bool isCovering = false;
-
     public float duration = 0.35f;
+    public AmbientLight ambientLight;
 
-    SpriteRenderer spriteRenderer { get { if (spriteRenderer_ == null) { spriteRenderer_ = GetComponent<SpriteRenderer>(); }; return spriteRenderer_; } }
-    SpriteRenderer spriteRenderer_;
+    MeshRenderer meshRenderer { get { if (meshRenderer_ == null) { meshRenderer_ = GetComponent<MeshRenderer>(); }; return meshRenderer_; } }
+    MeshRenderer meshRenderer_;
 
     Tweener tweener;
 
+    public static Fader instance;
+
+    void Awake()
+    {
+        instance = this;
+    }
+
     private void Update()
     {
-
+        var fadeAmount = 1f - meshRenderer.sharedMaterial.GetFloat("_Threshold");
+        ambientLight.attenuation = fadeAmount;
     }
 
     [Button]
@@ -25,16 +33,27 @@ public class Fader : MonoBehaviour
     {
         if (isCovering)
         {
-            FadeIn();
+            FadeIn(null);
         }
         else
         {
-            FadeOut();
+            FadeOut(null);
         }
     }
 
     [Button]
     public void FadeIn()
+    {
+        FadeIn(null);
+    }
+
+    [Button]
+    public void FadeOut()
+    {
+        FadeOut(null);
+    }
+
+    public void FadeIn(System.Action OnComplete)
     {
         if (isCovering)
         {
@@ -44,18 +63,17 @@ public class Fader : MonoBehaviour
                 {
                     tweener.Kill();
                 }
-                tweener = spriteRenderer.sharedMaterial.DOFloat(0f, "_Threshold", duration);
+                tweener = meshRenderer.sharedMaterial.DOFloat(0f, "_Threshold", duration).OnComplete(() => { if (OnComplete != null) { OnComplete(); } });
             }
             else
             {
-                spriteRenderer.sharedMaterial.SetFloat("_Threshold", 0f);
+                meshRenderer.sharedMaterial.SetFloat("_Threshold", 0f);
             }
             isCovering = false;
         }
     }
 
-    [Button]
-    public void FadeOut()
+    public void FadeOut(System.Action OnComplete)
     {
         if (!isCovering)
         {
@@ -65,11 +83,11 @@ public class Fader : MonoBehaviour
                 {
                     tweener.Kill();
                 }
-                tweener = spriteRenderer.sharedMaterial.DOFloat(1f, "_Threshold", duration);
+                tweener = meshRenderer.sharedMaterial.DOFloat(1f, "_Threshold", duration).OnComplete(() => { if (OnComplete != null) { OnComplete(); } });
             }
             else
             {
-                spriteRenderer.sharedMaterial.SetFloat("_Threshold", 1f);
+                meshRenderer.sharedMaterial.SetFloat("_Threshold", 1f);
             }
             isCovering = true;
         }
