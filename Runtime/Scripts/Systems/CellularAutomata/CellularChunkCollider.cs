@@ -86,6 +86,7 @@ public class CellularChunkCollider : MonoBehaviour
                         current = currentCell.blocksLight;
                         break;
                 }
+                var resultTile = emptyTile;
                 if (current)
                 {
                     var topCell = chunk[currentPosition.x, currentPosition.y + 1];
@@ -112,29 +113,38 @@ public class CellularChunkCollider : MonoBehaviour
                     switch (neighbourCount)
                     {
                         case 4:
-                            tilemap.SetTile(currentTilePosition, fullTile);
+                            resultTile = fullTile;
                             break;
                         case 3:
-                            tilemap.SetTile(currentTilePosition, fullTile);
+                            resultTile = fullTile;
                             break;
                         case 2:
-                            if (top && right) { tilemap.SetTile(currentTilePosition, blTile); }
-                            else if (right && bottom) { tilemap.SetTile(currentTilePosition, ulTile); }
-                            else if (bottom && left) { tilemap.SetTile(currentTilePosition, urTile); }
-                            else if (left && top) { tilemap.SetTile(currentTilePosition, brTile); }
+                            if (top && right) { resultTile = blTile; }
+                            else if (right && bottom) { resultTile = ulTile; }
+                            else if (bottom && left) { resultTile = urTile; }
+                            else if (left && top) { resultTile = brTile; }
                             break;
                         case 1:
-                            tilemap.SetTile(currentTilePosition, emptyTile);
+                            resultTile = emptyTile;
                             break;
                         case 0:
-                            tilemap.SetTile(currentTilePosition, emptyTile);
+                            resultTile = emptyTile;
                             break;
+                    }
+                    if (neighbourCount == 2)
+                    {
+                        bool isBorder = i == 0 || j == 0 || i == CellularAutomata.roomPixelSize.x - 1 || j == CellularAutomata.roomPixelSize.y - 1;
+                        if (isBorder)
+                        {
+                            resultTile = fullTile;
+                        }
                     }
                 }
                 else
                 {
-                    tilemap.SetTile(currentTilePosition, emptyTile);
+                    resultTile = emptyTile;
                 }
+                tilemap.SetTile(currentTilePosition, resultTile);
             }
         }
         compositeCollider.GenerateGeometry();

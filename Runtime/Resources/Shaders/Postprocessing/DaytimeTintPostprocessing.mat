@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: ColorRampPostProcessing
-  m_Shader: {fileID: 4800000, guid: e26a4c7db555284478dd4aef9b5974c3, type: 3}
+  m_Name: DaytimeTintPostprocessing
+  m_Shader: {fileID: 4800000, guid: 88c6c36fd712f0a4695785f280c91311, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -23,20 +23,17 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _Daytime:
-        m_Texture: {fileID: 0}
+    - _ColorRamp:
+        m_Texture: {fileID: 2800000, guid: fadece09cb9234247b5583292d6973cb, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _RampTex:
-        m_Texture: {fileID: 2800000, guid: d0972bfaa0dc8d74fa6ade83b23e9d94, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _Daytime: 0.125
+    - _Value: 0.27
     m_Colors: []
   m_BuildTextureStacks: []

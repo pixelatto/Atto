@@ -25,6 +25,34 @@ public class CellularChunk : MonoBehaviour
 
     CellularChunkCollider[] chunkColliders;
 
+    public Cell this[int x, int y]
+    {
+        get
+        {
+            var index = Index(x, y);
+            if (index < 0 || index > cells.Length - 1)
+            {
+                return CellularAutomata.emptyCell;
+            };
+            return cells[index];
+        }
+        set
+        {
+            var index = Index(x, y);
+            if (index < 0 || index > cells.Length - 1)
+            {
+                return;
+            };
+            textureDirty = true;
+            cells[index] = value;
+        }
+    }
+
+    private int Index(int x, int y)
+    {
+        return y * pixelSize.x + x;
+    }
+
     private void Update()
     {
         if (textureDirty)
@@ -79,34 +107,6 @@ public class CellularChunk : MonoBehaviour
         {
             chunkDirectory[chunkAddress.x][chunkAddress.y] = this;
         }
-    }
-
-    public Cell this[int x, int y]
-    {
-        get
-        {
-            var index = Index(x, y);
-            if (index < 0 || index > cells.Length - 1)
-            {
-                return CellularAutomata.emptyCell;
-            };
-            return cells[index];
-        }
-        set
-        {
-            var index = Index(x, y);
-            if (index < 0 || index > cells.Length - 1)
-            {
-                return;
-            };
-            textureDirty = true;
-            cells[index] = value;
-        }
-    }
-
-    private int Index(int x, int y)
-    {
-        return y * pixelSize.x + x;
     }
 
     public void PixelsToCells(Texture2D terrainRaster)
