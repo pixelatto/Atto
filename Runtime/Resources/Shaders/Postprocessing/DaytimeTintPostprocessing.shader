@@ -45,8 +45,10 @@ Shader "Atto/DaytimeTintPostprocessing"
                 fixed4 frag(v2f i) : SV_Target
                 {
                     fixed4 col = tex2D(_MainTex, i.uv); // Sample the texture color
-                    fixed4 colorRamp = tex2D(_ColorRamp, float2(_Daytime, 0.5)); // Use _Value to sample from the middle of the ramp texture
-                    return col * colorRamp; // Modulate texture color with color ramp based on _Value
+                    fixed4 colorRamp = tex2D(_ColorRamp, float2(_Daytime, 0.5)); // Sample the color ramp based on _Daytime
+                    fixed4 resultColor = col * colorRamp; // Adjust the blend factor to control the strength of the tint
+
+                    return resultColor;
                 }
                 ENDCG
             }

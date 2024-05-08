@@ -11,20 +11,22 @@ public class DayCycle : MonoBehaviour
     public float orbitalRadius = 100f;
     public float moonToSunOffset = 150f;
 
-    public float sunBrightness = 8;
-    public float moonBrightness = 4;
+    //public float sunBrightness = 8;
+    //public float moonBrightness = 4;
     public int anglesSubdivision = 360;
 
     [Header("References")]
     public PixelLight sun;
     public PixelLight moon;
     public Material daytimeTintMaterial;
+    public Material lightingMaterial;
 
     float normalizedDayPhase => (dayTime % dayDuration) / dayDuration;
     float dayAngle => anglesSubdivision != 0 ? 360f * Mathf.RoundToInt(normalizedDayPhase * anglesSubdivision) / ((float)(anglesSubdivision)) : normalizedDayPhase * 360f;
 
     float normalizedSunHeight;
     float normalizedMoonHeight;
+    public float ambientLight = 0.2f;
 
 
     void Update()
@@ -33,18 +35,20 @@ public class DayCycle : MonoBehaviour
         if (sun != null)
         {
             sun.transform.localPosition = new Vector2().AngleToVector(dayAngle, orbitalRadius);
+            sun.radiusInPixels = orbitalRadius * 8f * 1.5f;
             normalizedSunHeight = Mathf.Clamp01(sun.transform.localPosition.y / orbitalRadius);
-            sun.overrideBrightness = sunBrightness * normalizedSunHeight;
-            sun.enabled = sun.transform.position.y > 0;
+            sun.opacity = normalizedSunHeight;
+            //sun.enabled = sun.transform.position.y > 0;
         }
 
         //Moon
         if (moon != null)
         {
             moon.transform.localPosition = new Vector2().AngleToVector(dayAngle - moonToSunOffset, orbitalRadius);
+            moon.radiusInPixels = orbitalRadius * 8f * 1.5f;
             normalizedMoonHeight = Mathf.Clamp01(moon.transform.localPosition.y / orbitalRadius);
-            moon.overrideBrightness = moonBrightness * normalizedMoonHeight;
-            moon.enabled = moon.transform.position.y > 0;
+            moon.opacity = normalizedMoonHeight;
+            //moon.enabled = moon.transform.position.y > 0;
         }
 
         if (Application.isPlaying)
@@ -53,6 +57,7 @@ public class DayCycle : MonoBehaviour
         }
 
         daytimeTintMaterial.SetFloat("_Daytime", normalizedDayPhase);
+        lightingMaterial.SetFloat("_AmbientLight", ambientLight);
     }
 
 }

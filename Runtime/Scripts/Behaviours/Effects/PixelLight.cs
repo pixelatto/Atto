@@ -11,19 +11,18 @@ public class PixelLight : MonoBehaviour
     [Range(0f, 360f)] public float arc = 360f;
 
     public Transform lookAtTarget = null;
-    public float overrideRadius = 0f;
-    public float overrideBrightness = 0f;
-    public Color overrideColor = Color.clear;
+    public float radiusInPixels = 32f;
+    public float brightness = 1f;
+    public Color color = Color.white;
 
-    Color color => (ldtkFields != null) ? (overrideColor != Color.clear ? overrideColor : (ldtkFields.GetColor("Color"))) : overrideColor;
-    float radiusInPixels => (ldtkFields != null) ? (overrideRadius != 0 ? overrideRadius : ldtkFields.GetFloat("Radius")) : overrideRadius;
-    public float brightness => (ldtkFields != null) ? (overrideBrightness != 0 ? overrideBrightness : ldtkFields.GetFloat("Brightness")) : overrideBrightness;
     public float radiusInUnits => radiusInPixels / 8f;
 
     public float blinkFrequency = 0;
     public float blinkAmount = 0;
 
-    float runtimeBrightness => brightness + Mathf.Sin(Time.time * blinkFrequency + phase) * blinkAmount;
+    [HideInInspector] public float opacity = 1;
+
+    float runtimeBrightness => brightness * opacity + Mathf.Sin(Time.time * blinkFrequency + phase) * blinkAmount;
 
     [HideInInspector] public float phase = 0;
 
@@ -74,26 +73,21 @@ public class PixelLight : MonoBehaviour
             switch (type)
             {
                 case PixelLightType.Point:
-                    CreatePointLightMesh();
+                    meshFilter.mesh = CreatePointLightMesh();
                     break;
                 case PixelLightType.Directional:
-                    CreateDirectionalLightMesh();
+                    meshFilter.mesh = CreateDirectionalLightMesh();
                     break;
             }
+
+            meshRenderer.sharedMaterial.SetFloat("_Radius", radiusInUnits);
+            meshRenderer.sharedMaterial.SetFloat("_Brightness", runtimeBrightness);
+            meshRenderer.sharedMaterial.SetColor("_Color", color);
             isDirty = false;
         }
     }
 
-    void OnDrawGizmosSelected()
-    {
-        if (type == PixelLightType.Point)
-        {
-            Gizmos.color = Color.white;
-            Gizmos.DrawWireSphere(transform.position, radiusInUnits);
-        }
-    }
-
-    void CreatePointLightMesh()
+    Mesh CreatePointLightMesh(bool ignoreCollisions = false)
     {
         Vector3[] vertices = new Vector3[numberOfRays + 1];
         int[] triangles = new int[numberOfRays * 3];
@@ -108,7 +102,7 @@ public class PixelLight : MonoBehaviour
         {
             float currentAngle = endAngle - angleStep * i;
             Vector2 direction = AngleToVector2(currentAngle);
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, radiusInUnits, collisionLayer);
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, radiusInUnits, ignoreCollisions ? 0 : collisionLayer);
             if (debugRays)
             {
                 Debug.DrawLine(transform.position, hit.point, Color.yellow);
@@ -133,14 +127,10 @@ public class PixelLight : MonoBehaviour
         mesh.triangles = triangles;
         mesh.RecalculateNormals();
 
-        meshFilter.mesh = mesh;
-
-        pixelLightMaterial.SetFloat("_Radius", radiusInUnits);
-        pixelLightMaterial.SetFloat("_Brightness", runtimeBrightness);
-        pixelLightMaterial.SetColor("_Color", color);
+        return mesh;
     }
 
-    void CreateDirectionalLightMesh()
+    Mesh CreateDirectionalLightMesh(bool ignoreCollisions = false)
     {
         Vector3[] vertices = new Vector3[(numberOfRays + 1)*2];
         int[] triangles = new int[numberOfRays * 6];
@@ -155,7 +145,7 @@ public class PixelLight : MonoBehaviour
         {
             var origin = (Vector2)transform.position + tangent * ((float)i / (float)numberOfRays - 0.5f) * halfArc;
 
-            RaycastHit2D hit = Physics2D.Raycast(origin, direction, radiusInUnits, collisionLayer);
+            RaycastHit2D hit = Physics2D.Raycast(origin, direction, radiusInUnits, ignoreCollisions ? 0 : collisionLayer);
 
             Vector2 hitPoint = (Vector2)origin + direction * (hit.collider != null ? hit.distance : radiusInUnits);
 
@@ -185,11 +175,16 @@ public class PixelLight : MonoBehaviour
         mesh.triangles = triangles;
         mesh.RecalculateNormals();
 
-        meshFilter.mesh = mesh;
+        return mesh;
+    }
 
-        pixelLightMaterial.SetFloat("_Radius", radiusInUnits);
-        pixelLightMaterial.SetFloat("_Brightness", runtimeBrightness);
-        pixelLightMaterial.SetColor("_Color", color);
+    void OnDrawGizmosSelected()
+    {
+        if (type == PixelLightType.Point)
+        {
+            Gizmos.color = Color.white;
+            Gizmos.DrawWireSphere(transform.position, radiusInUnits);
+        }
     }
 
     Vector2 AngleToVector2(float angleInDegrees)

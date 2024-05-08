@@ -46,7 +46,7 @@ Material:
     - _DitherTileSize: 4
     - _DitheringLevels: 17
     - _Levels: 17
-    - _LightLevels: 16
+    - _LightLevels: 8
     - _ScreenHeight: 72
     - _ScreenWidth: 128
     - _TileSize: 4

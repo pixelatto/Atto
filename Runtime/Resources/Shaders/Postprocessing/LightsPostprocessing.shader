@@ -1,9 +1,11 @@
-Shader "Atto/LightmasksPostprocessing"
+Shader "Atto/LightsPostprocessing"
 {
     Properties
     {
         _MainTex("Color (RGB)", 2D) = "white" {}
         _LuminosityTex("Luminosity", 2D) = "white" {}
+        _AmbientLight("Ambient Light", float) = 0
+        _Gamma("Gamma", float) = 1
     }
         SubShader
     {
@@ -33,6 +35,8 @@ Shader "Atto/LightmasksPostprocessing"
             sampler2D _LuminosityTex;
             float4 _MainTex_ST;
             float4 _LuminosityTex_ST;
+            float _AmbientLight;
+            float _Gamma;
 
             v2f vert(appdata v)
             {
@@ -46,7 +50,7 @@ Shader "Atto/LightmasksPostprocessing"
             {
                 fixed4 col = tex2D(_MainTex, i.uv);
                 fixed4 lum = tex2D(_LuminosityTex, i.uv);
-                return col * lum;
+                return col * pow(lum + _AmbientLight, _Gamma);
             }
             ENDCG
         }

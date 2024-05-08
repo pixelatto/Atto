@@ -175,7 +175,6 @@ public class CellularChunk : MonoBehaviour
 
     public void RasterLightBlockers()
     {
-        var lightBlockersLayerMask = LayerMask.GetMask("LightBlockers");
         for (int i = 0; i < pixelSize.x; i++)
         {
             for (int j = 0; j < pixelSize.y; j++)
@@ -188,7 +187,7 @@ public class CellularChunk : MonoBehaviour
                 else
                 {
                     int distanceToEmpty = GetDistanceToEmpty(i, j);
-                    cell.blocksLight = distanceToEmpty >= 3;
+                    cell.blocksLight = distanceToEmpty >= 2;
                 }
             }
         }
