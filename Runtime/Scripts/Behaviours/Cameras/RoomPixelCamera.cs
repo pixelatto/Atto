@@ -11,6 +11,8 @@ public class RoomPixelCamera : PixelCamera
     public Room currentRoom = null;
     [HideInInspector]public Camera cam;
 
+    bool ignoreOnce = true;
+
     void Awake()
     {
         cam = GetComponent<Camera>();
@@ -18,15 +20,18 @@ public class RoomPixelCamera : PixelCamera
 
     private void Start()
     {
-        if (currentRoom != null)
-        {
-            OnRoomEnter(currentRoom);
-        }
+        
     }
 
     public void OnRoomEnter(Room room)
     {
         currentRoom = room;
+
+        if (ignoreOnce)
+        {
+            ignoreOnce = false;
+            return;
+        }
 
         zoom = room.cameraZoom;
 

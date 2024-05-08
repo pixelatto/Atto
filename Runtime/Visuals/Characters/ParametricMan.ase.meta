@@ -6513,7 +6513,7 @@ ScriptedImporter:
     uvTransform: {x: 102, y: 74}
   - name: RightEye_Frame_16
     originalName: 
-    pivot: {x: -2, y: 1}
+    pivot: {x: -2, y: 0.5}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -6533,7 +6533,7 @@ ScriptedImporter:
     uvTransform: {x: 102, y: 84}
   - name: RightEye_Frame_17
     originalName: 
-    pivot: {x: -2, y: 1}
+    pivot: {x: -2, y: 0.5}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -6553,7 +6553,7 @@ ScriptedImporter:
     uvTransform: {x: 102, y: 94}
   - name: RightEye_Frame_18
     originalName: 
-    pivot: {x: -2, y: 1}
+    pivot: {x: -2, y: 0.5}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -6573,7 +6573,7 @@ ScriptedImporter:
     uvTransform: {x: 102, y: 104}
   - name: RightEye_Frame_19
     originalName: 
-    pivot: {x: -2, y: 1}
+    pivot: {x: -2, y: 0.5}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -7273,7 +7273,7 @@ ScriptedImporter:
     uvTransform: {x: 102, y: 414}
   - name: LeftEye_Frame_16
     originalName: 
-    pivot: {x: 0, y: 1}
+    pivot: {x: 0, y: 0.5}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -7293,7 +7293,7 @@ ScriptedImporter:
     uvTransform: {x: 102, y: 424}
   - name: LeftEye_Frame_17
     originalName: 
-    pivot: {x: 0, y: 1}
+    pivot: {x: 0, y: 0.5}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -7313,7 +7313,7 @@ ScriptedImporter:
     uvTransform: {x: 102, y: 434}
   - name: LeftEye_Frame_18
     originalName: 
-    pivot: {x: 0, y: 1}
+    pivot: {x: 0, y: 0.5}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -7333,7 +7333,7 @@ ScriptedImporter:
     uvTransform: {x: 102, y: 444}
   - name: LeftEye_Frame_19
     originalName: 
-    pivot: {x: 0, y: 1}
+    pivot: {x: 0, y: 0.5}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -12468,7 +12468,7 @@ ScriptedImporter:
       frameIndex: 16
       cellRect:
         x: 18
-        y: 14
+        y: 15
         width: 1
         height: 2
       spriteId: bd7dfdd6c439fdf4ebbc3264e017d32c
@@ -12476,7 +12476,7 @@ ScriptedImporter:
       frameIndex: 17
       cellRect:
         x: 18
-        y: 14
+        y: 15
         width: 1
         height: 2
       spriteId: 90261d711fdbd9e4494e7f171c116d3c
@@ -12484,7 +12484,7 @@ ScriptedImporter:
       frameIndex: 18
       cellRect:
         x: 18
-        y: 14
+        y: 15
         width: 1
         height: 2
       spriteId: c3fb98006f7d4ec40986f3b8dd3211de
@@ -12492,7 +12492,7 @@ ScriptedImporter:
       frameIndex: 19
       cellRect:
         x: 18
-        y: 14
+        y: 15
         width: 1
         height: 2
       spriteId: a95867432e1326b42bf30e6459538f62
@@ -12797,7 +12797,7 @@ ScriptedImporter:
       frameIndex: 16
       cellRect:
         x: 16
-        y: 14
+        y: 15
         width: 1
         height: 2
       spriteId: d7fd53974f57cb9469f261fb56945339
@@ -12805,7 +12805,7 @@ ScriptedImporter:
       frameIndex: 17
       cellRect:
         x: 16
-        y: 14
+        y: 15
         width: 1
         height: 2
       spriteId: 1bda0366e8015a44e936beec2b3c937f
@@ -12813,7 +12813,7 @@ ScriptedImporter:
       frameIndex: 18
       cellRect:
         x: 16
-        y: 14
+        y: 15
         width: 1
         height: 2
       spriteId: ddc8dc0bade9afc46a068ac16b3e3a5d
@@ -12821,7 +12821,7 @@ ScriptedImporter:
       frameIndex: 19
       cellRect:
         x: 16
-        y: 14
+        y: 15
         width: 1
         height: 2
       spriteId: 14a80fd372cd55244811504520e919f8

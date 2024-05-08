@@ -2,8 +2,8 @@ Shader "Atto/GrayscaleMask"
 {
     Properties{
         _MainTex("Texture", 2D) = "white" {}
-        _TopThreshold("Top Threshold", Float) = 0.5
-        _LowThreshold("Low Threshold", Float) = 0
+        [PerRendererData] _TopThreshold("Top Threshold", Float) = 0.5
+        [PerRendererData] _LowThreshold("Low Threshold", Float) = 0
         _Color("Color", Color) = (1,1,1,1)
     }
         SubShader{
@@ -46,12 +46,8 @@ Shader "Atto/GrayscaleMask"
                 }
 
                 fixed4 frag(v2f i) : SV_Target {
-                    fixed4 texColor = tex2D(_MainTex, i.uv);
-                    float grayScale = texColor.r * texColor.a; // Assume texture is greyscale (R=G=B)
-
-                    // Calculate alpha based on the threshold
-
-                    float alpha = ((grayScale <= _TopThreshold) && (grayScale >= _LowThreshold)) ? 1.0 : 0.0;
+                    fixed4 texColor = tex2D(_MainTex, i.uv) - 0.1;
+                    float alpha = ((texColor.r <= _TopThreshold) && (texColor.r >= _LowThreshold)) ? 1.0 : 0.0;
                     return fixed4(i.color.rgb, alpha * texColor.a);
                 }
                 ENDCG

@@ -24,7 +24,7 @@ public class CellularDebug : MonoBehaviour
                 for (float j = -brushSize * 0.5f; j < brushSize * 0.5f; j++)
                 {
                     var globalPixelPosition = pixelPosition + new Vector2Int(Mathf.FloorToInt(i), Mathf.FloorToInt(j));
-                    var newCell = new Cell(mouseSpawnMaterial) { blocksLight = true };
+                    var newCell = new Cell(mouseSpawnMaterial);
 
                     CellularAutomata.instance.SetCell(globalPixelPosition, newCell);
                 }

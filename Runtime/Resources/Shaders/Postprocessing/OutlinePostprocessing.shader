@@ -13,7 +13,6 @@ Shader "Atto/OutlinePostprocessing"
             Pass
             {
                 ZTest Always Cull Off ZWrite Off
-                //Blend SrcAlpha OneMinusSrcAlpha // Para manejar la transparencia
 
                 CGPROGRAM
                 #pragma vertex vert
@@ -58,9 +57,11 @@ Shader "Atto/OutlinePostprocessing"
                     float4 right= tex2D(_MainTex, i.uv + offsetRight);
 
                     float4 texColor = (up + down + left + right + center);
-                    float value = ceil(texColor.r + texColor.g + texColor.b);
+                    float value = saturate(ceil(texColor.r + texColor.g + texColor.b)) - saturate(ceil(center.r + center.g + center.b));
                     
-                    return 1-value;
+                    float4 col = saturate(value * _OutlineColor + (1 - value));
+                    col.a = 1;
+                    return col;
                 }
                 ENDCG
             }

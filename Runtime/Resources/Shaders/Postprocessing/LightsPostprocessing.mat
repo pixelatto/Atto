@@ -34,7 +34,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _AmbientLight: 0
-    - _Gamma: 2
+    - _Gamma: 3
     - _Intensify: 1
     m_Colors: []
   m_BuildTextureStacks: []

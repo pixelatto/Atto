@@ -5,7 +5,7 @@ using UnityEngine;
 [ExecuteAlways]
 public class AmbientLight : MonoBehaviour
 {
-    public float baseAmbientLight = 0.2f;
+    [Range(0, 1)] public float baseAmbientLight = 0.2f;
 
     [HideInInspector] public float attenuation = 1;
 
