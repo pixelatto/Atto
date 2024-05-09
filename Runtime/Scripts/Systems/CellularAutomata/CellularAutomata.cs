@@ -172,9 +172,13 @@ public class CellularAutomata : MonoBehaviour
         }
     }
 
-    public void DestroyCell(Vector2Int position)
+    /// <summary>
+    /// Tries to destroy a cell and returns true if suceeded
+    /// </summary>
+    public bool DestroyCell(Vector2Int position)
     {
-        SetCell(position, new Cell(CellMaterial.None));
+        var cell = SetCell(position, new Cell(CellMaterial.None));
+        return cell == null;
     }
 
     public Cell CreateCell(Vector2Int position, CellMaterial material)
@@ -211,12 +215,12 @@ public class CellularAutomata : MonoBehaviour
         }
     }
 
-    void SetCell(Vector2Int position, Cell cell)
+    Cell SetCell(Vector2Int position, Cell cell)
     {
-        SetCell(position.x, position.y, cell);
+        return SetCell(position.x, position.y, cell);
     }
 
-    void SetCell(int x, int y, Cell cell)
+    Cell SetCell(int x, int y, Cell cell)
     {
         Vector2Int chunkAddress = GetPixelChunkAddress(x, y);
         CellularChunk targetChunk = FindChunk(chunkAddress);
@@ -224,13 +228,14 @@ public class CellularAutomata : MonoBehaviour
         if (targetChunk == null)
         {
             //Debug.Log("Can't find chunk at " + chunkAddress);
-            return;
+            return null;
         }
 
         Vector2Int localChunkCoords = new Vector2Int(x - targetChunk.pixelPosition.x, y - targetChunk.pixelPosition.y);
 
         cell.lastUpdateTick = currentTick;
         targetChunk[localChunkCoords.x, localChunkCoords.y] = cell;
+        return targetChunk[localChunkCoords.x, localChunkCoords.y];
     }
 
     public Cell GetCell(Vector2Int position)

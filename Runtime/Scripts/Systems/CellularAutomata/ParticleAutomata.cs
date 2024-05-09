@@ -21,6 +21,8 @@ public class ParticleAutomata : MonoBehaviour
     public static ParticleAutomata instance { get { if (instance_ == null) { instance_ = FindObjectOfType<ParticleAutomata>(); } return instance_; } }
     static ParticleAutomata instance_;
 
+    public bool debug = false;
+
     private void Awake()
     {
         PrepareClearTexture();
@@ -53,6 +55,19 @@ public class ParticleAutomata : MonoBehaviour
         IntegrateParticles();
         CheckCollisions();
         RasterParticles();
+        DrawDebugGizmos();
+    }
+
+    private void DrawDebugGizmos()
+    {
+        if (debug && Debug.isDebugBuild)
+        {
+            foreach (var particle in particles)
+            {
+                Draw.Circle(particle.position, 0.5f.PixelsToUnits(), Color.magenta, 8);
+                Draw.Vector(particle.position, particle.position + particle.speed * Time.deltaTime, Color.cyan);
+            }
+        }
     }
 
     private void IntegrateParticles()
@@ -105,15 +120,23 @@ public class ParticleAutomata : MonoBehaviour
 
     public Particle CellToParticle(Cell cell, Vector2Int globalPixelPosition)
     {
-        var newParticle = new Particle(cell, CellularAutomata.PixelToWorldPosition(globalPixelPosition));
+        var worldPosition = CellularAutomata.PixelToWorldPosition(globalPixelPosition);
+        var newParticle = new Particle(cell, worldPosition);
         particles.Add(newParticle);
-        cellularAutomata.DestroyCell(globalPixelPosition);
+        bool succeeded = cellularAutomata.DestroyCell(globalPixelPosition);
+        if (!succeeded)
+        {
+            Debug.LogWarning("Error!");
+        }
+        Draw.Circle(worldPosition, 0.5f.PixelsToUnits(), Color.red, 8);
+        Debug.DrawLine(worldPosition + Vector3.up * 1 / 8f, worldPosition + Vector3.down*1/8f, Color.red, 1f);
+        Debug.DrawLine(worldPosition + Vector3.left * 1 / 8f, worldPosition + Vector3.right * 1 / 8f, Color.red, 1f);
         return newParticle;
     }
 
     public Cell ParticleToCell(Particle particle)
     {
-        Vector2Int validPosition = Vector2Int.zero;
+        Vector2Int? validPosition = null;
         var currentPixelPosition = CellularAutomata.WorldToPixelPosition(particle.position);
         var currentCell = cellularAutomata.GetCell(currentPixelPosition);
         var speedDirection = -particle.speed.normalized;
@@ -123,9 +146,9 @@ public class ParticleAutomata : MonoBehaviour
         }
         else
         {
-            for (float i = 0; i < 3; i++)
+            for (float i = 0; i < 10; i++)
             {
-                var candidatePosition = CellularAutomata.WorldToPixelPosition(particle.position + i * speedDirection);
+                var candidatePosition = CellularAutomata.WorldToPixelPosition(particle.position + i.PixelsToUnits() * speedDirection);
                 var candidateCell = cellularAutomata.GetCell(candidatePosition);
                 if (candidateCell.IsEmpty())
                 {
@@ -135,9 +158,9 @@ public class ParticleAutomata : MonoBehaviour
             }
         }
 
-        if (validPosition != Vector2Int.zero)
+        if (validPosition != null)
         {
-            var newCell = cellularAutomata.CreateCell(validPosition, particle.material);
+            var newCell = cellularAutomata.CreateCell((Vector2Int)validPosition, particle.material);
             particles.Remove(particle);
             return newCell;
         }

@@ -135,8 +135,8 @@ public class CellularChunk : MonoBehaviour
                     if (!found)
                     {
                         Draw.Circle(PixelToWorldPosition(i, j), 0.5f.PixelsToUnits(), Color.magenta);
-                        Debug.Break();
                         Debug.Log(name + ": Material color identifier not defined: " + color + " at coordinates (" + i + ", " + j + ")");
+                        Debug.Break();
                     }
                 }
                 cells[Index(i, j)] = newCell;

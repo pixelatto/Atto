@@ -52,6 +52,8 @@ public class Cloud : MonoBehaviour
     {
         var width = Random.Range(minSize.x, maxSize.x);
         var height = Random.Range(minSize.y, maxSize.y);
+        width -= width % 2;
+        height -= height % 2;
         size = new Vector2Int(width, height);
         labels = new int[width, height];
 
