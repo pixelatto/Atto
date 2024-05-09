@@ -15,7 +15,6 @@ public class CellularAutomata : MonoBehaviour
     float lastUpdateTime = 0;
 
     public static CellularAutomata instance { get { if (instance_ == null) { instance_ = FindObjectOfType<CellularAutomata>(); } return instance_; } }
-
     static CellularAutomata instance_;
 
     public bool hasChanged = false;
@@ -126,6 +125,7 @@ public class CellularAutomata : MonoBehaviour
                             var canFallRight = CanDisplace(currentPosition, bottomRightPosition);
                             var canSlideLeft = CanDisplace(currentPosition, leftPosition);
                             var canSlideRight = CanDisplace(currentPosition, rightPosition);
+                            /*
                             if (canFallLeft || canFallRight)
                             {
                                 int direction = (canFallLeft ? -1 : 0) + (canFallRight ? 1 : 0);
@@ -135,7 +135,8 @@ public class CellularAutomata : MonoBehaviour
                                 }
                                 SwapCells(currentPosition, currentPosition + new Vector2Int(direction, -1));
                             }
-                            else if (canSlideLeft || canSlideRight)
+                            else */
+                            if (canSlideLeft || canSlideRight)
                             {
                                 int direction = (canSlideLeft ? -1 : 0) + (canSlideRight ? 1 : 0);
                                 if (direction == 0)

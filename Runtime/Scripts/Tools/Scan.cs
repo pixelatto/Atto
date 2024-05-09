@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,5 +26,10 @@ public static class Scan
         }
 
         return hits.ToArray();
+    }
+
+    public static Collider2D[] NearbyObjects(Vector2 position, float radius, int layerMask)
+    {
+        return Physics2D.OverlapCircleAll(position, radius, layerMask);
     }
 }

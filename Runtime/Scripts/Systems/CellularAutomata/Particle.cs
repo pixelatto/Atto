@@ -14,6 +14,14 @@ public class Particle
 
     public Vector2 previousPosition { get; private set; }
 
+    public Particle(Vector2 worldPosition, CellMaterial cellMaterial)
+    {
+        this.material = cellMaterial;
+        this.position = worldPosition;
+        this.previousPosition = worldPosition;
+        color = CellularAutomata.instance.materials.FindMaterial(material).GetColor();
+    }
+
     public Particle(Cell source, Vector2 worldPosition)
     {
         this.material = source.material;

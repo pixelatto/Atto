@@ -18,6 +18,9 @@ public class ParticleAutomata : MonoBehaviour
 
     Color32[] clearColors;
 
+    public static ParticleAutomata instance { get { if (instance_ == null) { instance_ = FindObjectOfType<ParticleAutomata>(); } return instance_; } }
+    static ParticleAutomata instance_;
+
     private void Awake()
     {
         PrepareClearTexture();
@@ -91,6 +94,13 @@ public class ParticleAutomata : MonoBehaviour
             var pixelPosition = CellularAutomata.WorldToPixelPosition(particle.position);
             texture.SetPixel(pixelPosition.x, pixelPosition.y, particle.color);
         }
+    }
+
+    public Particle CreateParticle(Vector2 worldPosition, CellMaterial material)
+    {
+        var newParticle = new Particle(worldPosition, material);
+        particles.Add(newParticle);
+        return newParticle;
     }
 
     public Particle CellToParticle(Cell cell, Vector2Int globalPixelPosition)
