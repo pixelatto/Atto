@@ -2,8 +2,17 @@
 
 public class CellularDebug : MonoBehaviour
 {
+    [Header("Global")]
     public float brushSize = 3;
     public CellMaterial mouseSpawnMaterial = CellMaterial.Dirt;
+
+    [Header("Particles")]
+    public bool spawnAsParticles = false;
+    public float particleSpawnSpeed = 5;
+
+    [Header("References")]
+    public CellularAutomata cellularAutomata;
+    public ParticleAutomata particleAutomata;
 
     private void Update()
     {
@@ -24,9 +33,13 @@ public class CellularDebug : MonoBehaviour
                 for (float j = -brushSize * 0.5f; j < brushSize * 0.5f; j++)
                 {
                     var globalPixelPosition = pixelPosition + new Vector2Int(Mathf.FloorToInt(i), Mathf.FloorToInt(j));
-                    var newCell = new Cell(mouseSpawnMaterial);
 
-                    CellularAutomata.instance.SetCell(globalPixelPosition, newCell);
+                    var newCell = cellularAutomata.CreateCell(globalPixelPosition, mouseSpawnMaterial);
+                    if (spawnAsParticles)
+                    {
+                        var newParticle = particleAutomata.CellToParticle(newCell, globalPixelPosition);
+                        newParticle.speed = Random.insideUnitCircle * particleSpawnSpeed;
+                    }
                 }
             }
         }
@@ -37,7 +50,7 @@ public class CellularDebug : MonoBehaviour
                 for (float j = -brushSize*0.5f; j < brushSize*0.5f; j++)
                 {
                     var globalPixelPosition = pixelPosition + new Vector2Int(Mathf.FloorToInt(i), Mathf.FloorToInt(j));
-                    CellularAutomata.instance.SetCell(globalPixelPosition, new Cell(CellMaterial.None));
+                    cellularAutomata.DestroyCell(globalPixelPosition);
                 }
             }
         }

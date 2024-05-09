@@ -4,7 +4,7 @@ using UnityEngine;
 
 [ExecuteAlways]
 [RequireComponent(typeof(Camera))]
-public class Camera2CameraSync : MonoBehaviour
+public class CamerasSync : MonoBehaviour
 {
     public Camera target;
 

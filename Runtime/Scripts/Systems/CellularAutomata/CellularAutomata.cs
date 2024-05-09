@@ -8,6 +8,8 @@ public class CellularAutomata : MonoBehaviour
     public float updateRate = 0.1f;
     public UpdateType updateType = UpdateType.Manual; public enum UpdateType { Manual, Automatic }
 
+    public PixelCamera pixelCamera;
+
     public static LayerMask layerMask => LayerMask.GetMask("Terrain");
 
     float lastUpdateTime = 0;
@@ -23,21 +25,13 @@ public class CellularAutomata : MonoBehaviour
     public static Vector2Int roomPixelSize = new Vector2Int(128, 72);
     public static Vector2 roomWorldSize = new Vector2(128 / 8f, 72 / 8f);
 
-    public Vector3 cameraBottomLeft { get; private set; }
-    public Vector2Int pixelBottomLeft { get; private set; }
-    public RectInt viewPortPixelRect { get; private set; }
-    public Rect viewPortWorldRect { get; private set; }
-
     public static Cell emptyCell = new Cell(CellMaterial.None);
-
-    Camera mainCamera;
 
     public static uint currentTick = 0;
 
     private void Start()
     {
         currentTick = 0;
-        mainCamera = Camera.main;
         var chunks = FindObjectsOfType<CellularChunk>();
         foreach (var chunk in chunks)
         {
@@ -71,19 +65,11 @@ public class CellularAutomata : MonoBehaviour
     {
         hasChanged = false;
 
-        int viewPortLookaheadPixels = 32;
-        cameraBottomLeft = mainCamera.transform.position + new Vector3(-mainCamera.orthographicSize * 16f / 9f, -mainCamera.orthographicSize, 0);
-        pixelBottomLeft =  new Vector2Int(Mathf.RoundToInt(cameraBottomLeft.x * 8f), Mathf.RoundToInt(cameraBottomLeft.y * 8f));
-        viewPortPixelRect = new RectInt(pixelBottomLeft.x, pixelBottomLeft.y, roomPixelSize.x, roomPixelSize.y).Grow(viewPortLookaheadPixels);
-        viewPortWorldRect = new Rect(cameraBottomLeft.x, cameraBottomLeft.y, roomPixelSize.x/8f, roomPixelSize.y / 8f).Grow(viewPortLookaheadPixels / 8f);
-
-        Draw.Rect(viewPortWorldRect, Color.cyan);
-
-        for (int j = viewPortPixelRect.y; j <= viewPortPixelRect.y + viewPortPixelRect.height; j++)
+        for (int j = pixelCamera.lookAheadPixelRect.y; j <= pixelCamera.lookAheadPixelRect.y + pixelCamera.lookAheadPixelRect.height; j++)
         {
-            for (int i = viewPortPixelRect.x; i <= viewPortPixelRect.x + viewPortPixelRect.width; i++)
+            for (int i = pixelCamera.lookAheadPixelRect.x; i <= pixelCamera.lookAheadPixelRect.x + pixelCamera.lookAheadPixelRect.width; i++)
             {
-                int x = flip ? (viewPortPixelRect.x + viewPortPixelRect.width - (i - viewPortPixelRect.x)) : i;
+                int x = flip ? (pixelCamera.lookAheadPixelRect.x + pixelCamera.lookAheadPixelRect.width - (i - pixelCamera.lookAheadPixelRect.x)) : i;
 
                 int y = j;
                 var currentPosition = new Vector2Int(x, y);
@@ -177,10 +163,6 @@ public class CellularAutomata : MonoBehaviour
                                 }
                                 distance = Mathf.Max(1, distance);
                                 SwapCells(currentPosition, currentPosition + new Vector2Int(direction * distance, fall));
-                                //if (Random.value > 0.995f)
-                                //{
-                                //    CreateCell(currentPosition, currentCell.material);
-                                //}
                             }
                         }
                     }
@@ -189,14 +171,16 @@ public class CellularAutomata : MonoBehaviour
         }
     }
 
-    void DestroyCell(Vector2Int position)
+    public void DestroyCell(Vector2Int position)
     {
         SetCell(position, new Cell(CellMaterial.None));
     }
 
-    void CreateCell(Vector2Int position, CellMaterial material)
+    public Cell CreateCell(Vector2Int position, CellMaterial material)
     {
-        SetCell(position, new Cell(material));
+        var newCell = new Cell(material);
+        SetCell(position, newCell);
+        return newCell;
     }
 
     void SwapCells(Vector2Int oldPosition, Vector2Int newPosition)
@@ -226,7 +210,7 @@ public class CellularAutomata : MonoBehaviour
         }
     }
 
-    public void SetCell(Vector2Int position, Cell cell)
+    void SetCell(Vector2Int position, Cell cell)
     {
         SetCell(position.x, position.y, cell);
     }
@@ -272,6 +256,11 @@ public class CellularAutomata : MonoBehaviour
     public static Vector2Int WorldToPixelPosition(Vector3 position)
     {
         return new Vector2Int(Mathf.RoundToInt(position.x * 8f), Mathf.RoundToInt(position.y * 8f));
+    }
+
+    public static Vector3 PixelToWorldPosition(Vector2Int pixelPosition)
+    {
+        return new Vector3((pixelPosition.x + 0.5f) / 8f, (pixelPosition.y + 0.5f) / 8f, 0);
     }
 
     public bool CanDisplace(Vector2Int origin, Vector2Int target)

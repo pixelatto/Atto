@@ -79,8 +79,8 @@ public class CellularChunk : MonoBehaviour
         }
 
         var currentTerrainRaster = CellularRasterizer.instance.RasterChunk(this);
-        PixelsToCells(currentTerrainRaster);
-        PaintSurfacePixels(surfaceColor);
+        RasterTerrain(currentTerrainRaster);
+        RasterSurfacePixels(surfaceColor);
         RasterLightBlockers();
         CheckTexture();
         RenderChunk();
@@ -109,7 +109,7 @@ public class CellularChunk : MonoBehaviour
         }
     }
 
-    public void PixelsToCells(Texture2D terrainRaster)
+    public void RasterTerrain(Texture2D terrainRaster)
     {
         for (int i = 0; i < terrainRaster.width; i++)
         {
@@ -149,7 +149,7 @@ public class CellularChunk : MonoBehaviour
         return worldPosition + new Vector2((i + 0.5f) / 8f, (j + 0.5f) / 8f);
     }
 
-    public void PaintSurfacePixels(Color mainSurfaceColor)
+    public void RasterSurfacePixels(Color mainSurfaceColor)
     {
         if (mainSurfaceColor == Color.clear)
         {
