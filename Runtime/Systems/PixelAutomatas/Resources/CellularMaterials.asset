@@ -16,6 +16,7 @@ MonoBehaviour:
   - cellMaterial: 1
     movement: 1
     fluidity: 1
+    temperature: 0
     appearance: {fileID: 21300000, guid: f842b45f0fc48a24e827a360c99c9d94, type: 3}
     identifierColor:
       serializedVersion: 2
@@ -24,6 +25,7 @@ MonoBehaviour:
   - cellMaterial: 2
     movement: 2
     fluidity: 1
+    temperature: 0
     appearance: {fileID: 21300000, guid: 67cfaa3fb054e744386bcdc980f8c560, type: 3}
     identifierColor:
       serializedVersion: 2
@@ -32,8 +34,36 @@ MonoBehaviour:
   - cellMaterial: 3
     movement: 3
     fluidity: 5
+    temperature: 0
     appearance: {fileID: 21300000, guid: 83aeb07c9de90554b981d23def81bd5d, type: 3}
     identifierColor:
       serializedVersion: 2
       rgba: 4292963931
+    opacity: 0.5
+  - cellMaterial: 4
+    movement: 3
+    fluidity: 1
+    temperature: 500
+    appearance: {fileID: 21300000, guid: 7d34c1ece8e53924d83647888f98cbcf, type: 3}
+    identifierColor:
+      serializedVersion: 2
+      rgba: 4281417126
+    opacity: 1
+  - cellMaterial: 5
+    movement: 4
+    fluidity: 1
+    temperature: 400
+    appearance: {fileID: 21300000, guid: 5812fccd0b6d2664e98d5b52ae5be407, type: 3}
+    identifierColor:
+      serializedVersion: 2
+      rgba: 4281694169
+    opacity: 1
+  - cellMaterial: 6
+    movement: 3
+    fluidity: 5
+    temperature: 0
+    appearance: {fileID: 21300000, guid: c411c51088a98e64f8e8efcbffe09e96, type: 3}
+    identifierColor:
+      serializedVersion: 2
+      rgba: 4285719207
     opacity: 0.5

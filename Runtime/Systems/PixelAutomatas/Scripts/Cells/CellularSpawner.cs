@@ -50,7 +50,7 @@ public class CellularSpawner : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning("Can't spawn", gameObject);
+                //Debug.LogWarning("Can't spawn", gameObject);
             }
         }
     }

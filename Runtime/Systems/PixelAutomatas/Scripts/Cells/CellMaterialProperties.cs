@@ -5,6 +5,7 @@ public class CellMaterialProperties
 {
     public CellMaterial cellMaterial = CellMaterial.None;
     public CellMovement movement = CellMovement.Undefined;
+    public int gravity = -1;
     public int fluidity = 1;
     public int temperature = 0;
     public Sprite appearance;

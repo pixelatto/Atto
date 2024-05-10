@@ -15,6 +15,7 @@ public class Cell
     CellMaterialProperties _materialProperties;
 
     public uint lastUpdateTick = 0;
+    public int  gravity => materialProperties.gravity;
 
     public bool wasUpdatedThisTick => lastUpdateTick == CellularAutomata.currentTick;
 
@@ -70,9 +71,19 @@ public class Cell
         return movement == CellMovement.Fluid;
     }
 
+    public bool IsGas()
+    {
+        return movement == CellMovement.Gas;
+    }
+
     public bool IsHotterThan(int threshold)
     {
         return materialProperties != null && materialProperties.temperature > threshold;
+    }
+
+    public bool IsColderThan(int threshold)
+    {
+        return materialProperties != null && materialProperties.temperature < threshold;
     }
 
     public void Destroy()

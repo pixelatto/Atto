@@ -12,8 +12,6 @@ public class CellularAutomata : MonoBehaviour
 
     public static LayerMask layerMask => LayerMask.GetMask("Terrain");
 
-    float lastUpdateTime = 0;
-
     public static CellularAutomata instance { get { if (instance_ == null) { instance_ = FindObjectOfType<CellularAutomata>(); } return instance_; } }
     static CellularAutomata instance_;
 
@@ -24,6 +22,11 @@ public class CellularAutomata : MonoBehaviour
     public static Cell emptyCell = new Cell(CellMaterial.None);
 
     public static uint currentTick = 0;
+
+    float lastUpdateTime = 0;
+
+    Vector2Int currentPosition;
+    Cell currentCell;
 
     private void Start()
     {
@@ -68,104 +71,135 @@ public class CellularAutomata : MonoBehaviour
                 int x = flip ? (pixelCamera.lookAheadPixelRect.x + pixelCamera.lookAheadPixelRect.width - (i - pixelCamera.lookAheadPixelRect.x)) : i;
 
                 int y = j;
-                var currentPosition = new Vector2Int(x, y);
-                var currentCell = GetCell(currentPosition);
+                currentPosition = new Vector2Int(x, y);
+                currentCell = GetCell(currentPosition);
 
                 if (currentCell.material != CellMaterial.None && !currentCell.wasUpdatedThisTick)
                 {
                     var movementType = currentCell.movement;
 
-                    if (movementType == CellMovement.Static)
+                    switch (movementType)
                     {
-                        SwapCells(currentPosition, currentPosition);
-                    }
-                    else if (movementType == CellMovement.Granular)
-                    {
-                        var bottomPosition = new Vector2Int(x, y - 1);
-                        var bottomLeftPosition = new Vector2Int(x - 1, y - 1);
-                        var bottomRightPosition = new Vector2Int(x + 1, y - 1);
-                        var canFallDown = CanDisplace(currentPosition, bottomPosition);
-                        if (canFallDown)
-                        {
-                            SwapCells(currentPosition, bottomPosition);
-                        }
-                        else
-                        {
-                            var canFallLeft = CanDisplace(currentPosition, bottomLeftPosition);
-                            var canFallRight = CanDisplace(currentPosition, bottomRightPosition);
-                            if (canFallLeft || canFallRight)
-                            {
-                                int direction = (canFallLeft ? -1 : 0) + (canFallRight ? 1 : 0);
-                                if (direction == 0)
-                                {
-                                    direction = (Random.value > 0.5f) ? 1 : -1;
-                                }
-                                SwapCells(currentPosition, currentPosition + new Vector2Int(direction, -1));
-                            }
-                        }
-                    }
-                    else if (movementType == CellMovement.Fluid)
-                    {
-                        var bottomPosition = new Vector2Int(x, y - 1);
-                        var bottomLeftPosition = new Vector2Int(x - 1, y - 1);
-                        var bottomRightPosition = new Vector2Int(x + 1, y - 1);
-                        var canFallDown = CanDisplace(currentPosition, bottomPosition);
-                        if (canFallDown)
-                        {
-                            SwapCells(currentPosition, bottomPosition);
-                        }
-                        else
-                        {
-                            var leftPosition = new Vector2Int(x - 1, y);
-                            var rightPosition = new Vector2Int(x + 1, y);
-                            var canFallLeft = CanDisplace(currentPosition, bottomLeftPosition);
-                            var canFallRight = CanDisplace(currentPosition, bottomRightPosition);
-                            var canSlideLeft = CanDisplace(currentPosition, leftPosition);
-                            var canSlideRight = CanDisplace(currentPosition, rightPosition);
-                            /*
-                            if (canFallLeft || canFallRight)
-                            {
-                                int direction = (canFallLeft ? -1 : 0) + (canFallRight ? 1 : 0);
-                                if (direction == 0)
-                                {
-                                    direction = (Random.value > 0.5f) ? 1 : -1;
-                                }
-                                SwapCells(currentPosition, currentPosition + new Vector2Int(direction, -1));
-                            }
-                            else */
-                            if (canSlideLeft || canSlideRight)
-                            {
-                                int direction = (canSlideLeft ? -1 : 0) + (canSlideRight ? 1 : 0);
-                                if (direction == 0)
-                                {
-                                    direction = (Random.value > 0.5f) ? 1 : -1;
-                                }
-                                int distance = 0;
-                                int fall = 0;
-                                var fluidity = currentCell.fluidity;
-                                for (int spread = 1; spread < fluidity; spread++)
-                                {
-                                    var spreadPosition = currentPosition + new Vector2Int(spread * direction, 0);
-                                    var spreadPositionBottom = currentPosition + new Vector2Int(spread * direction, -1);
-                                    if (CanDisplace(currentPosition, spreadPositionBottom))
-                                    {
-                                        distance = spread;
-                                        fall = -1;
-                                        break;
-                                    }
-                                    else if (!CanDisplace(currentPosition, spreadPosition))
-                                    {
-                                        distance = spread - 1;
-                                        break;
-                                    }
-                                }
-                                distance = Mathf.Max(1, distance);
-                                SwapCells(currentPosition, currentPosition + new Vector2Int(direction * distance, fall));
-                            }
-                        }
+                        case CellMovement.Static:
+                            break;
+                        case CellMovement.Granular:
+                            GranularMovement();
+                            break;
+                        case CellMovement.Fluid:
+                            FluidMovement();
+                            break;
+                        case CellMovement.Gas:
+                            GasMovement();
+                            break;
                     }
                 }
             }
+        }
+    }
+
+    private void FluidMovement()
+    {
+        int x = currentPosition.x;
+        int y = currentPosition.y;
+        var bottomPosition = new Vector2Int(x, y - 1);
+        var bottomLeftPosition = new Vector2Int(x - 1, y - 1);
+        var bottomRightPosition = new Vector2Int(x + 1, y - 1);
+        var canFallDown = CanDisplace(currentPosition, bottomPosition);
+        if (canFallDown)
+        {
+            SwapCells(currentPosition, bottomPosition);
+        }
+        else
+        {
+            var leftPosition = new Vector2Int(x - 1, y);
+            var rightPosition = new Vector2Int(x + 1, y);
+            //var canFallLeft = CanDisplace(currentPosition, bottomLeftPosition);
+            //var canFallRight = CanDisplace(currentPosition, bottomRightPosition);
+            var canSlideLeft = CanDisplace(currentPosition, leftPosition);
+            var canSlideRight = CanDisplace(currentPosition, rightPosition);
+            if (canSlideLeft || canSlideRight)
+            {
+                int direction = (canSlideLeft ? -1 : 0) + (canSlideRight ? 1 : 0);
+                if (direction == 0)
+                {
+                    direction = (Random.value > 0.5f) ? 1 : -1;
+                }
+                int distance = 0;
+                int fall = 0;
+                var fluidity = currentCell.fluidity;
+                for (int spread = 1; spread < fluidity; spread++)
+                {
+                    var spreadPosition = currentPosition + new Vector2Int(spread * direction, 0);
+                    var spreadPositionBottom = currentPosition + new Vector2Int(spread * direction, -1);
+                    if (CanDisplace(currentPosition, spreadPositionBottom))
+                    {
+                        distance = spread;
+                        fall = -1;
+                        break;
+                    }
+                    else if (!CanDisplace(currentPosition, spreadPosition))
+                    {
+                        distance = spread - 1;
+                        break;
+                    }
+                }
+                distance = Mathf.Max(1, distance);
+                SwapCells(currentPosition, currentPosition + new Vector2Int(direction * distance, fall));
+            }
+        }
+    }
+
+    private void GranularMovement()
+    {
+        int x = currentPosition.x;
+        int y = currentPosition.y;
+        var bottomPosition = new Vector2Int(x, y - 1);
+        var bottomLeftPosition = new Vector2Int(x - 1, y - 1);
+        var bottomRightPosition = new Vector2Int(x + 1, y - 1);
+        var canFallDown = CanDisplace(currentPosition, bottomPosition);
+        if (canFallDown)
+        {
+            SwapCells(currentPosition, bottomPosition);
+        }
+        else
+        {
+            var canFallLeft = CanDisplace(currentPosition, bottomLeftPosition);
+            var canFallRight = CanDisplace(currentPosition, bottomRightPosition);
+            if (canFallLeft || canFallRight)
+            {
+                int direction = (canFallLeft ? -1 : 0) + (canFallRight ? 1 : 0);
+                if (direction == 0)
+                {
+                    direction = (Random.value > 0.5f) ? 1 : -1;
+                }
+                SwapCells(currentPosition, currentPosition + new Vector2Int(direction, -1));
+            }
+        }
+    }
+
+    private void GasMovement()
+    {
+        int x = currentPosition.x;
+        int y = currentPosition.y;
+
+        List<Vector2Int> targetPositions = new List<Vector2Int>();
+        var fluidity = currentCell.fluidity;
+        for (int i = -fluidity; i <= fluidity; i++)
+        {
+            for (int j = -fluidity; j <= fluidity; j++)
+            {
+                var targetPosition = new Vector2Int(x+i, y+j + currentCell.gravity);
+                var targetCell = GetCell(targetPosition);
+                if (targetCell.IsEmpty() || targetCell.IsGas())
+                {
+                    targetPositions.Add(targetPosition);
+                }
+            }
+        }
+        if (targetPositions.Count > 0)
+        {
+            var randomPosition = targetPositions.PickRandom();
+            SwapCells(currentPosition, randomPosition);
         }
     }
 
@@ -305,6 +339,6 @@ public class CellularAutomata : MonoBehaviour
     }
 }
 
-public enum CellMaterial { None = 0, Rock = 1, Dirt = 2, Water = 3 }
-public enum CellMovement { Undefined, Static, Granular, Fluid }
+public enum CellMaterial { None = 0, Rock = 1, Dirt = 2, Water = 3, Lava = 4, Fire = 5, Acid = 6 }
+public enum CellMovement { Undefined, Static, Granular, Fluid, Gas }
 
