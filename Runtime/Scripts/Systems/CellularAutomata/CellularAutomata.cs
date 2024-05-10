@@ -175,16 +175,16 @@ public class CellularAutomata : MonoBehaviour
     /// <summary>
     /// Tries to destroy a cell and returns true if suceeded
     /// </summary>
-    public bool DestroyCell(Vector2Int position)
+    public bool DestroyCell(Vector2Int globalPixelPosition)
     {
-        var cell = SetCell(position, new Cell(CellMaterial.None));
+        var cell = SetCell(globalPixelPosition, new Cell(CellMaterial.None));
         return cell == null;
     }
 
-    public Cell CreateCell(Vector2Int position, CellMaterial material)
+    public Cell CreateCell(Vector2Int globalPixelPosition, CellMaterial material)
     {
         var newCell = new Cell(material);
-        SetCell(position, newCell);
+        SetCell(globalPixelPosition, newCell);
         return newCell;
     }
 
@@ -215,9 +215,9 @@ public class CellularAutomata : MonoBehaviour
         }
     }
 
-    Cell SetCell(Vector2Int position, Cell cell)
+    Cell SetCell(Vector2Int globalPixelPosition, Cell cell)
     {
-        return SetCell(position.x, position.y, cell);
+        return SetCell(globalPixelPosition.x, globalPixelPosition.y, cell);
     }
 
     Cell SetCell(int x, int y, Cell cell)
@@ -238,9 +238,9 @@ public class CellularAutomata : MonoBehaviour
         return targetChunk[localChunkCoords.x, localChunkCoords.y];
     }
 
-    public Cell GetCell(Vector2Int position)
+    public Cell GetCell(Vector2Int globalPixelPosition)
     {
-        return GetCell(position.x, position.y);
+        return GetCell(globalPixelPosition.x, globalPixelPosition.y);
     }
 
     Cell GetCell(int x, int y)

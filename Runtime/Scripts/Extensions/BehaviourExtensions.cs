@@ -13,9 +13,9 @@ public static class BehaviourExtensions
         return result;
     }
 
-    public static T GetOrAddComponent<T>(this GameObject target) where T : Component
+    public static T GetOrAddComponent<T>(this GameObject target, bool includeChildren = false) where T : Component
     {
-        T result = target.GetComponent<T>();
+        T result = includeChildren ? target.GetComponentInChildren<T>() : target.GetComponent<T>();
 
         if (result == null)
         {

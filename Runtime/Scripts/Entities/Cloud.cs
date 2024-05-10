@@ -6,7 +6,6 @@ using UnityEngine;
 public class Cloud : MonoBehaviour
 {
     public bool isRaining = false;
-    public CellMaterial rainMaterial = CellMaterial.Water;
 
     public Vector2Int minSize = new Vector2Int(8, 4);
     public Vector2Int maxSize = new Vector2Int(64, 16);
@@ -22,6 +21,11 @@ public class Cloud : MonoBehaviour
 
     BoxCollider2D boxCollider;
 
+
+    public CellularSpawner spawner { get { if (spawner_ == null) { spawner_ = GetComponentInChildren<CellularSpawner>(); }; return spawner_; } }
+    private CellularSpawner spawner_;
+
+
     void Start()
     {
         GenerateCloud();
@@ -33,18 +37,10 @@ public class Cloud : MonoBehaviour
         {
             GenerateCloud();
         }
-        if (Application.isPlaying && isRaining)
+        if (Application.isPlaying)
         {
-            ParticleAutomata.instance.CreateParticle(RandomColliderPosition(), rainMaterial);
+            spawner.enabled = isRaining;
         }
-    }
-
-    Vector2 RandomColliderPosition()
-    {
-        Bounds bounds = boxCollider.bounds;
-        float x = Random.Range(bounds.min.x, bounds.max.x);
-        float y = Random.Range(bounds.min.y, bounds.max.y);
-        return new Vector2(x, y);
     }
 
     [Button]
