@@ -7,11 +7,11 @@ public static class PixelExtensions
     
     public static float PixelsToUnits(this int number)
     {
-        return (float)number / 8f;
+        return (float)number / Global.pixelsPerUnit;
     }
 
     public static float PixelsToUnits(this float number)
     {
-        return number / 8f;
+        return number / Global.pixelsPerUnit;
     }
 }

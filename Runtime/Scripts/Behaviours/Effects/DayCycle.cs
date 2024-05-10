@@ -31,7 +31,7 @@ public class DayCycle : MonoBehaviour
         if (sun != null)
         {
             sun.transform.localPosition = new Vector2().AngleToVector(dayAngle, orbitalRadius);
-            sun.radiusInPixels = orbitalRadius * 8f * 1.5f;
+            sun.radiusInPixels = orbitalRadius * Global.pixelsPerUnit * 1.5f;
             normalizedSunHeight = Mathf.Clamp01(sun.transform.localPosition.y / orbitalRadius);
             sun.opacity = normalizedSunHeight;
             //sun.enabled = sun.transform.position.y > 0;
@@ -41,7 +41,7 @@ public class DayCycle : MonoBehaviour
         if (moon != null)
         {
             moon.transform.localPosition = new Vector2().AngleToVector(dayAngle - moonToSunOffset, orbitalRadius);
-            moon.radiusInPixels = orbitalRadius * 8f * 1.5f;
+            moon.radiusInPixels = orbitalRadius * Global.pixelsPerUnit * 1.5f;
             normalizedMoonHeight = Mathf.Clamp01(moon.transform.localPosition.y / orbitalRadius);
             moon.opacity = normalizedMoonHeight;
             //moon.enabled = moon.transform.position.y > 0;

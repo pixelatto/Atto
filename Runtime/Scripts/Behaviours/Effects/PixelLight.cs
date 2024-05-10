@@ -15,7 +15,7 @@ public class PixelLight : MonoBehaviour
     public float brightness = 1f;
     public Color color = Color.white;
 
-    public float radiusInUnits => radiusInPixels / 8f;
+    public float radiusInUnits => radiusInPixels / Global.pixelsPerUnit;
 
     public float blinkFrequency = 0;
     public float blinkAmount = 0;

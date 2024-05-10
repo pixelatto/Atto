@@ -1,0 +1,1 @@
+﻿public enum GadgetState { Undefined, On, Off, Out }

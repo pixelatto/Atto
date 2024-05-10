@@ -46,7 +46,7 @@ public class ParticleAutomata : MonoBehaviour
             PrepareClearTexture();
             ClearTexture();
             texture.Apply();
-            spriteRenderer.sprite = Sprite.Create(texture, new Rect(0, 0, pixelSize.x, pixelSize.y), Vector2.one * 0.5f, 8f);
+            spriteRenderer.sprite = Sprite.Create(texture, new Rect(0, 0, pixelSize.x, pixelSize.y), Vector2.one * 0.5f, Global.pixelsPerUnit);
         }
     }
 
@@ -118,19 +118,21 @@ public class ParticleAutomata : MonoBehaviour
         return newParticle;
     }
 
+    public void DestroyParticle(Particle particle)
+    {
+        particles.Remove(particle);
+        particle = null;
+    }
+
     public Particle CellToParticle(Cell cell, Vector2Int globalPixelPosition)
     {
         var worldPosition = CellularAutomata.PixelToWorldPosition(globalPixelPosition);
         var newParticle = new Particle(cell, worldPosition);
         particles.Add(newParticle);
-        bool succeeded = cellularAutomata.DestroyCell(globalPixelPosition);
-        if (!succeeded)
-        {
-            Debug.LogWarning("Error!");
-        }
+        cellularAutomata.DestroyCell(globalPixelPosition);
         Draw.Circle(worldPosition, 0.5f.PixelsToUnits(), Color.red, 8);
-        Debug.DrawLine(worldPosition + Vector3.up * 1 / 8f, worldPosition + Vector3.down*1/8f, Color.red, 1f);
-        Debug.DrawLine(worldPosition + Vector3.left * 1 / 8f, worldPosition + Vector3.right * 1 / 8f, Color.red, 1f);
+        Debug.DrawLine(worldPosition + Vector3.up * 1 / Global.pixelsPerUnit, worldPosition + Vector3.down * 1 / Global.pixelsPerUnit, Color.red, 1f);
+        Debug.DrawLine(worldPosition + Vector3.left * 1 / Global.pixelsPerUnit, worldPosition + Vector3.right * 1 / Global.pixelsPerUnit, Color.red, 1f);
         return newParticle;
     }
 
@@ -161,13 +163,14 @@ public class ParticleAutomata : MonoBehaviour
         if (validPosition != null)
         {
             var newCell = cellularAutomata.CreateCell((Vector2Int)validPosition, particle.material);
-            particles.Remove(particle);
+            DestroyParticle(particle);
             return newCell;
         }
         else
         {
-            Debug.LogWarning("Couldn't find a valid cell position for particle.");
-            Draw.Circle(particle.position, 0.5f.PixelsToUnits(), Color.magenta);
+            DestroyParticle(particle);
+            //Debug.LogWarning("Couldn't find a valid cell position for particle.");
+            //Draw.Circle(particle.position, 0.5f.PixelsToUnits(), Color.magenta);
             return null;
         }
     }

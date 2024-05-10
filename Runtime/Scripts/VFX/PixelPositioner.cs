@@ -17,8 +17,8 @@ public class PixelPositioner : MonoBehaviour
                 visualsBase.localPosition = Vector3.zero;
                 visualsBase.position =
                     new Vector3(
-                        horizontally ? Mathf.Round(visualsBase.position.x * 8f) / 8f : visualsBase.position.x,
-                        vertically ? Mathf.Round(visualsBase.position.y * 8f) / 8f : visualsBase.position.y,
+                        horizontally ? Mathf.Round(visualsBase.position.x * Global.pixelsPerUnit) / Global.pixelsPerUnit : visualsBase.position.x,
+                        vertically ? Mathf.Round(visualsBase.position.y * Global.pixelsPerUnit) / Global.pixelsPerUnit : visualsBase.position.y,
                         visualsBase.position.z
                         );
             }
@@ -29,16 +29,16 @@ public class PixelPositioner : MonoBehaviour
             {
                 transform.position =
                     new Vector3(
-                        Mathf.Round(visualsBase.position.x * 4f) / 4f,
-                        Mathf.Round(visualsBase.position.y * 4f) / 4f,
+                        Mathf.Round(visualsBase.position.x * Global.pixelsPerUnit / 2) / (Global.pixelsPerUnit / 2),
+                        Mathf.Round(visualsBase.position.y * Global.pixelsPerUnit / 2) / (Global.pixelsPerUnit / 2),
                         transform.position.z
                         );
             }
             else
             {
                 transform.position = new Vector3(
-                    Mathf.Round(transform.position.x * 8f) / 8f,
-                    Mathf.Round(transform.position.y * 8f) / 8f,
+                    Mathf.Round(transform.position.x * Global.pixelsPerUnit) / Global.pixelsPerUnit,
+                    Mathf.Round(transform.position.y * Global.pixelsPerUnit) / Global.pixelsPerUnit,
                     transform.position.z
                     );
             }

@@ -48,7 +48,7 @@ Shader "Atto/GrayscaleMask"
                 fixed4 frag(v2f i) : SV_Target {
                     fixed4 texColor = tex2D(_MainTex, i.uv) - 0.1;
                     float alpha = ((texColor.r <= _TopThreshold) && (texColor.r >= _LowThreshold)) ? 1.0 : 0.0;
-                    return fixed4(i.color.rgb, alpha * texColor.a);
+                    return fixed4(i.color.rgb, alpha);
                 }
                 ENDCG
             }

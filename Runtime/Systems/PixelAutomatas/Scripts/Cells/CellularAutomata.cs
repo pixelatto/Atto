@@ -21,9 +21,6 @@ public class CellularAutomata : MonoBehaviour
 
     bool flip = false;
 
-    public static Vector2Int roomPixelSize = new Vector2Int(128, 72);
-    public static Vector2 roomWorldSize = new Vector2(128 / 8f, 72 / 8f);
-
     public static Cell emptyCell = new Cell(CellMaterial.None);
 
     public static uint currentTick = 0;
@@ -172,13 +169,9 @@ public class CellularAutomata : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Tries to destroy a cell and returns true if suceeded
-    /// </summary>
-    public bool DestroyCell(Vector2Int globalPixelPosition)
+    public void DestroyCell(Vector2Int globalPixelPosition)
     {
-        var cell = SetCell(globalPixelPosition, new Cell(CellMaterial.None));
-        return cell == null;
+        SetCell(globalPixelPosition, new Cell(CellMaterial.None));
     }
 
     public Cell CreateCell(Vector2Int globalPixelPosition, CellMaterial material)
@@ -200,8 +193,14 @@ public class CellularAutomata : MonoBehaviour
 
     public static Vector2Int GetPixelChunkAddress(int x, int y)
     {
-        return new Vector2Int(Mathf.FloorToInt((float)x / roomPixelSize.x), Mathf.FloorToInt((float)y / roomPixelSize.y));
+        return GetPixelChunkAddress(new Vector2Int(x, y));
     }
+
+    public static Vector2Int GetPixelChunkAddress(Vector2Int globalPixelPosition)
+    {
+        return new Vector2Int(Mathf.FloorToInt((float)globalPixelPosition.x / Global.roomPixelSize.x), Mathf.FloorToInt((float)globalPixelPosition.y / Global.roomPixelSize.y));
+    }
+
 
     public static CellularChunk FindChunk(Vector2Int chunkAddress)
     {
@@ -217,12 +216,7 @@ public class CellularAutomata : MonoBehaviour
 
     Cell SetCell(Vector2Int globalPixelPosition, Cell cell)
     {
-        return SetCell(globalPixelPosition.x, globalPixelPosition.y, cell);
-    }
-
-    Cell SetCell(int x, int y, Cell cell)
-    {
-        Vector2Int chunkAddress = GetPixelChunkAddress(x, y);
+        Vector2Int chunkAddress = GetPixelChunkAddress(globalPixelPosition.x, globalPixelPosition.y);
         CellularChunk targetChunk = FindChunk(chunkAddress);
 
         if (targetChunk == null)
@@ -231,21 +225,22 @@ public class CellularAutomata : MonoBehaviour
             return null;
         }
 
-        Vector2Int localChunkCoords = new Vector2Int(x - targetChunk.pixelPosition.x, y - targetChunk.pixelPosition.y);
-
-        cell.lastUpdateTick = currentTick;
-        targetChunk[localChunkCoords.x, localChunkCoords.y] = cell;
-        return targetChunk[localChunkCoords.x, localChunkCoords.y];
+        var localChunkCoords = GlobalPixelToChunkCoords(globalPixelPosition, targetChunk);
+        if (localChunkCoords == null)
+        {
+            return null;
+        }
+        else
+        {
+            cell.lastUpdateTick = currentTick;
+            targetChunk[((Vector2Int)localChunkCoords).x, ((Vector2Int)localChunkCoords).y] = cell;
+            return targetChunk[((Vector2Int)localChunkCoords).x, ((Vector2Int)localChunkCoords).y];
+        }
     }
 
     public Cell GetCell(Vector2Int globalPixelPosition)
     {
-        return GetCell(globalPixelPosition.x, globalPixelPosition.y);
-    }
-
-    Cell GetCell(int x, int y)
-    {
-        Vector2Int chunkAddress = GetPixelChunkAddress(x, y);
+        Vector2Int chunkAddress = GetPixelChunkAddress(globalPixelPosition);
         CellularChunk targetChunk = FindChunk(chunkAddress);
 
         if (targetChunk == null)
@@ -254,19 +249,32 @@ public class CellularAutomata : MonoBehaviour
         }
         else
         {
-            Vector2Int localChunkCoords = new Vector2Int(x - targetChunk.pixelPosition.x, y - targetChunk.pixelPosition.y);
+            Vector2Int localChunkCoords = new Vector2Int(globalPixelPosition.x - targetChunk.pixelPosition.x, globalPixelPosition.y - targetChunk.pixelPosition.y);
             return targetChunk[localChunkCoords.x, localChunkCoords.y];
         }
     }
 
-    public static Vector2Int WorldToPixelPosition(Vector3 position)
+    public static Vector2Int? GlobalPixelToChunkCoords(Vector2Int globalPixelCoords, CellularChunk chunk)
     {
-        return new Vector2Int(Mathf.RoundToInt(position.x * 8f), Mathf.RoundToInt(position.y * 8f));
+        var chunkCoords = new Vector2Int(globalPixelCoords.x - chunk.pixelPosition.x, globalPixelCoords.y - chunk.pixelPosition.y);
+        if (chunkCoords.x < 0 || chunkCoords.y < 0 || chunkCoords.x >= chunk.pixelSize.x || chunkCoords.y >= chunk.pixelSize.y)
+        {
+            return null;
+        }
+        else
+        {
+            return chunkCoords;
+        }
     }
 
-    public static Vector3 PixelToWorldPosition(Vector2Int pixelPosition)
+    public static Vector2Int WorldToPixelPosition(Vector3 worldPosition)
     {
-        return new Vector3((pixelPosition.x + 0.5f) / 8f, (pixelPosition.y + 0.5f) / 8f, 0);
+        return new Vector2Int(Mathf.RoundToInt(worldPosition.x * Global.pixelsPerUnit), Mathf.RoundToInt(worldPosition.y * Global.pixelsPerUnit));
+    }
+
+    public static Vector3 PixelToWorldPosition(Vector2Int globalPixelPosition)
+    {
+        return new Vector3((globalPixelPosition.x + 0.5f) / Global.pixelsPerUnit, (globalPixelPosition.y + 0.5f) / Global.pixelsPerUnit, 0);
     }
 
     public bool CanDisplace(Vector2Int origin, Vector2Int target)

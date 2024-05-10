@@ -13,8 +13,8 @@ public class CellularChunk : MonoBehaviour
     public Vector2Int pixelSize;
     public Color surfaceColor;
 
-    public Vector2 worldPosition => new Vector2(pixelPosition.x / 8f, pixelPosition.y / 8f);
-    public Vector2 worldSize => new Vector2(pixelSize.x / 8f, pixelSize.y / 8f);
+    public Vector2 worldPosition => new Vector2(pixelPosition.x / Global.pixelsPerUnit, pixelPosition.y / Global.pixelsPerUnit);
+    public Vector2 worldSize => new Vector2(pixelSize.x / Global.pixelsPerUnit, pixelSize.y / Global.pixelsPerUnit);
 
     SpriteRenderer spriteRenderer;
     Texture2D texture;
@@ -94,7 +94,7 @@ public class CellularChunk : MonoBehaviour
             chunkCollider.InitChunkCollider(this);
         }
 
-        chunkAddress = new Vector2Int(Mathf.RoundToInt(pixelPosition.x / CellularAutomata.roomPixelSize.x), Mathf.RoundToInt(pixelPosition.y / CellularAutomata.roomPixelSize.y));
+        chunkAddress = new Vector2Int(Mathf.RoundToInt(pixelPosition.x / Global.roomPixelSize.x), Mathf.RoundToInt(pixelPosition.y / Global.roomPixelSize.y));
         if (!chunkDirectory.ContainsKey(chunkAddress.x))
         {
             chunkDirectory.Add(chunkAddress.x, new Dictionary<int, CellularChunk>());
@@ -146,7 +146,7 @@ public class CellularChunk : MonoBehaviour
 
     private Vector2 PixelToWorldPosition(int i, int j)
     {
-        return worldPosition + new Vector2((i + 0.5f) / 8f, (j + 0.5f) / 8f);
+        return worldPosition + new Vector2((i + 0.5f) / Global.pixelsPerUnit, (j + 0.5f) / Global.pixelsPerUnit);
     }
 
     public void RasterSurfacePixels(Color mainSurfaceColor)
@@ -250,7 +250,7 @@ public class CellularChunk : MonoBehaviour
             var childObject = new GameObject("ChunkRenderer");
             childObject.layer = LayerMask.NameToLayer("Terrain");
             childObject.transform.SetParent(transform);
-            childObject.transform.localPosition = new Vector3(pixelSize.x / 8f / 2f, pixelSize.y / 8f / 2f, 0);
+            childObject.transform.localPosition = new Vector3(pixelSize.x / Global.pixelsPerUnit / 2f, pixelSize.y / Global.pixelsPerUnit / 2f, 0);
             spriteRenderer = childObject.AddComponent<SpriteRenderer>();
         }
         if (spriteRenderer.sprite == null || spriteRenderer.sprite.texture.width != pixelSize.x || spriteRenderer.sprite.texture.height != pixelSize.y)
@@ -265,7 +265,7 @@ public class CellularChunk : MonoBehaviour
                 }
             }
             texture.Apply();
-            spriteRenderer.sprite = Sprite.Create(texture, new Rect(0, 0, pixelSize.x, pixelSize.y), Vector2.one * 0.5f, 8f);
+            spriteRenderer.sprite = Sprite.Create(texture, new Rect(0, 0, pixelSize.x, pixelSize.y), Vector2.one * 0.5f, Global.pixelsPerUnit);
         }
     }
 

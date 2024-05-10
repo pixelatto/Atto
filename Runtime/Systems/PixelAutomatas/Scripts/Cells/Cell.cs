@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 [System.Serializable]
 public class Cell
@@ -67,5 +68,15 @@ public class Cell
     public bool IsLiquid()
     {
         return movement == CellMovement.Fluid;
+    }
+
+    public bool IsHotterThan(int threshold)
+    {
+        return materialProperties != null && materialProperties.temperature > threshold;
+    }
+
+    public void Destroy()
+    {
+        material = CellMaterial.None;
     }
 }

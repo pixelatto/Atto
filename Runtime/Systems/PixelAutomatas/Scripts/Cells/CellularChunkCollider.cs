@@ -60,7 +60,7 @@ public class CellularChunkCollider : MonoBehaviour
                 break;
         }
         tilemapRenderer.enabled = false;
-        tilemapGrid.cellSize = new Vector3(1f / 8f, 1f / 8f, 1);
+        tilemapGrid.cellSize = new Vector3(1f / Global.pixelsPerUnit, 1f / Global.pixelsPerUnit, 1);
         tilemapCollider.usedByComposite = true;
         rb2d.bodyType = RigidbodyType2D.Static;
         compositeCollider.geometryType = CompositeCollider2D.GeometryType.Polygons;
@@ -70,9 +70,9 @@ public class CellularChunkCollider : MonoBehaviour
     {
         bool current = false, top = false, bottom = false, left = false, right = false;
 
-        for (int i = 0; i < CellularAutomata.roomPixelSize.x; i++)
+        for (int i = 0; i < Global.roomPixelSize.x; i++)
         {
-            for (int j = 0; j < CellularAutomata.roomPixelSize.y; j++)
+            for (int j = 0; j < Global.roomPixelSize.y; j++)
             {
                 var currentPosition = new Vector2Int(i, j);
                 var currentTilePosition = new Vector3Int(i, j, 0);
@@ -133,7 +133,7 @@ public class CellularChunkCollider : MonoBehaviour
                     }
                     if (neighbourCount == 2)
                     {
-                        bool isBorder = i == 0 || j == 0 || i == CellularAutomata.roomPixelSize.x - 1 || j == CellularAutomata.roomPixelSize.y - 1;
+                        bool isBorder = i == 0 || j == 0 || i == Global.roomPixelSize.x - 1 || j == Global.roomPixelSize.y - 1;
                         if (isBorder)
                         {
                             resultTile = fullTile;
