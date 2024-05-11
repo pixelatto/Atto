@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CharacterAppearance : MonoBehaviour
 {
+    public Character.CharacterStates visualState;
 
     public float timeToChangeVisualState = 0.01f;
 
@@ -11,16 +12,12 @@ public class CharacterAppearance : MonoBehaviour
     public float sprintAnimationSpeed = 2f;
     public float rollAnimationSpeed = 3f;
 
-    Character character;
-    Animator animator;
+    public Character character { get { if (character_ == null) { character_ = GetComponentInParent<Character>(); }; return character_; } }
+    private Character character_;
 
-    public Character.CharacterStates visualState;
+    public Animator animator { get { if (animator_ == null) { animator_ = GetComponent<Animator>(); }; return animator_; } }
+    private Animator animator_;
 
-    void Awake()
-    {
-        character = GetComponentInParent<Character>();
-        animator = GetComponent<Animator>();
-    }
 
     void Update()
     {

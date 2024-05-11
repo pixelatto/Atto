@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
+[RequireComponent(typeof(Camera))]
 public class CellularRasterizer : MonoBehaviour
 {
     public bool saveToFile = false;
-    public Camera rasterizerCamera;
+    
+    public Camera rasterizerCamera { get { if (rasterizerCamera_ == null) { rasterizerCamera_ = GetComponent<Camera>(); }; return rasterizerCamera_; } }
+    private Camera rasterizerCamera_;
+
 
     public static CellularRasterizer instance { get { if (instance_ == null) { instance_ = FindObjectOfType<CellularRasterizer>(); } return instance_; } }
     static CellularRasterizer instance_;

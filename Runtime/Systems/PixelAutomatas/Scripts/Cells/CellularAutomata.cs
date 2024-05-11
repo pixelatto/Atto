@@ -6,7 +6,7 @@ public class CellularAutomata : MonoBehaviour
 {
     public CellularMaterials materials;
     public float updateRate = 0.1f;
-    public UpdateType updateType = UpdateType.Manual; public enum UpdateType { Manual, Automatic }
+    public UpdateType updateType = UpdateType.Automatic; public enum UpdateType { Manual, Automatic }
 
     public PixelCamera pixelCamera;
 
