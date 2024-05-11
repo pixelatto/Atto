@@ -60,7 +60,7 @@ public class CellularSpawner : MonoBehaviour
         switch (spawnType)
         {
             case SpawnType.AsCell:
-                CellularAutomata.instance.CreateCell(CellularAutomata.WorldToPixelPosition(worldPosition), cellMaterial);
+                CellularAutomata.instance.CreateCellIfEmpty(CellularAutomata.WorldToPixelPosition(worldPosition), cellMaterial);
                 break;
             case SpawnType.AsParticle:
                 ParticleAutomata.instance.CreateParticle(worldPosition, cellMaterial);

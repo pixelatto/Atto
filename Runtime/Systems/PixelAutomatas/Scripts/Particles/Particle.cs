@@ -19,7 +19,7 @@ public class Particle
         this.material = cellMaterial;
         this.position = worldPosition;
         this.previousPosition = worldPosition;
-        color = CellularAutomata.instance.materials.FindMaterial(material).GetColor();
+        color = CellularMaterials.instance.FindMaterial(material).GetColor();
     }
 
     public Particle(Cell source, Vector2 worldPosition)

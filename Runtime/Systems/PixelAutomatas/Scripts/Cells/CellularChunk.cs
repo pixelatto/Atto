@@ -124,7 +124,7 @@ public class CellularChunk : MonoBehaviour
                 else
                 {
                     bool found = false;
-                    foreach (var material in CellularAutomata.instance.materials.materials)
+                    foreach (var material in CellularMaterials.instance.materials)
                     {
                         if (color.r == material.identifierColor.r && color.g == material.identifierColor.g && color.b == material.identifierColor.b)
                         {

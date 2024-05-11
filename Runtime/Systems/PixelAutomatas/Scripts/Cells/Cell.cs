@@ -11,13 +11,17 @@ public class Cell
     public CellMovement movement => material == CellMaterial.None ? CellMovement.Static : materialProperties.movement;
     public int fluidity => materialProperties.fluidity;
 
-    CellMaterialProperties materialProperties { get { if (_materialProperties == null) { _materialProperties = CellularAutomata.instance.materials.FindMaterial(material); }; return _materialProperties; } }
+    CellMaterialProperties materialProperties { get { if (_materialProperties == null) { _materialProperties = CellularMaterials.instance.FindMaterial(material); }; return _materialProperties; } }
     CellMaterialProperties _materialProperties;
 
     public uint lastUpdateTick = 0;
     public int  gravity => materialProperties.gravity;
 
     public bool wasUpdatedThisTick => lastUpdateTick == CellularAutomata.currentTick;
+
+    public int startLifetime => materialProperties.startLifetime;
+    public int elapsedLifetime = 0;
+    public bool lifetimeTimeout => (startLifetime != -1) && (elapsedLifetime >= startLifetime);
 
     public Cell(CellMaterial material)
     {

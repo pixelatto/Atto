@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class CellularAutomata : MonoBehaviour
 {
-    public CellularMaterials materials;
     public float updateRate = 0.1f;
     public UpdateType updateType = UpdateType.Automatic; public enum UpdateType { Manual, Automatic }
 
@@ -73,24 +72,31 @@ public class CellularAutomata : MonoBehaviour
                 int y = j;
                 currentPosition = new Vector2Int(x, y);
                 currentCell = GetCell(currentPosition);
-
-                if (currentCell.material != CellMaterial.None && !currentCell.wasUpdatedThisTick)
+                currentCell.elapsedLifetime++;
+                if (currentCell != null && currentCell.lifetimeTimeout)
                 {
-                    var movementType = currentCell.movement;
-
-                    switch (movementType)
+                    currentCell.Destroy();
+                }
+                else
+                {
+                    if (currentCell.material != CellMaterial.None && !currentCell.wasUpdatedThisTick)
                     {
-                        case CellMovement.Static:
-                            break;
-                        case CellMovement.Granular:
-                            GranularMovement();
-                            break;
-                        case CellMovement.Fluid:
-                            FluidMovement();
-                            break;
-                        case CellMovement.Gas:
-                            GasMovement();
-                            break;
+                        var movementType = currentCell.movement;
+
+                        switch (movementType)
+                        {
+                            case CellMovement.Static:
+                                break;
+                            case CellMovement.Granular:
+                                GranularMovement();
+                                break;
+                            case CellMovement.Fluid:
+                                FluidMovement();
+                                break;
+                            case CellMovement.Gas:
+                                GasMovement();
+                                break;
+                        }
                     }
                 }
             }
@@ -213,6 +219,21 @@ public class CellularAutomata : MonoBehaviour
         var newCell = new Cell(material);
         SetCell(globalPixelPosition, newCell);
         return newCell;
+    }
+
+    public Cell CreateCellIfEmpty(Vector2Int globalPixelPosition, CellMaterial material)
+    {
+        var currentCell = GetCell(globalPixelPosition);
+        if (currentCell.IsEmpty())
+        {
+            var newCell = new Cell(material);
+            SetCell(globalPixelPosition, newCell);
+            return newCell;
+        }
+        else
+        {
+            return null;
+        }
     }
 
     void SwapCells(Vector2Int oldPosition, Vector2Int newPosition)
