@@ -21,8 +21,8 @@ public class ParametricSprite : MonoBehaviour
     Animator animator { get { if (_animator == null) { _animator = GetComponent<Animator>(); } return _animator; } }
     Animator _animator;
 
-    Character character { get { if (_character == null) { _character = GetComponent<Character>(); } return _character; } }
-    Character _character;
+    Actor character { get { if (_character == null) { _character = GetComponent<Actor>(); } return _character; } }
+    Actor _character;
 
     MaterialPropertyBlock _propBlock;
 

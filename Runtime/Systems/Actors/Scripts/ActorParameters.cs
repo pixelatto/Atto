@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteAlways]
-public class CharacterParameters : MonoBehaviour
+public class ActorParameters : MonoBehaviour
 {
 
     static Color defaultHairColor => new Color32(251, 242, 54, 255);
@@ -50,7 +50,7 @@ public class CharacterParameters : MonoBehaviour
 
     ParametricSprite[] parametricSprites = null;
 
-    Character character;
+    Actor character;
 
     private void Awake()
     {
@@ -111,12 +111,18 @@ public class CharacterParameters : MonoBehaviour
             }
         }
 
+        SetLook();
         SetHeight(height);
+    }
+
+    private void SetLook()
+    {
+        verticalLookDirection = character.wantsToGoUp ? 1 : 0;
     }
 
     private void GetReferences()
     {
-        if (character == null)         { character = GetComponentInParent<Character>(); }
+        if (character == null)         { character = GetComponentInParent<Actor>(); }
         if (hairTransform     == null) { hairTransform      = transform.Find("Hair"); }
         if (headTransform     == null) { headTransform      = transform.Find("Head"); }
         if (torsoTransform    == null) { torsoTransform     = transform.Find("Torso"); }
@@ -138,9 +144,7 @@ public class CharacterParameters : MonoBehaviour
         leftEyeTransform.localPosition = new Vector3(0,  topBodyPixelOffset + verticalLookDirection * 1f / Global.pixelsPerUnit, 0);
         abdomenTransform.localPosition = new Vector3(0, -1.PixelsToUnits(), 0);
         abdomenTransform.localScale = new Vector3(1, Mathf.Max(0, height-1), 1);
-        character.pixelSize = height + 1 + (character.HasReducedHitBox() ? -1 : 0);
-
-        character.mainCollider.offset = new Vector2(0, 1f / Global.pixelsPerUnit * (height-3 + (character.HasReducedHitBox() ? -1 : 0)));
+        character.pixelSize = height + 1;
     }
 
     public void Randomize()

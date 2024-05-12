@@ -1,0 +1,1 @@
+﻿public enum Momentum { None, Slow, Medium, Fast }
