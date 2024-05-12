@@ -34,7 +34,7 @@ public class Room : MonoBehaviour
     public void OnTriggerStay2D(Collider2D collider)
     {
         var target = collider.gameObject.GetComponent<CameraTarget>();
-        if (target != null)
+        if (target != null && target.enabled)
         {
             if (cam.currentRoom != this && roomRect.Contains(collider.transform.position))
             {

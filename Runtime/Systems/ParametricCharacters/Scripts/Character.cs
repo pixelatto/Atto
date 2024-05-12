@@ -35,6 +35,7 @@ public class Character : MonoBehaviour, IControllable
 
     public bool wantsToGoUp = false;
     public bool wantsToGoDown = false;
+    public bool wantsToRideDown = false;
     public bool isGrounded = false;
     public bool isUnstable = false;
     public bool isRolling = false;
@@ -57,7 +58,7 @@ public class Character : MonoBehaviour, IControllable
 
     const float verticalMomentumThreeshold = 1f;
 
-    public enum CharacterStates { Idle, Walk, Run, Sprint, Jump, Fall, Sit, Crawl, Roll, Float, Levitate, LevitateJump, LevitateFall, Unstable, Look, }
+    public enum CharacterStates { Idle, Walk, Run, Sprint, Jump, Fall, Sit, Crawl, Roll, Float, Levitate, LevitateJump, LevitateFall, Unstable, Look, Ride }
     public enum Momentum { None, Slow, Medium, Fast }
 
     public CircleCollider2D mainCollider { get; private set; }
@@ -82,6 +83,13 @@ public class Character : MonoBehaviour, IControllable
     public bool jumpRequested = false;
 
     PixelPositioner pixelPositioner;
+
+    [HideInInspector] public GameObject currentRide;
+
+    public CameraTarget cameraTarget { get { if (cameraTarget_ == null) { cameraTarget_ = GetComponent<CameraTarget>(); }; return cameraTarget_; } }
+    private CameraTarget cameraTarget_;
+
+    public bool isCameraTarget => cameraTarget != null;
 
     void Awake()
     {
@@ -143,7 +151,11 @@ public class Character : MonoBehaviour, IControllable
 
     private void UpdateState()
     {
-        if (isUnstable)
+        if (currentRide != null )
+        {
+            ChangeState(CharacterStates.Ride);
+        }
+        else if (isUnstable)
         {
             ChangeState(CharacterStates.Unstable);
         }
@@ -260,6 +272,7 @@ public class Character : MonoBehaviour, IControllable
         {
             wantsToGoDown = controller.verticalAxis < 0;
             wantsToGoUp = controller.verticalAxis > 0;
+            wantsToRideDown = wantsToGoDown && controller.actionHeld;
             if (isGrounded)
             {
                 //TODO: If over slippery material (EG: Ice), set material to slippery
@@ -453,7 +466,7 @@ public class Character : MonoBehaviour, IControllable
         }
     }
 
-    public void Control(Controller controller)
+    public void SetControl(Controller controller)
     {
         this.controller = controller;
     }

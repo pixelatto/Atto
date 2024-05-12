@@ -31,12 +31,13 @@ public class PixelCamera : MonoBehaviour
         pixelRect = new RectInt(pixelBottomLeft.x, pixelBottomLeft.y, Global.roomPixelSize.x, Global.roomPixelSize.y);
         worldRect = new Rect(cameraBottomLeft.x, cameraBottomLeft.y, Global.roomPixelSize.x / Global.pixelsPerUnit, Global.roomPixelSize.y / Global.pixelsPerUnit);
         lookAheadPixelRect = pixelRect.Grow(viewPortLookaheadPixels);
-        lookAheadWorldRect = worldRect.Grow(viewPortLookaheadPixels / Global.pixelsPerUnit);
+        lookAheadWorldRect = worldRect.Grow(viewPortLookaheadPixels / 8f);
 
         var size = new Vector2(baseCameraSize * 2f * aspectRatio, baseCameraSize * 2f) * zoom;
         var position = new Vector2(transform.position.x, transform.position.y) - new Vector2(size.x * 0.5f, size.y * 0.5f);
         worldRect = new Rect(position, size);
 
+        Draw.Rect(worldRect, Color.yellow);
         Draw.Rect(lookAheadWorldRect, Color.cyan);
     }
 }

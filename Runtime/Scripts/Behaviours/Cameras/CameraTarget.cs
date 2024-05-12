@@ -3,4 +3,9 @@
 public class CameraTarget : MonoBehaviour
 {
 
+    public void Start()
+    {
+        
+    }
+
 }

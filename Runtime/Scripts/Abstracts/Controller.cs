@@ -2,8 +2,9 @@
 
 public abstract class Controller : MonoBehaviour
 {
-    public GameObject overrideControllable;
-    IControllable target;
+    
+    public IControllable target { get { if (target_ == null) { target_ = GetComponent<IControllable>(); }; return target_; } }
+    private IControllable target_;
 
     public abstract bool jumpPressed { get; }
     public abstract bool jumpHeld { get; }
@@ -15,16 +16,21 @@ public abstract class Controller : MonoBehaviour
 
     private void Start()
     {
-        if (overrideControllable == null)
-        {
-            overrideControllable = gameObject;
-        }
-        target = overrideControllable.GetComponent<IControllable>();
+
     }
 
     public void Update()
     {
-        target.Control(this);
+        target.SetControl(this);
     }
 
+    public void OverrideControl(IControllable newTarget)
+    {
+        target_ = newTarget;
+    }
+
+    public void RestoreControl()
+    {
+        target_ = GetComponent<IControllable>();
+    }
 }
