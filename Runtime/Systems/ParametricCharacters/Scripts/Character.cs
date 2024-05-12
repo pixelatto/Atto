@@ -4,11 +4,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteAlways]
+[RequireComponent(typeof(CircleCollider2D), typeof(Rigidbody2D))]
 public class Character : MonoBehaviour, IControllable
 {
     public Facing facing;
+    public bool canFly = false;
     public bool canLevitate = false;
     public bool canCloudWalk = false;
+    public bool canCrawl = true;
+    public bool canRoll = true;
     public float pixelSize = 3;
     public float crawlSpeed = 1f;
     public float walkSpeed = 2f;
@@ -66,7 +70,7 @@ public class Character : MonoBehaviour, IControllable
 
     float minGroundTimeBeforeJump = 0.05f;
     float timeGrounded = 0;
-    public bool canJump => (isGrounded && timeGrounded > minGroundTimeBeforeJump);
+    public bool canJump => ((isGrounded && timeGrounded > minGroundTimeBeforeJump) || canFly);
 
     LayerMask walkMask => LayerMask.GetMask("Terrain", canCloudWalk ? "Clouds" : "");
     LayerMask cloudsMask;
@@ -171,7 +175,7 @@ public class Character : MonoBehaviour, IControllable
                     }
                     break;
                 case Momentum.Slow:
-                    if (wantsToGoDown)
+                    if (wantsToGoDown && canCrawl)
                     {
                         ChangeState(CharacterStates.Crawl);
                     }
@@ -301,12 +305,15 @@ public class Character : MonoBehaviour, IControllable
                     LookRight();
                 }
 
-                if (isGrounded && wantsToGoDown && horizontalMomentum >= Momentum.Medium)
+                if (canRoll)
                 {
-                    isRolling = true;
-                    rollStartTime = Time.time;
-                    rb.velocity = new Vector2(rb.velocity.x * rollBoost, rb.velocity.y);
-                    ChangeState(CharacterStates.Roll);
+                    if (isGrounded && wantsToGoDown && horizontalMomentum >= Momentum.Medium)
+                    {
+                        isRolling = true;
+                        rollStartTime = Time.time;
+                        rb.velocity = new Vector2(rb.velocity.x * rollBoost, rb.velocity.y);
+                        ChangeState(CharacterStates.Roll);
+                    }
                 }
             }
 
@@ -322,7 +329,10 @@ public class Character : MonoBehaviour, IControllable
                 jumpRequested = controller.jumpHeld;
             }
 
-            parameters.verticalLookDirection = wantsToGoUp ? 1 : 0;
+            if (parameters != null)
+            {
+                parameters.verticalLookDirection = wantsToGoUp ? 1 : 0;
+            }
         }
     }
 
@@ -451,13 +461,19 @@ public class Character : MonoBehaviour, IControllable
     private void LookRight()
     {
         facing = Facing.Right;
-        appearance.LookRight();
+        if (appearance != null)
+        {
+            appearance.LookRight();
+        }
     }
 
     private void LookLeft()
     {
         facing = Facing.Left;
-        appearance.LookLeft();
+        if (appearance != null)
+        {
+            appearance.LookLeft();
+        }
     }
 
     void OnDrawGizmos()
