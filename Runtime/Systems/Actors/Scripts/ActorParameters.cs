@@ -74,7 +74,7 @@ public class ActorParameters : MonoBehaviour
             GetReferences();
         }
 
-        if (Input.GetKeyDown(KeyCode.O) && Application.isPlaying)
+        if (Debug.isDebugBuild && Input.GetKeyDown(KeyCode.O) && Application.isPlaying)
         {
             Randomize();
         }

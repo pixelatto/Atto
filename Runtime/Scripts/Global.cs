@@ -13,6 +13,13 @@ public class Global
 
     public static LayerMask cloudsMask = LayerMask.GetMask("Clouds");
 
+    public static PhysicsMaterial2D brakeMaterial = null;
+    public static PhysicsMaterial2D stickyMaterial = Resources.Load<PhysicsMaterial2D>("PhysicsMaterials2D/Sticky");
+    public static PhysicsMaterial2D slipperyMaterial = Resources.Load<PhysicsMaterial2D>("PhysicsMaterials2D/Icy");
+    public static PhysicsMaterial2D unstableMaterial = Resources.Load<PhysicsMaterial2D>("PhysicsMaterials2D/Unstable");
+    public static PhysicsMaterial2D rollMaterial = Resources.Load<PhysicsMaterial2D>("PhysicsMaterials2D/Rolling");
+
+
     public const float slowMomentumThreeshold = 0.5f;
     public const float mediumMomentumThreeshold = 2.5f;
     public const float fastMomentumThreeshold = 5f;

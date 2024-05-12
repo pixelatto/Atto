@@ -6,45 +6,40 @@ using System.Collections.Generic;
 [RequireComponent(typeof(CircleCollider2D), typeof(Rigidbody2D))]
 public class Actor : MonoBehaviour, IControllable
 {
+    [Header("Main")]
     public ActorFacing facing;
-
-    [Header("Skill")]
-    public bool canFly = false;
-    public bool canLevitate = false;
-    public bool canCloudWalk = false;
-    public bool canCrawl = true;
-    public bool canRoll = true;
-    public bool canJump => ((isGrounded && timeGrounded > minGroundTimeBeforeJump) || canFly);
-
-    [Header("Skill powers")]
+    public int weight = 10;
     public float pixelSize = 3; [HideInInspector] public float pixelSizeModifier = 0;
-    public float crawlSpeed = 1f;
-    public float walkSpeed = 2f;
-    public float runSpeed = 4f;
-    public float sprintSpeed = 6f;
-    public float jumpForce = 300f;
     public float horizontalAirDrag = 0.01f;
-    public float rollDuration = 0.35f;
-    public float rollBoost = 1.2f;
 
-    [Header("Materials")]
-    public PhysicsMaterial2D brakeMaterial;
-    public PhysicsMaterial2D stickyMaterial;
-    public PhysicsMaterial2D slipperyMaterial;
-    public PhysicsMaterial2D unstableMaterial;
-    public PhysicsMaterial2D rollMaterial;
+    [Header("Powers")]
+    public float walkPower = 2f;
+    public bool canWalk => walkPower > 0;
+    public float runPower = 4f;
+    public bool canRun => runPower > 0;
+    public bool canSprint => sprintPower > 0;
+    public float sprintPower = 6f;
+    public bool canJump => jumpPower > 0;
+    public float jumpPower = 10f;
+    public bool canFly => flyPower > 0;
+    public float flyPower = 0;
+    public bool canCrawl => crawlPower > 0;
+    public float crawlPower = 1f;
+    public bool canRoll => rollPower > 0;
+    public float rollPower = 1.2f; public float rollDuration => rollPower / 3f;
 
-    [Header("Input semantics")]
-    public bool wantsToGoUp = false;
-    public bool wantsToGoDown = false;
-    public bool wantsToRideDown = false;
-    public bool wantsToJump = false;
+    [HideInInspector] public bool wantsToGoUp = false;
+    [HideInInspector] public bool wantsToGoDown = false;
+    [HideInInspector] public bool wantsToRideDown = false;
+    [HideInInspector] public bool wantsToJump = false;
 
     [HideInInspector] public bool isGrounded = false;
     [HideInInspector] public bool isUnstable = false;
     [HideInInspector] public Momentum horizontalMomentum = Momentum.None;
     [HideInInspector] public Momentum verticalMomentum = Momentum.None;
     [HideInInspector] public Rigidbody2D rb;
+    [HideInInspector] public bool isCloudWalkAvailable => weight < 5;
+    [HideInInspector] public bool isJumpAvailable => ((canJump && isGrounded && (timeGrounded > minGroundTimeBeforeJump)) || canFly);
     [HideInInspector] public bool isMovingRight => rb.velocity.x > Global.slowMomentumThreeshold;
     [HideInInspector] public bool isMovingLeft => rb.velocity.x < -Global.slowMomentumThreeshold;
     [HideInInspector] public bool isMovingUp => rb.velocity.y > Global.verticalMomentumThreeshold;
@@ -64,7 +59,7 @@ public class Actor : MonoBehaviour, IControllable
     Vector2 standingPoint;
     Vector2 groundNormal;
 
-    LayerMask walkMask => LayerMask.GetMask("Terrain", canCloudWalk ? "Clouds" : "");
+    LayerMask walkMask => LayerMask.GetMask("Terrain", isCloudWalkAvailable ? "Clouds" : "");
 
     [HideInInspector] public GameObject currentRide;
 
@@ -93,12 +88,9 @@ public class Actor : MonoBehaviour, IControllable
                 LookTowardsMovement();
                 HorizontalMovement();
                 UpdateGroundedMaterial();
-                CheckForRoll();
+                CheckForCrawling();
                 LimitToSprintSpeed();
-                if (!isGrounded)
-                {
-                    stateMachine.ChangeState(ActorStates.Airborne);
-                }
+                CheckForAirborne();
             }
         );
         stateMachine.AddState
@@ -106,11 +98,10 @@ public class Actor : MonoBehaviour, IControllable
             ActorStates.Crawling, () =>
             {
                 LookTowardsMovement();
-                HorizontalMovement(crawlSpeed);
-                if (!isGrounded)
-                {
-                    stateMachine.ChangeState(ActorStates.Airborne);
-                }
+                HorizontalMovement(crawlPower);
+                CheckForRolling();
+                CheckForStandUp();
+                CheckForAirborne();
             }
         );
         stateMachine.AddState
@@ -121,10 +112,7 @@ public class Actor : MonoBehaviour, IControllable
                 HorizontalMovement();
                 UpdateAirborneMaterial();
                 HorizontalAirDrag();
-                if (isGrounded)
-                {
-                    stateMachine.ChangeState(ActorStates.Grounded);
-                }
+                CheckForGrounded();
             }
         );
         stateMachine.AddState
@@ -132,37 +120,71 @@ public class Actor : MonoBehaviour, IControllable
             ActorStates.Rolling, () =>
             {
                 UpdateRollingMaterial();
-                if (((stateMachine.timeInCurrentState > rollDuration) && (horizontalMomentum == Momentum.None || !isGrounded || !wantsToGoDown)) || stateMachine.timeInCurrentState > rollDuration * 2.75f)
-                {
-                    stateMachine.ChangeState(ActorStates.Grounded);
-                }
+                CheckForEndRolling();
             }
         );
     }
 
-    private void LimitToSprintSpeed()
+    private void CheckForRolling()
     {
-        if (horizontalSpeed > sprintSpeed)
+        if (horizontalMomentum >= Momentum.Medium && canRoll)
         {
-            rb.velocity = new Vector2(Mathf.Sign(rb.velocity.x) * sprintSpeed, rb.velocity.y);
+            rb.velocity = new Vector2(rb.velocity.x * rollPower, rb.velocity.y);
+            stateMachine.ChangeState(ActorStates.Rolling);
         }
     }
 
-    private void CheckForRoll()
+    private void CheckForStandUp()
     {
-        if (canRoll)
+        if (!wantsToGoDown)
         {
-            if (isGrounded && wantsToGoDown && horizontalMomentum >= Momentum.Medium)
-            {
-                rb.velocity = new Vector2(rb.velocity.x * rollBoost, rb.velocity.y);
-                stateMachine.ChangeState(ActorStates.Rolling);
-            }
+            stateMachine.ChangeState(ActorStates.Grounded);
+        }
+    }
+
+    private void CheckForEndRolling()
+    {
+        if (((stateMachine.timeInCurrentState > rollDuration) && (horizontalMomentum == Momentum.None || !isGrounded || !wantsToGoDown)) || stateMachine.timeInCurrentState > rollDuration * 2.75f)
+        {
+            stateMachine.ChangeState(ActorStates.Grounded);
+        }
+    }
+
+    private void CheckForGrounded()
+    {
+        if (isGrounded)
+        {
+            stateMachine.ChangeState(ActorStates.Grounded);
+        }
+    }
+
+    private void CheckForAirborne()
+    {
+        if (!isGrounded)
+        {
+            stateMachine.ChangeState(ActorStates.Airborne);
+        }
+    }
+
+    private void LimitToSprintSpeed()
+    {
+        if (horizontalSpeed > sprintPower)
+        {
+            rb.velocity = new Vector2(Mathf.Sign(rb.velocity.x) * sprintPower, rb.velocity.y);
+        }
+    }
+
+    private void CheckForCrawling()
+    {
+        if (canCrawl && wantsToGoDown)
+        {
+            stateMachine.ChangeState(ActorStates.Crawling);
         }
     }
 
     private void HorizontalAirDrag()
     {
-        if (controller.horizontalAxis == 0)
+        if (controller != null && controller.horizontalAxis == 0)
         {
             rb.velocity -= new Vector2(rb.velocity.x * horizontalAirDrag * Time.fixedDeltaTime, 0);
         }
@@ -170,49 +192,55 @@ public class Actor : MonoBehaviour, IControllable
 
     private void UpdateAirborneMaterial()
     {
-        rb.sharedMaterial = slipperyMaterial;
+        rb.sharedMaterial = Global.slipperyMaterial;
         rb.freezeRotation = false;
     }
 
     private void UpdateRollingMaterial()
     {
-        rb.sharedMaterial = rollMaterial;
+        rb.sharedMaterial = Global.rollMaterial;
         rb.freezeRotation = true;
         rb.rotation = 0;
     }
 
     private void UpdateGroundedMaterial()
     {
-        if (controller.horizontalAxis != 0)
+        if (controller != null)
         {
-            rb.sharedMaterial = slipperyMaterial;
-            rb.freezeRotation = false;
-        }
-        else
-        {
-            rb.sharedMaterial = isUnstable ? unstableMaterial : stickyMaterial;
-            rb.freezeRotation = true;
-            rb.rotation = 0;
+            if (controller.horizontalAxis != 0)
+            {
+                rb.sharedMaterial = Global.slipperyMaterial;
+                rb.freezeRotation = false;
+            }
+            else
+            {
+                rb.sharedMaterial = isUnstable ? Global.unstableMaterial : Global.stickyMaterial;
+                rb.freezeRotation = true;
+                rb.rotation = 0;
+            }
         }
     }
 
     void LookTowardsMovement()
     {
-        if (controller.horizontalAxis < 0)
+        if (controller != null)
         {
-            LookLeft();
-        }
-        if (controller.horizontalAxis > 0)
-        {
-            LookRight();
+            if (controller.horizontalAxis < 0)
+            {
+                LookLeft();
+            }
+            if (controller.horizontalAxis > 0)
+            {
+                LookRight();
+            }
         }
     }
 
     private void HorizontalMovement(float overrideSpeed = 0)
     {
-        if (controller.horizontalAxis != 0)
+        if (controller!= null && controller.horizontalAxis != 0)
         {
-            var speed = controller.actionHeld ? sprintSpeed : runSpeed;
+            var speed = controller.actionHeld ? sprintPower : runPower;
             if (overrideSpeed != 0)
             {
                 speed = overrideSpeed;
@@ -245,7 +273,7 @@ public class Actor : MonoBehaviour, IControllable
         }
         mainCollider.radius = radius;
         bool hasReducedHitBox = currentState == ActorStates.Crawling || currentState == ActorStates.Rolling;
-        pixelSizeModifier = hasReducedHitBox ? -1 : 0;
+        pixelSizeModifier = hasReducedHitBox ? -0.5f : 0;
     }
 
     private void UpdateStateMachine()
@@ -279,23 +307,7 @@ public class Actor : MonoBehaviour, IControllable
     {
         CheckCloudWalk();
         CheckGround();
-
-        if (wantsToJump && canJump)
-        {
-            if (rb.velocity.y > 0)
-            {
-                rb.velocity += Vector2.up * jumpForce;
-            }
-            else
-            {
-                rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-            }
-            rb.velocity = new Vector2(rb.velocity.x, Mathf.Min(rb.velocity.y, jumpForce));
-            rb.angularVelocity = 0;
-            wantsToJump = false;
-        }
-
-        
+        CheckJump();
     }
 
     private void CheckGround()
@@ -350,8 +362,36 @@ public class Actor : MonoBehaviour, IControllable
         {
             foreach (var cloud in nearbyClouds)
             {
-                Physics2D.IgnoreCollision(mainCollider, cloud, !canCloudWalk);
+                Physics2D.IgnoreCollision(mainCollider, cloud, !isCloudWalkAvailable);
             }
+        }
+    }
+
+    private void CheckJump()
+    {
+        if (wantsToJump && isJumpAvailable)
+        {
+            float power = 0;
+            if (isGrounded)
+            {
+                power = jumpPower;
+            }
+            else
+            {
+                power = flyPower;
+            }
+
+            if (rb.velocity.y > 0)
+            {
+                rb.velocity += Vector2.up * power;
+            }
+            else
+            {
+                rb.velocity = new Vector2(rb.velocity.x, power);
+            }
+            rb.velocity = new Vector2(rb.velocity.x, Mathf.Min(rb.velocity.y, power));
+            rb.angularVelocity = 0;
+            wantsToJump = false;
         }
     }
 
@@ -395,10 +435,9 @@ public class Actor : MonoBehaviour, IControllable
         {
             var spawnPoint = standingPoint + Vector2.up * 0.5f.PixelsToUnits();
             var dustParticle = ParticleAutomata.instance.CellToParticle(standingCell, CellularAutomata.WorldToPixelPosition(spawnPoint));
-            dustParticle.speed = (UnityEngine.Random.insideUnitCircle - rb.velocity.normalized + Vector2.up*3f);
+            dustParticle.speed = Random.insideUnitCircle - rb.velocity.normalized + Vector2.up*3f;
             standingCell.Destroy();
         }
     }
 
 }
-public enum ActorStates { Grounded, Airborne, Crawling, Rolling, Riding }

@@ -49,10 +49,6 @@ public class ActorAppearance : MonoBehaviour
                     {
                         currentAnimation = ActorAnimations.Sit;
                     }
-                    else if (character.canLevitate)
-                    {
-                        currentAnimation = ActorAnimations.Float;
-                    }
                     else
                     {
                         currentAnimation = ActorAnimations.Idle;
@@ -65,35 +61,14 @@ public class ActorAppearance : MonoBehaviour
                     }
                     else
                     {
-                        if (character.canLevitate)
-                        {
-                            currentAnimation = ActorAnimations.Levitate;
-                        }
-                        else
-                        {
-                            currentAnimation = ActorAnimations.Walk;
-                        }
+                        currentAnimation = ActorAnimations.Walk;
                     }
                     break;
                 case Momentum.Medium:
-                    if (character.canLevitate)
-                    {
-                        currentAnimation = ActorAnimations.Levitate;
-                    }
-                    else
-                    {
-                        currentAnimation = ActorAnimations.Run;
-                    }
+                    currentAnimation = ActorAnimations.Run;
                     break;
                 case Momentum.Fast:
-                    if (character.canLevitate)
-                    {
-                        currentAnimation = ActorAnimations.Levitate;
-                    }
-                    else
-                    {
-                        currentAnimation = ActorAnimations.Sprint;
-                    }
+                    currentAnimation = ActorAnimations.Sprint;
                     break;
             }
         }
@@ -101,25 +76,11 @@ public class ActorAppearance : MonoBehaviour
         {
             if (character.isMovingUp)
             {
-                if (character.canLevitate)
-                {
-                    currentAnimation = ActorAnimations.LevitateJump;
-                }
-                else
-                {
-                    currentAnimation = ActorAnimations.Jump;
-                }
+                currentAnimation = ActorAnimations.Jump;
             }
             else
             {
-                if (character.canLevitate)
-                {
-                    currentAnimation = ActorAnimations.LevitateFall;
-                }
-                else
-                {
-                    currentAnimation = ActorAnimations.Fall;
-                }
+                currentAnimation = ActorAnimations.Fall;
             }
         }
     }
