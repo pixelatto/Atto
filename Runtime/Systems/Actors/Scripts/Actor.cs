@@ -12,22 +12,6 @@ public class Actor : MonoBehaviour, IControllable
     public float pixelSize = 3; [HideInInspector] public float pixelSizeModifier = 0;
     public float horizontalAirDrag = 0.01f;
 
-    [Header("Powers")]
-    public float walkPower = 2f;
-    public bool canWalk => walkPower > 0;
-    public float runPower = 4f;
-    public bool canRun => runPower > 0;
-    public bool canSprint => sprintPower > 0;
-    public float sprintPower = 6f;
-    public bool canJump => jumpPower > 0;
-    public float jumpPower = 10f;
-    public bool canFly => flyPower > 0;
-    public float flyPower = 0;
-    public bool canCrawl => crawlPower > 0;
-    public float crawlPower = 1f;
-    public bool canRoll => rollPower > 0;
-    public float rollPower = 1.2f; public float rollDuration => rollPower / 3f;
-
     [HideInInspector] public bool wantsToGoUp = false;
     [HideInInspector] public bool wantsToGoDown = false;
     [HideInInspector] public bool wantsToRideDown = false;
@@ -39,7 +23,7 @@ public class Actor : MonoBehaviour, IControllable
     [HideInInspector] public Momentum verticalMomentum = Momentum.None;
     [HideInInspector] public Rigidbody2D rb;
     [HideInInspector] public bool isCloudWalkAvailable => weight < 5;
-    [HideInInspector] public bool isJumpAvailable => ((canJump && isGrounded && (timeGrounded > minGroundTimeBeforeJump)) || canFly);
+    [HideInInspector] public bool isJumpAvailable => ((Can(Skill.Jump) && isGrounded && (timeGrounded > minGroundTimeBeforeJump)) || Can(Skill.Fly));
     [HideInInspector] public bool isMovingRight => rb.velocity.x > Global.slowMomentumThreeshold;
     [HideInInspector] public bool isMovingLeft => rb.velocity.x < -Global.slowMomentumThreeshold;
     [HideInInspector] public bool isMovingUp => rb.velocity.y > Global.verticalMomentumThreeshold;
@@ -53,6 +37,8 @@ public class Actor : MonoBehaviour, IControllable
 
     Controller controller;
 
+    float defaultHorizontalSpeed = 0;
+    float fastHorizontalSpeed = 0;
     float minGroundTimeBeforeJump = 0.05f;
     float timeGrounded = 0;
 
@@ -71,11 +57,22 @@ public class Actor : MonoBehaviour, IControllable
     public ActorStates currentState => stateMachine.currentStateLabel;
     public StateMachine<ActorStates> stateMachine;
 
+    Dictionary<Skill, SkillBase> skills = new Dictionary<Skill, SkillBase>();
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         mainCollider = GetComponent<CircleCollider2D>();
+        RegisterSkills();
         InitStateMachine();
+    }
+
+    private void RegisterSkills()
+    {
+        foreach (var skill in GetComponentsInChildren<SkillBase>())
+        {
+            skills.Add(skill.skillType, skill);
+        }
     }
 
     private void InitStateMachine()
@@ -85,11 +82,12 @@ public class Actor : MonoBehaviour, IControllable
         (
             ActorStates.Grounded, () =>
             {
+                SetSpeeds(skills[Skill.Walk].power, Can(Skill.Run) ? skills[Skill.Run].power : skills[Skill.Walk].power);
                 LookTowardsMovement();
                 HorizontalMovement();
                 UpdateGroundedMaterial();
                 CheckForCrawling();
-                LimitToSprintSpeed();
+                LimitGroundSpeed();
                 CheckForAirborne();
             }
         );
@@ -97,8 +95,9 @@ public class Actor : MonoBehaviour, IControllable
         (
             ActorStates.Crawling, () =>
             {
+                SetSpeeds(skills[Skill.Crawl].power);
                 LookTowardsMovement();
-                HorizontalMovement(crawlPower);
+                HorizontalMovement();
                 CheckForRolling();
                 CheckForStandUp();
                 CheckForAirborne();
@@ -108,6 +107,7 @@ public class Actor : MonoBehaviour, IControllable
         (
             ActorStates.Airborne, () =>
             {
+                SetSpeeds(skills[Skill.Walk].power, Can(Skill.Run) ? skills[Skill.Run].power : skills[Skill.Walk].power);
                 LookTowardsMovement();
                 HorizontalMovement();
                 UpdateAirborneMaterial();
@@ -125,11 +125,24 @@ public class Actor : MonoBehaviour, IControllable
         );
     }
 
+    private void SetSpeeds(float defaultSpeed, float fastSpeed = 0)
+    {
+        defaultHorizontalSpeed = defaultSpeed;
+        if (fastSpeed != 0)
+        {
+            fastHorizontalSpeed = fastSpeed;
+        }
+        else
+        {
+            fastHorizontalSpeed = defaultHorizontalSpeed;
+        }
+    }
+
     private void CheckForRolling()
     {
-        if (horizontalMomentum >= Momentum.Medium && canRoll)
+        if (horizontalMomentum >= Momentum.Medium && Can(Skill.Roll))
         {
-            rb.velocity = new Vector2(rb.velocity.x * rollPower, rb.velocity.y);
+            rb.velocity = new Vector2(rb.velocity.x * skills[Skill.Roll].power, rb.velocity.y);
             stateMachine.ChangeState(ActorStates.Rolling);
         }
     }
@@ -144,7 +157,8 @@ public class Actor : MonoBehaviour, IControllable
 
     private void CheckForEndRolling()
     {
-        if (((stateMachine.timeInCurrentState > rollDuration) && (horizontalMomentum == Momentum.None || !isGrounded || !wantsToGoDown)) || stateMachine.timeInCurrentState > rollDuration * 2.75f)
+        //HACKVI: Hacky durations
+        if (((stateMachine.timeInCurrentState > skills[Skill.Roll].skillDuration) && (horizontalMomentum == Momentum.None || !isGrounded || !wantsToGoDown)) || stateMachine.timeInCurrentState > skills[Skill.Roll].skillDuration * 2.75f)
         {
             stateMachine.ChangeState(ActorStates.Grounded);
         }
@@ -166,17 +180,21 @@ public class Actor : MonoBehaviour, IControllable
         }
     }
 
-    private void LimitToSprintSpeed()
+    private void LimitGroundSpeed()
     {
-        if (horizontalSpeed > sprintPower)
+        float maxGroundedSpeed = 0;
+        if (Can(Skill.Walk))   { maxGroundedSpeed = skills[Skill.Walk]   .power; }
+        if (Can(Skill.Run))    { maxGroundedSpeed = skills[Skill.Run]    .power; }
+
+        if (horizontalSpeed > maxGroundedSpeed)
         {
-            rb.velocity = new Vector2(Mathf.Sign(rb.velocity.x) * sprintPower, rb.velocity.y);
+            rb.velocity = new Vector2(Mathf.Sign(rb.velocity.x) * maxGroundedSpeed, rb.velocity.y);
         }
     }
 
     private void CheckForCrawling()
     {
-        if (canCrawl && wantsToGoDown)
+        if (Can(Skill.Crawl) && wantsToGoDown)
         {
             stateMachine.ChangeState(ActorStates.Crawling);
         }
@@ -236,16 +254,12 @@ public class Actor : MonoBehaviour, IControllable
         }
     }
 
-    private void HorizontalMovement(float overrideSpeed = 0)
+    private void HorizontalMovement()
     {
         if (controller!= null && controller.horizontalAxis != 0)
         {
-            var speed = controller.actionHeld ? sprintPower : runPower;
-            if (overrideSpeed != 0)
-            {
-                speed = overrideSpeed;
-            }
-            rb.velocity = new Vector2((Vector2.right * speed * controller.horizontalAxis).x, rb.velocity.y);
+            var wantsToGoFast = controller != null && controller.actionHeld;
+            rb.velocity = new Vector2((Vector2.right * (wantsToGoFast ? fastHorizontalSpeed : defaultHorizontalSpeed) * controller.horizontalAxis).x, rb.velocity.y);
         }
     }
 
@@ -374,11 +388,11 @@ public class Actor : MonoBehaviour, IControllable
             float power = 0;
             if (isGrounded)
             {
-                power = jumpPower;
+                power = skills[Skill.Jump].power;
             }
             else
             {
-                power = flyPower;
+                power = skills[Skill.Fly].power;
             }
 
             if (rb.velocity.y > 0)
@@ -416,6 +430,23 @@ public class Actor : MonoBehaviour, IControllable
         facing = ActorFacing.Left;
     }
 
+    public bool Can(Skill skill)
+    {
+        if (skills.ContainsKey(skill))
+        {
+            var targetSkill = skills[skill];
+            if (targetSkill.level > 0)
+            {
+                return true;
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Skill " + skill.ToString() + " not found.");
+        }
+        return false;
+    }
+
     void OnDrawGizmos()
     {
         if (Application.isPlaying)
@@ -434,9 +465,10 @@ public class Actor : MonoBehaviour, IControllable
         if (standingCell.IsGranular())
         {
             var spawnPoint = standingPoint + Vector2.up * 0.5f.PixelsToUnits();
-            var dustParticle = ParticleAutomata.instance.CellToParticle(standingCell, CellularAutomata.WorldToPixelPosition(spawnPoint));
+            var dustParticle = ParticleAutomata.instance.CreateParticle(CellularAutomata.WorldToPixelPosition(spawnPoint), standingCell.material);
             dustParticle.speed = Random.insideUnitCircle - rb.velocity.normalized + Vector2.up*3f;
-            standingCell.Destroy();
+            dustParticle.isEthereal = Random.value > 0.5f;
+            if (!dustParticle.isEthereal) { standingCell.Destroy(); }
         }
     }
 

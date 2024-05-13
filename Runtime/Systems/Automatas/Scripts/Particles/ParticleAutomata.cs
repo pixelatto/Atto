@@ -84,10 +84,18 @@ public class ParticleAutomata : MonoBehaviour
         {
             var particle = particles[i];
             var overlapCell = cellularAutomata.GetCell(CellularAutomata.WorldToPixelPosition(particle.position));
-            if (overlapCell != null && !overlapCell.IsEmpty())
+            if (particle.isEthereal)
             {
-                ParticleToCell(particle);
+                DestroyParticle(particle);
             }
+            else
+            {
+                if (overlapCell != null && !overlapCell.IsEmpty())
+                {
+                    ParticleToCell(particle);
+                }
+            }
+
         }
     }
 

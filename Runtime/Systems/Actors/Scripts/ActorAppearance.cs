@@ -55,7 +55,7 @@ public class ActorAppearance : MonoBehaviour
                     }
                     break;
                 case Momentum.Slow:
-                    if (character.wantsToGoDown && character.canCrawl)
+                    if (character.wantsToGoDown && character.Can(Skill.Crawl))
                     {
                         currentAnimation = ActorAnimations.Crawl;
                     }

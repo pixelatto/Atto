@@ -7,6 +7,7 @@ public class CellularSpawner : MonoBehaviour
     public CellMaterial cellMaterial = CellMaterial.Water;
     public int spawnAmount = 3;
     public float spawnRate = 0.1f;
+    public float etherealRate = 0.5f;
     public SpawnType spawnType; public enum SpawnType { AsParticle, AsCell }
     public SpawnShape spawnShape => ((circleCollider != null) ? SpawnShape.Circle : ((boxCollider != null) ? SpawnShape.Box : SpawnShape.None));
     public enum SpawnShape { None, Circle, Box }
@@ -63,7 +64,8 @@ public class CellularSpawner : MonoBehaviour
                 CellularAutomata.instance.CreateCellIfEmpty(CellularAutomata.WorldToPixelPosition(worldPosition), cellMaterial);
                 break;
             case SpawnType.AsParticle:
-                ParticleAutomata.instance.CreateParticle(worldPosition, cellMaterial);
+                var newParticle = ParticleAutomata.instance.CreateParticle(worldPosition, cellMaterial);
+                newParticle.isEthereal = Random.value < etherealRate;
                 break;
         }
     }

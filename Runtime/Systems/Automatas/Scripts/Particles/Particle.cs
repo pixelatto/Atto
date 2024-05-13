@@ -11,6 +11,7 @@ public class Particle
     public CellMaterial material;
     public float gravityScale = 1;
     public float drag = 0;
+    public bool isEthereal = false;
 
     public Vector2 previousPosition { get; private set; }
 

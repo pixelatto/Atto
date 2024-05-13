@@ -30,7 +30,7 @@ public class StateMachine<StateLabel>
         }
         else
         {
-            Debug.LogWarning("Invalid state");
+            Debug.LogWarning("Invalid state " + currentStateLabel);
         }
     }
 
