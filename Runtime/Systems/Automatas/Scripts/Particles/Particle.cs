@@ -18,6 +18,7 @@ public class Particle
     public float invulnerabilityTime = 0;
 
     public float lightEmission => materialProperties.lightEmission;
+    public float lightRadius => materialProperties.lightRadius;
 
     public Vector2 previousPosition { get; private set; }
 

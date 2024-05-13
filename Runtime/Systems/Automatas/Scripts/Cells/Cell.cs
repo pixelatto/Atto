@@ -10,6 +10,8 @@ public class Cell
     
     public CellMovement movement => material == CellMaterial.None ? CellMovement.Static : materialProperties.movement;
     public int fluidity => materialProperties.fluidity;
+    public float lightEmission => materialProperties.lightEmission;
+    public float lightRadius => materialProperties.lightRadius;
 
     CellMaterialProperties materialProperties { get { if (_materialProperties == null) { _materialProperties = CellularMaterials.instance.FindMaterial(material); }; return _materialProperties; } }
     CellMaterialProperties _materialProperties;
