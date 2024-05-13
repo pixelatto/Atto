@@ -3,7 +3,7 @@ using UnityEngine.Tilemaps;
 
 public class CellularChunkCollider : MonoBehaviour
 {
-    public CellularColliderType cellularColliderType = CellularColliderType.Main; public enum CellularColliderType { Main, Lights }
+    public CellularColliderType cellularColliderType { get; private set; } public enum CellularColliderType { Main, Lights }
 
     Grid tilemapGrid;
     Tilemap tilemap;
@@ -21,9 +21,10 @@ public class CellularChunkCollider : MonoBehaviour
 
     CellularChunk chunk;
 
-    public void InitChunkCollider(CellularChunk chunk)
+    public void InitChunkCollider(CellularChunk chunk, CellularColliderType cellularColliderType)
     {
         this.chunk = chunk;
+        this.cellularColliderType = cellularColliderType;
         SetupTiles();
         BuildTilemap();
         Recalculate();
@@ -41,7 +42,7 @@ public class CellularChunkCollider : MonoBehaviour
 
     private void BuildTilemap()
     {
-        GameObject tilemapObject = new GameObject("ChunkCollider"+ cellularColliderType);
+        GameObject tilemapObject = new GameObject("ChunkCollider_"+ cellularColliderType);
         tilemapObject.transform.parent = transform;
         tilemapObject.transform.localPosition = Vector3.zero;
         tilemapGrid = tilemapObject.GetOrAddComponent<Grid>();

@@ -12,6 +12,7 @@ public class CellMaterialProperties
     public Color32 identifierColor = Color.white;
     [Range(0f, 1f)]public float opacity = 1;
     public int startLifetime = -1;
+    public CellRenderLayer renderLayer = CellRenderLayer.Main;
 
     public Color GetColor()
     {
@@ -20,3 +21,5 @@ public class CellMaterialProperties
         return color;
     }
 }
+
+public enum CellRenderLayer { Main, Back, Front }

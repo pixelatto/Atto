@@ -16,14 +16,12 @@ public class CellularChunk : MonoBehaviour
     public Vector2 worldPosition => new Vector2(pixelPosition.x / Global.pixelsPerUnit, pixelPosition.y / Global.pixelsPerUnit);
     public Vector2 worldSize => new Vector2(pixelSize.x / Global.pixelsPerUnit, pixelSize.y / Global.pixelsPerUnit);
 
-    SpriteRenderer spriteRenderer;
-    Texture2D texture;
-
     public static Dictionary<int, Dictionary<int, CellularChunk>> chunkDirectory = new Dictionary<int, Dictionary<int, CellularChunk>>();
 
-    public bool textureDirty = false;
+    bool chunkDirty = true;
 
     CellularChunkCollider[] chunkColliders;
+    CellularChunkRenderer[] chunkRenderers;
 
     public Cell this[int x, int y]
     {
@@ -43,7 +41,7 @@ public class CellularChunk : MonoBehaviour
             {
                 return;
             };
-            textureDirty = true;
+            chunkDirty = true;
             cells[index] = value;
         }
     }
@@ -55,19 +53,32 @@ public class CellularChunk : MonoBehaviour
 
     private void Update()
     {
-        if (textureDirty)
+        if (chunkDirty)
         {
-            RenderChunk();
-            textureDirty = false;
+            chunkDirty = false;
 
             foreach (var chunkCollider in chunkColliders)
             {
                 chunkCollider.Recalculate();
             }
+
+            foreach (var chunkRenderer in chunkRenderers)
+            {
+                chunkRenderer.Draw();
+            }
         }
     }
 
     public void InitChunk()
+    {
+        ClearCells();
+        BuildColliders();
+        BuildRenderers();
+        RasterChunk();
+        AdressChunk();
+    }
+
+    private void ClearCells()
     {
         cells = new Cell[pixelSize.x * pixelSize.y];
         for (int i = 0; i < pixelSize.x; i++)
@@ -77,23 +88,10 @@ public class CellularChunk : MonoBehaviour
                 cells[Index(i, j)] = new Cell(CellMaterial.None);
             }
         }
+    }
 
-        var currentTerrainRaster = CellularRasterizer.instance.RasterChunk(this);
-        RasterTerrain(currentTerrainRaster);
-        RasterSurfacePixels(surfaceColor);
-        RasterLightBlockers();
-        CheckTexture();
-        RenderChunk();
-        GetComponent<Room>().Hide();
-        var mainChunkCollider = gameObject.AddComponent<CellularChunkCollider>();
-        var lightsChunkCollider = gameObject.AddComponent<CellularChunkCollider>();
-        lightsChunkCollider.cellularColliderType = CellularChunkCollider.CellularColliderType.Lights;
-        chunkColliders = GetComponents<CellularChunkCollider>();
-        foreach (var chunkCollider in chunkColliders)
-        {
-            chunkCollider.InitChunkCollider(this);
-        }
-
+    private void AdressChunk()
+    {
         chunkAddress = new Vector2Int(Mathf.RoundToInt(pixelPosition.x / Global.roomPixelSize.x), Mathf.RoundToInt(pixelPosition.y / Global.roomPixelSize.y));
         if (!chunkDirectory.ContainsKey(chunkAddress.x))
         {
@@ -107,6 +105,39 @@ public class CellularChunk : MonoBehaviour
         {
             chunkDirectory[chunkAddress.x][chunkAddress.y] = this;
         }
+    }
+
+    private void RasterChunk()
+    {
+        var currentTerrainRaster = CellularRasterizer.instance.RasterChunk(this);
+        RasterTerrain(currentTerrainRaster);
+        RasterSurfacePixels(surfaceColor);
+        RasterLightBlockers();
+        GetComponent<Room>().Hide();
+    }
+
+    private void BuildColliders()
+    {
+        gameObject.AddComponent<CellularChunkCollider>();
+        gameObject.AddComponent<CellularChunkCollider>();
+
+        chunkColliders = GetComponents<CellularChunkCollider>();
+
+        chunkColliders[0].InitChunkCollider(this, CellularChunkCollider.CellularColliderType.Main);
+        chunkColliders[1].InitChunkCollider(this, CellularChunkCollider.CellularColliderType.Lights);
+    }
+
+    private void BuildRenderers()
+    {
+        gameObject.AddComponent<CellularChunkRenderer>();
+        gameObject.AddComponent<CellularChunkRenderer>();
+        gameObject.AddComponent<CellularChunkRenderer>();
+
+        chunkRenderers = GetComponents<CellularChunkRenderer>();
+
+        chunkRenderers[0].InitChunkRenderer(this, CellRenderLayer.Back);
+        chunkRenderers[1].InitChunkRenderer(this, CellRenderLayer.Main);
+        chunkRenderers[2].InitChunkRenderer(this, CellRenderLayer.Front);
     }
 
     public void RasterTerrain(Texture2D terrainRaster)
@@ -237,39 +268,7 @@ public class CellularChunk : MonoBehaviour
         return int.MaxValue;
     }
 
-    private void RenderChunk()
-    {
-        texture.SetPixels32(ChunkToColorArray());
-        texture.Apply();
-    }
-
-    private void CheckTexture()
-    {
-        if (spriteRenderer == null)
-        {
-            var childObject = new GameObject("ChunkRenderer");
-            childObject.layer = LayerMask.NameToLayer("Terrain");
-            childObject.transform.SetParent(transform);
-            childObject.transform.localPosition = new Vector3(pixelSize.x / Global.pixelsPerUnit / 2f, pixelSize.y / Global.pixelsPerUnit / 2f, 0);
-            spriteRenderer = childObject.AddComponent<SpriteRenderer>();
-        }
-        if (spriteRenderer.sprite == null || spriteRenderer.sprite.texture.width != pixelSize.x || spriteRenderer.sprite.texture.height != pixelSize.y)
-        {
-            texture = new Texture2D(pixelSize.x, pixelSize.y);
-            texture.filterMode = FilterMode.Point;
-            for (int i = 0; i < pixelSize.x; i++)
-            {
-                for (int j = 0; j < pixelSize.y; j++)
-                {
-                    texture.SetPixel(i, j, Color.clear);
-                }
-            }
-            texture.Apply();
-            spriteRenderer.sprite = Sprite.Create(texture, new Rect(0, 0, pixelSize.x, pixelSize.y), Vector2.one * 0.5f, Global.pixelsPerUnit);
-        }
-    }
-
-    public Color32[] ChunkToColorArray()
+    public Color32[] ChunkToColorArray(CellRenderLayer renderLayer)
     {
         Color32[] result = new Color32[pixelSize.x * pixelSize.y];
 
@@ -278,7 +277,15 @@ public class CellularChunk : MonoBehaviour
             for (int j = 0; j < pixelSize.y; j++)
             {
                 int index = j * pixelSize.x + i;
-                result[index] = cells[Index(i, j)].GetColor();
+                var currentCell = cells[Index(i, j)];
+                if (currentCell.renderLayer == renderLayer)
+                {
+                    result[index] = currentCell.GetColor();
+                }
+                else
+                {
+                    result[index] = Color.clear;
+                }
             }
         }
 

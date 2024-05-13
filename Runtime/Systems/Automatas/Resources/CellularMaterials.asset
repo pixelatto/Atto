@@ -24,6 +24,7 @@ MonoBehaviour:
       rgba: 0
     opacity: 0
     startLifetime: -1
+    renderLayer: 0
   - cellMaterial: 1
     movement: 1
     gravity: -1
@@ -35,6 +36,7 @@ MonoBehaviour:
       rgba: 4283586137
     opacity: 1
     startLifetime: -1
+    renderLayer: 0
   - cellMaterial: 2
     movement: 2
     gravity: -1
@@ -46,6 +48,7 @@ MonoBehaviour:
       rgba: 4282078863
     opacity: 1
     startLifetime: -1
+    renderLayer: 0
   - cellMaterial: 3
     movement: 3
     gravity: -1
@@ -57,6 +60,7 @@ MonoBehaviour:
       rgba: 4292963931
     opacity: 0.5
     startLifetime: -1
+    renderLayer: 2
   - cellMaterial: 4
     movement: 3
     gravity: -1
@@ -68,6 +72,7 @@ MonoBehaviour:
       rgba: 4281417126
     opacity: 1
     startLifetime: -1
+    renderLayer: 2
   - cellMaterial: 5
     movement: 4
     gravity: 1
@@ -79,6 +84,7 @@ MonoBehaviour:
       rgba: 4281694169
     opacity: 1
     startLifetime: 10
+    renderLayer: 0
   - cellMaterial: 6
     movement: 3
     gravity: -1
@@ -90,6 +96,7 @@ MonoBehaviour:
       rgba: 4285719207
     opacity: 0.5
     startLifetime: -1
+    renderLayer: 2
   - cellMaterial: 7
     movement: 2
     gravity: -1
@@ -101,6 +108,7 @@ MonoBehaviour:
       rgba: 4294761419
     opacity: 1
     startLifetime: -1
+    renderLayer: 0
   - cellMaterial: 8
     movement: 2
     gravity: -1
@@ -112,3 +120,4 @@ MonoBehaviour:
       rgba: 4288332782
     opacity: 1
     startLifetime: -1
+    renderLayer: 0

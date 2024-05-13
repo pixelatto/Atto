@@ -11,6 +11,9 @@ public class Global
     public static Vector2 roomWorldSize => new Vector2(128 / pixelsPerUnit, 72 / pixelsPerUnit);
     public static float worldPixelSize => 1f / (float)pixelsPerUnit;
 
+    public static LayerMask terrainMask = LayerMask.NameToLayer("Terrain");
+    public static LayerMask backgroundMask = LayerMask.NameToLayer("Background");
+    public static LayerMask foregroundMask = LayerMask.NameToLayer("Foreground");
     public static LayerMask cloudsMask = LayerMask.GetMask("Clouds");
 
     public static PhysicsMaterial2D brakeMaterial = null;
