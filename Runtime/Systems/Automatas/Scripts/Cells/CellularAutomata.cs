@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CellularAutomata : MonoBehaviour
+public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
 {
     public float updateRate = 0.1f;
     public UpdateType updateType = UpdateType.Automatic; public enum UpdateType { Manual, Automatic }
@@ -10,9 +10,6 @@ public class CellularAutomata : MonoBehaviour
     public PixelCamera pixelCamera;
 
     public static LayerMask layerMask => LayerMask.GetMask("Terrain");
-
-    public static CellularAutomata instance { get { if (instance_ == null) { instance_ = FindObjectOfType<CellularAutomata>(); } return instance_; } }
-    static CellularAutomata instance_;
 
     public bool hasChanged = false;
 

@@ -17,7 +17,12 @@ public class Particle
     public float currentLifetime => Time.time - creationTime;
     public float invulnerabilityTime = 0;
 
+    public float lightEmission => materialProperties.lightEmission;
+
     public Vector2 previousPosition { get; private set; }
+
+    CellMaterialProperties materialProperties { get { if (_materialProperties == null) { _materialProperties = CellularMaterials.instance.FindMaterial(material); }; return _materialProperties; } }
+    CellMaterialProperties _materialProperties;
 
     public Particle(Vector2 worldPosition, CellMaterial cellMaterial)
     {

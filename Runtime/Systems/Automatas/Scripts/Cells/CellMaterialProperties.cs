@@ -8,6 +8,7 @@ public class CellMaterialProperties
     public int gravity = -1;
     public int fluidity = 1;
     public int temperature = 0;
+    public float lightEmission = 0;
     public Sprite appearance;
     public Color32 identifierColor = Color.white;
     [Range(0f, 1f)]public float opacity = 1;

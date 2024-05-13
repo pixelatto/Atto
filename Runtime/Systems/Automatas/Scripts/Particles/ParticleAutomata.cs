@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ParticleAutomata : MonoBehaviour
+public class ParticleAutomata : SingletonMonobehaviour<ParticleAutomata>
 {
     public Vector2Int pixelSize = new Vector2Int(128, 72);
     public Vector2 globalGravity = new Vector2(0, -10);
@@ -18,15 +18,19 @@ public class ParticleAutomata : MonoBehaviour
     Color32[] clearColors;
     List<Particle> markedToRemove = new List<Particle>();
 
-    public static ParticleAutomata instance { get { if (instance_ == null) { instance_ = FindObjectOfType<ParticleAutomata>(); } return instance_; } }
-    static ParticleAutomata instance_;
-
-    public bool debug = false;
-
     private void Awake()
     {
         PrepareClearTexture();
         CheckTexture();
+    }
+
+    private void Update()
+    {
+        IntegrateParticles();
+        CheckCollisions();
+        RasterParticles();
+        DrawDebugGizmos();
+        RemoveDeadParticles();
     }
 
     private void CheckTexture()
@@ -50,16 +54,7 @@ public class ParticleAutomata : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        IntegrateParticles();
-        CheckCollisions();
-        RasterParticles();
-        DrawDebugGizmos();
-        RemoveParticles();
-    }
-
-    private void RemoveParticles()
+    private void RemoveDeadParticles()
     {
         foreach (var particle in markedToRemove)
         {
@@ -70,7 +65,7 @@ public class ParticleAutomata : MonoBehaviour
 
     private void DrawDebugGizmos()
     {
-        if (debug && Debug.isDebugBuild)
+        if (Debug.isDebugBuild)
         {
             foreach (var particle in particles)
             {
