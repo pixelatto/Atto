@@ -13,6 +13,10 @@ public class Particle
     public float drag = 0;
     public bool isEthereal = false;
 
+    float creationTime;
+    public float currentLifetime => Time.time - creationTime;
+    public float invulnerabilityTime = 0;
+
     public Vector2 previousPosition { get; private set; }
 
     public Particle(Vector2 worldPosition, CellMaterial cellMaterial)
@@ -21,6 +25,7 @@ public class Particle
         this.position = worldPosition;
         this.previousPosition = worldPosition;
         color = CellularMaterials.instance.FindMaterial(material).GetColor();
+        creationTime = Time.time;
     }
 
     public Particle(Cell source, Vector2 worldPosition)
@@ -29,6 +34,7 @@ public class Particle
         this.position = worldPosition;
         this.previousPosition = worldPosition;
         color = source.GetColor();
+        creationTime = Time.time;
     }
 
     public void Integrate(ParticleAutomata automata, float deltaTime)
@@ -44,5 +50,14 @@ public class Particle
 
         //End
         accel = Vector2.zero;
+    }
+
+    public bool Destroy()
+    {
+        if (currentLifetime <= invulnerabilityTime)
+        {
+            return false;
+        }
+        return true;
     }
 }

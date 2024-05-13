@@ -15,8 +15,8 @@ public class ParticleAutomata : MonoBehaviour
 
     SpriteRenderer spriteRenderer;
     Texture2D texture;
-
     Color32[] clearColors;
+    List<Particle> markedToRemove = new List<Particle>();
 
     public static ParticleAutomata instance { get { if (instance_ == null) { instance_ = FindObjectOfType<ParticleAutomata>(); } return instance_; } }
     static ParticleAutomata instance_;
@@ -34,7 +34,7 @@ public class ParticleAutomata : MonoBehaviour
         if (spriteRenderer == null)
         {
             var childObject = new GameObject("ParticleRasterizer");
-            childObject.layer = LayerMask.NameToLayer("Terrain");
+            childObject.layer = Global.backgroundMask;
             childObject.transform.SetParent(transform);
             childObject.transform.localPosition = Vector3.zero;
             spriteRenderer = childObject.AddComponent<SpriteRenderer>();
@@ -56,6 +56,16 @@ public class ParticleAutomata : MonoBehaviour
         CheckCollisions();
         RasterParticles();
         DrawDebugGizmos();
+        RemoveParticles();
+    }
+
+    private void RemoveParticles()
+    {
+        foreach (var particle in markedToRemove)
+        {
+            particles.Remove(particle);
+        }
+        markedToRemove.Clear();
     }
 
     private void DrawDebugGizmos()
@@ -84,13 +94,14 @@ public class ParticleAutomata : MonoBehaviour
         {
             var particle = particles[i];
             var overlapCell = cellularAutomata.GetCell(CellularAutomata.WorldToPixelPosition(particle.position));
-            if (particle.isEthereal)
+            
+            if (!overlapCell.IsEmpty())
             {
-                DestroyParticle(particle);
-            }
-            else
-            {
-                if (overlapCell != null && !overlapCell.IsEmpty())
+                if (particle.isEthereal)
+                {
+                    DestroyParticle(particle);
+                }
+                else
                 {
                     ParticleToCell(particle);
                 }
@@ -126,26 +137,39 @@ public class ParticleAutomata : MonoBehaviour
         return newParticle;
     }
 
-    public void DestroyParticle(Particle particle)
+    public bool DestroyParticle(Particle particle)
     {
-        particles.Remove(particle);
-        particle = null;
+        bool succeded = particle.Destroy();
+        if (succeded)
+        {
+            markedToRemove.Add(particle);
+        }
+        return succeded;
     }
 
     public Particle CellToParticle(Cell cell, Vector2Int globalPixelPosition)
     {
-        var worldPosition = CellularAutomata.PixelToWorldPosition(globalPixelPosition);
-        var newParticle = new Particle(cell, worldPosition);
-        particles.Add(newParticle);
+        Particle newParticle = null;
         cellularAutomata.DestroyCell(globalPixelPosition);
-        Draw.Circle(worldPosition, 0.5f.PixelsToUnits(), Color.red, 8);
-        Debug.DrawLine(worldPosition + Vector3.up * 1 / Global.pixelsPerUnit, worldPosition + Vector3.down * 1 / Global.pixelsPerUnit, Color.red, 1f);
-        Debug.DrawLine(worldPosition + Vector3.left * 1 / Global.pixelsPerUnit, worldPosition + Vector3.right * 1 / Global.pixelsPerUnit, Color.red, 1f);
+
+        bool succeded = cellularAutomata.GetCell(globalPixelPosition).IsEmpty();
+
+        if (succeded)
+        {
+            var worldPosition = CellularAutomata.PixelToWorldPosition(globalPixelPosition);
+            newParticle = new Particle(cell, worldPosition);
+            particles.Add(newParticle);
+            Draw.Circle(worldPosition, 0.5f.PixelsToUnits(), Color.red, 8);
+            Debug.DrawLine(worldPosition + Vector3.up * 1 / Global.pixelsPerUnit, worldPosition + Vector3.down * 1 / Global.pixelsPerUnit, Color.red, 1f);
+            Debug.DrawLine(worldPosition + Vector3.left * 1 / Global.pixelsPerUnit, worldPosition + Vector3.right * 1 / Global.pixelsPerUnit, Color.red, 1f);
+        }
+
         return newParticle;
     }
 
     public Cell ParticleToCell(Particle particle)
     {
+        Cell newCell = CellularAutomata.emptyCell;
         Vector2Int? validPosition = null;
         var currentPixelPosition = CellularAutomata.WorldToPixelPosition(particle.position);
         var currentCell = cellularAutomata.GetCell(currentPixelPosition);
@@ -168,19 +192,15 @@ public class ParticleAutomata : MonoBehaviour
             }
         }
 
-        if (validPosition != null)
+        var destroySuccessful = DestroyParticle(particle);
+        if (destroySuccessful)
         {
-            var newCell = cellularAutomata.CreateCell((Vector2Int)validPosition, particle.material);
-            DestroyParticle(particle);
-            return newCell;
+            if (validPosition != null)
+            {
+                newCell = cellularAutomata.CreateCell((Vector2Int)validPosition, particle.material);
+            }
         }
-        else
-        {
-            DestroyParticle(particle);
-            //Debug.LogWarning("Couldn't find a valid cell position for particle.");
-            //Draw.Circle(particle.position, 0.5f.PixelsToUnits(), Color.magenta);
-            return null;
-        }
+        return newCell;
     }
 
     private void PrepareClearTexture()

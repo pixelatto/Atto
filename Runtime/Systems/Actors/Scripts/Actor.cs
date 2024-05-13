@@ -8,7 +8,7 @@ public class Actor : MonoBehaviour, IControllable
 {
     [Header("Main")]
     public ActorFacing facing;
-    public int weight = 10;
+    public ActorWeights weight = ActorWeights.Medium; public enum ActorWeights { Tiny = 1, Light = 2, Medium = 3, Heavy = 4, Massive = 5 }
     public float pixelSize = 3; [HideInInspector] public float pixelSizeModifier = 0;
     public float horizontalAirDrag = 0.01f;
 
@@ -22,7 +22,7 @@ public class Actor : MonoBehaviour, IControllable
     [HideInInspector] public Momentum horizontalMomentum = Momentum.None;
     [HideInInspector] public Momentum verticalMomentum = Momentum.None;
     [HideInInspector] public Rigidbody2D rb;
-    [HideInInspector] public bool isCloudWalkAvailable => weight < 5;
+    [HideInInspector] public bool isCloudWalkAvailable => weight <= ActorWeights.Light;
     [HideInInspector] public bool isJumpAvailable => ((Can(Skill.Jump) && isGrounded && (timeGrounded > minGroundTimeBeforeJump)) || Can(Skill.Fly));
     [HideInInspector] public bool isMovingRight => rb.velocity.x > Global.slowMomentumThreeshold;
     [HideInInspector] public bool isMovingLeft => rb.velocity.x < -Global.slowMomentumThreeshold;
@@ -459,16 +459,31 @@ public class Actor : MonoBehaviour, IControllable
 
     public void OnRunFootstep()
     {
-        var belowStandingPosition = standingPoint + Vector2.down * 2.5f.PixelsToUnits();
-        var pixelPosition = CellularAutomata.WorldToPixelPosition(belowStandingPosition);
-        var standingCell = CellularAutomata.instance.GetCell(pixelPosition);
-        if (standingCell.IsGranular())
+        var belowWorldPosition = standingPoint + Vector2.down * 1.5f.PixelsToUnits();
+        var belowPixelPosition = CellularAutomata.WorldToPixelPosition(belowWorldPosition);
+        var belowCell = CellularAutomata.instance.GetCell(belowPixelPosition);
+        Draw.Pixel(belowWorldPosition, Color.green);
+        
+        if (belowCell.IsGranular())
         {
-            var spawnPoint = standingPoint + Vector2.up * 0.5f.PixelsToUnits();
-            var dustParticle = ParticleAutomata.instance.CreateParticle(CellularAutomata.WorldToPixelPosition(spawnPoint), standingCell.material);
+            bool canPushGroundParticles = weight >= ActorWeights.Heavy;
+
+            bool pushRealParticle = canPushGroundParticles && Random.value < 0.20f * (int)weight;
+            var spawnPoint = (Vector2)standingPoint + Vector2.up * 1.5f.PixelsToUnits();
+
+            Particle dustParticle;
+            if (pushRealParticle)
+            {
+                dustParticle = ParticleAutomata.instance.CellToParticle(belowCell, CellularAutomata.WorldToPixelPosition(spawnPoint));
+            }
+            else
+            {
+                dustParticle = ParticleAutomata.instance.CreateParticle(spawnPoint, belowCell.material);
+            }
+
+            dustParticle.isEthereal = !pushRealParticle;
+
             dustParticle.speed = Random.insideUnitCircle - rb.velocity.normalized + Vector2.up*3f;
-            dustParticle.isEthereal = Random.value > 0.5f;
-            if (!dustParticle.isEthereal) { standingCell.Destroy(); }
         }
     }
 
