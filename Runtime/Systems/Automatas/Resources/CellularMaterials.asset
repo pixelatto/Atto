@@ -90,3 +90,25 @@ MonoBehaviour:
       rgba: 4285719207
     opacity: 0.5
     startLifetime: -1
+  - cellMaterial: 7
+    movement: 2
+    gravity: -1
+    fluidity: 0
+    temperature: -20
+    appearance: {fileID: 21300000, guid: ce47024ab35c4534e9e826e53cbe9c63, type: 3}
+    identifierColor:
+      serializedVersion: 2
+      rgba: 4294761419
+    opacity: 1
+    startLifetime: -1
+  - cellMaterial: 8
+    movement: 2
+    gravity: -1
+    fluidity: 0
+    temperature: 20
+    appearance: {fileID: 21300000, guid: 968823d5fe4c3f64d81cfd9f01c211e0, type: 3}
+    identifierColor:
+      serializedVersion: 2
+      rgba: 4288332782
+    opacity: 1
+    startLifetime: -1
