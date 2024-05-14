@@ -10,7 +10,6 @@ public class CellMaterialProperties
     public CellMovement movement = CellMovement.Undefined;
     public int gravity = 1;
     public int fluidity = 1;
-    public int temperature = 0;
     public int lifespan = -1;
 
     [Header("Optics")]
@@ -19,6 +18,14 @@ public class CellMaterialProperties
     public float lightEmission = 0;
     [Range(0f, 1f)] public float opacity = 1;
     public CellRenderLayer renderLayer = CellRenderLayer.Main;
+
+    [Header("Thermodynamics")]
+    public float temperature = 20;
+    public float thermalConductivity = 1;
+    public float heatPoint = 100;
+    public CellMaterial heatMaterial = CellMaterial.None;
+    public float coldPoint = 0;
+    public CellMaterial coldMaterial = CellMaterial.None;
 
     public Color GetColor()
     {

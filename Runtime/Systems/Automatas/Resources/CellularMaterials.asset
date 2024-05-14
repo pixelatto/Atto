@@ -20,13 +20,18 @@ MonoBehaviour:
     movement: 0
     gravity: 0
     fluidity: 0
-    temperature: 20
     lifespan: -1
     appearance: {fileID: 21300000, guid: c411c51088a98e64f8e8efcbffe09e96, type: 3}
     lightRadius: 0
     lightEmission: 0
     opacity: 0
     renderLayer: 0
+    temperature: 20
+    thermalConductivity: 1
+    heatPoint: 100
+    heatMaterial: 0
+    coldPoint: 0
+    coldMaterial: 0
   - cellMaterial: 1
     identifierColor:
       serializedVersion: 2
@@ -34,13 +39,18 @@ MonoBehaviour:
     movement: 1
     gravity: 1
     fluidity: 1
-    temperature: 0
     lifespan: -1
     appearance: {fileID: 21300000, guid: f842b45f0fc48a24e827a360c99c9d94, type: 3}
     lightRadius: 0
     lightEmission: 0
     opacity: 1
     renderLayer: 0
+    temperature: 0
+    thermalConductivity: 1
+    heatPoint: 100
+    heatMaterial: 0
+    coldPoint: 0
+    coldMaterial: 0
   - cellMaterial: 2
     identifierColor:
       serializedVersion: 2
@@ -48,13 +58,18 @@ MonoBehaviour:
     movement: 2
     gravity: 1
     fluidity: 1
-    temperature: 0
     lifespan: -1
     appearance: {fileID: 21300000, guid: 67cfaa3fb054e744386bcdc980f8c560, type: 3}
     lightRadius: 0
     lightEmission: 0
     opacity: 1
     renderLayer: 0
+    temperature: 0
+    thermalConductivity: 1
+    heatPoint: 100
+    heatMaterial: 0
+    coldPoint: 0
+    coldMaterial: 0
   - cellMaterial: 3
     identifierColor:
       serializedVersion: 2
@@ -62,27 +77,37 @@ MonoBehaviour:
     movement: 3
     gravity: 1
     fluidity: 5
-    temperature: 0
     lifespan: -1
     appearance: {fileID: 21300000, guid: 83aeb07c9de90554b981d23def81bd5d, type: 3}
     lightRadius: 0
     lightEmission: 0
     opacity: 0.5
     renderLayer: 2
+    temperature: 0
+    thermalConductivity: 1
+    heatPoint: 100
+    heatMaterial: 0
+    coldPoint: 0
+    coldMaterial: 0
   - cellMaterial: 4
     identifierColor:
       serializedVersion: 2
       rgba: 4282132549
     movement: 3
     gravity: 1
-    fluidity: 1
-    temperature: 500
+    fluidity: 2
     lifespan: -1
     appearance: {fileID: 21300000, guid: 7d34c1ece8e53924d83647888f98cbcf, type: 3}
     lightRadius: 1
     lightEmission: 0.5
     opacity: 1
     renderLayer: 2
+    temperature: 500
+    thermalConductivity: 1
+    heatPoint: 100
+    heatMaterial: 0
+    coldPoint: 0
+    coldMaterial: 0
   - cellMaterial: 5
     identifierColor:
       serializedVersion: 2
@@ -90,13 +115,18 @@ MonoBehaviour:
     movement: 4
     gravity: -1
     fluidity: 1
-    temperature: 400
     lifespan: 10
     appearance: {fileID: 21300000, guid: 5812fccd0b6d2664e98d5b52ae5be407, type: 3}
     lightRadius: 10
     lightEmission: 0.1
     opacity: 1
     renderLayer: 0
+    temperature: 400
+    thermalConductivity: 1
+    heatPoint: 100
+    heatMaterial: 0
+    coldPoint: 0
+    coldMaterial: 0
   - cellMaterial: 6
     identifierColor:
       serializedVersion: 2
@@ -104,13 +134,18 @@ MonoBehaviour:
     movement: 3
     gravity: 1
     fluidity: 5
-    temperature: 0
     lifespan: -1
     appearance: {fileID: 21300000, guid: c411c51088a98e64f8e8efcbffe09e96, type: 3}
     lightRadius: 0
     lightEmission: 0
     opacity: 0.5
     renderLayer: 2
+    temperature: 0
+    thermalConductivity: 1
+    heatPoint: 100
+    heatMaterial: 0
+    coldPoint: 0
+    coldMaterial: 0
   - cellMaterial: 7
     identifierColor:
       serializedVersion: 2
@@ -118,13 +153,18 @@ MonoBehaviour:
     movement: 2
     gravity: 1
     fluidity: 0
-    temperature: -20
     lifespan: -1
     appearance: {fileID: 21300000, guid: ce47024ab35c4534e9e826e53cbe9c63, type: 3}
     lightRadius: 0
     lightEmission: 0
     opacity: 1
     renderLayer: 0
+    temperature: -20
+    thermalConductivity: 1
+    heatPoint: 100
+    heatMaterial: 0
+    coldPoint: 0
+    coldMaterial: 0
   - cellMaterial: 8
     identifierColor:
       serializedVersion: 2
@@ -132,13 +172,18 @@ MonoBehaviour:
     movement: 2
     gravity: 1
     fluidity: 0
-    temperature: 20
     lifespan: -1
     appearance: {fileID: 21300000, guid: 968823d5fe4c3f64d81cfd9f01c211e0, type: 3}
     lightRadius: 0
     lightEmission: 0
     opacity: 1
     renderLayer: 0
+    temperature: 20
+    thermalConductivity: 1
+    heatPoint: 100
+    heatMaterial: 0
+    coldPoint: 0
+    coldMaterial: 0
   - cellMaterial: 9
     identifierColor:
       serializedVersion: 2
@@ -146,13 +191,18 @@ MonoBehaviour:
     movement: 1
     gravity: 1
     fluidity: 0
-    temperature: 20
     lifespan: -1
     appearance: {fileID: 21300000, guid: d979957eced5fd74a8cb467c725f9bcb, type: 3}
     lightRadius: 0
     lightEmission: 0
     opacity: 1
     renderLayer: 0
+    temperature: 20
+    thermalConductivity: 1
+    heatPoint: 100
+    heatMaterial: 0
+    coldPoint: 0
+    coldMaterial: 0
   - cellMaterial: 10
     identifierColor:
       serializedVersion: 2
@@ -160,13 +210,18 @@ MonoBehaviour:
     movement: 4
     gravity: -1
     fluidity: 1
-    temperature: 150
-    lifespan: -1
+    lifespan: 100
     appearance: {fileID: 21300000, guid: bd41bd3aa30dd2e4c8dea9ae9b2374e4, type: 3}
     lightRadius: 0
     lightEmission: 0
     opacity: 0.5
     renderLayer: 2
+    temperature: 150
+    thermalConductivity: 1
+    heatPoint: 100
+    heatMaterial: 0
+    coldPoint: 0
+    coldMaterial: 0
   - cellMaterial: 11
     identifierColor:
       serializedVersion: 2
@@ -174,13 +229,18 @@ MonoBehaviour:
     movement: 1
     gravity: 1
     fluidity: 1
-    temperature: -30
     lifespan: -1
     appearance: {fileID: 21300000, guid: d75d0bcd58d047b4b96e742aff3ae948, type: 3}
     lightRadius: 0
     lightEmission: 0
     opacity: 1
     renderLayer: 0
+    temperature: -30
+    thermalConductivity: 1
+    heatPoint: 100
+    heatMaterial: 0
+    coldPoint: 0
+    coldMaterial: 0
   reactions:
   - reactionName: Wood combustion
     reactorA: 5
