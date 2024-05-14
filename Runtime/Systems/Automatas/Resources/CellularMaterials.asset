@@ -188,6 +188,12 @@ MonoBehaviour:
     productA: 5
     productB: 5
     chance: 1
+  - reactionName: Wood combustion (lava)
+    reactorA: 4
+    reactorB: 9
+    productA: 4
+    productB: 5
+    chance: 1
   - reactionName: Water evaporation
     reactorA: 3
     reactorB: 5
@@ -204,11 +210,23 @@ MonoBehaviour:
     reactorA: 4
     reactorB: 3
     productA: 1
-    productB: 0
+    productB: 10
     chance: 1
   - reactionName: Melt ice
     reactorA: 11
     reactorB: 5
     productA: 3
     productB: 0
+    chance: 1
+  - reactionName: Melt ice (lava)
+    reactorA: 11
+    reactorB: 4
+    productA: 3
+    productB: 4
+    chance: 1
+  - reactionName: Melt snow (lava)
+    reactorA: 7
+    reactorB: 4
+    productA: 3
+    productB: 4
     chance: 1

@@ -106,8 +106,15 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         int y = currentPosition.y;
         var bottomPosition = new Vector2Int(x, y - 1);
         var bottomCell = GetCell(bottomPosition);
+        var bottomReaction = CellularMaterials.instance.FindReaction(currentCell.material, bottomCell.material);
+        var canReactDown = bottomReaction != null;
         var canFallDown = CanDisplace(currentCell, bottomCell);
-        if (canFallDown)
+
+        if (canReactDown)
+        {
+            ReactCells(currentPosition, bottomPosition, bottomReaction);
+        }
+        else if (canFallDown)
         {
             SwapCells(currentPosition, bottomPosition);
         }
@@ -117,9 +124,23 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
             var rightPosition = new Vector2Int(x + 1, y);
             var leftCell = GetCell(leftPosition);
             var rightCell = GetCell(rightPosition);
+            var leftReaction = CellularMaterials.instance.FindReaction(currentCell.material, leftCell.material);
+            var rightReaction = CellularMaterials.instance.FindReaction(currentCell.material, rightCell.material);
+            var canReactLeft = leftReaction != null;
+            var canReactRight = rightReaction != null;
             var canSlideLeft = CanDisplace(currentCell, leftCell);
             var canSlideRight = CanDisplace(currentCell, rightCell);
-            if (canSlideLeft || canSlideRight)
+
+            if (canReactLeft || canReactRight)
+            {
+                int direction = (canReactLeft ? -1 : 0) + (canReactRight ? 1 : 0);
+                if (direction == 0)
+                {
+                    direction = (Random.value > 0.5f) ? 1 : -1;
+                }
+                ReactCells(currentPosition, currentPosition + new Vector2Int(direction, 0), direction == -1 ? leftReaction : rightReaction);
+            }
+            else if (canSlideLeft || canSlideRight)
             {
                 int direction = (canSlideLeft ? -1 : 0) + (canSlideRight ? 1 : 0);
                 if (direction == 0)
@@ -135,7 +156,25 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
                     var spreadPositionBottom = currentPosition + new Vector2Int(spread * direction, -1);
                     var spreadPositionCell = GetCell(spreadPosition);
                     var spreadPositionBottomCell = GetCell(spreadPositionBottom);
-                    if (CanDisplace(currentCell, spreadPositionBottomCell))
+                    var spreadPositionReaction = CellularMaterials.instance.FindReaction(currentCell.material, spreadPositionCell.material);
+                    var spreadPositionBottomReaction = CellularMaterials.instance.FindReaction(currentCell.material, spreadPositionBottomCell.material);
+                    var canReactSpreadPosition = spreadPositionReaction != null;
+                    var canReactSpreadPositionBottom = spreadPositionBottomReaction != null;
+
+                    if (canReactSpreadPositionBottom)
+                    {
+                        distance = spread;
+                        fall = -1;
+                        ReactCells(currentPosition, spreadPositionBottom, spreadPositionBottomReaction);
+                        break;
+                    }
+                    else if (canReactSpreadPosition)
+                    {
+                        distance = spread;
+                        ReactCells(currentPosition, spreadPosition, spreadPositionReaction);
+                        break;
+                    }
+                    else if (CanDisplace(currentCell, spreadPositionBottomCell))
                     {
                         distance = spread;
                         fall = -1;
@@ -162,7 +201,12 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         var bottomLeftPosition = new Vector2Int(x - 1, y - 1);
         var bottomRightPosition = new Vector2Int(x + 1, y - 1);
         var canFallDown = CanDisplace(currentCell, bottomCell);
-        var canInteractDown = CanInteract(currentCell, bottomCell); //TODO: interactions
+        var downReaction = CellularMaterials.instance.FindReaction(currentCell.material, bottomCell.material);
+        var canReactDown = downReaction != null;
+        if (canReactDown)
+        {
+            ReactCells(currentPosition, bottomPosition, downReaction);
+        }
         if (canFallDown)
         {
             SwapCells(currentPosition, bottomPosition);
@@ -173,7 +217,21 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
             var bottomRightCell = GetCell(bottomRightPosition);
             var canFallLeft = CanDisplace(currentCell, bottomLeftCell);
             var canFallRight = CanDisplace(currentCell, bottomRightCell);
-            if (canFallLeft || canFallRight)
+            var bottomLeftReaction = CellularMaterials.instance.FindReaction(currentCell.material, bottomLeftCell.material);
+            var canReactBottomLeft = bottomLeftReaction != null;
+            var bottomRightReaction = CellularMaterials.instance.FindReaction(currentCell.material, bottomRightCell.material);
+            var canReactBottomRight = bottomRightReaction != null;
+
+            if (canReactBottomLeft || canReactBottomRight)
+            {
+                int direction = (canFallLeft ? -1 : 0) + (canFallRight ? 1 : 0);
+                if (direction == 0)
+                {
+                    direction = (Random.value > 0.5f) ? 1 : -1;
+                }
+                ReactCells(currentPosition, currentPosition + new Vector2Int(direction, -1), direction == -1 ? bottomLeftReaction : bottomRightReaction);
+            }
+            else if (canFallLeft || canFallRight)
             {
                 int direction = (canFallLeft ? -1 : 0) + (canFallRight ? 1 : 0);
                 if (direction == 0)
@@ -198,7 +256,14 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
             {
                 var targetPosition = new Vector2Int(x+i, y+j - currentCell.gravity);
                 var targetCell = GetCell(targetPosition);
-                if (CanDisplace(currentCell, targetCell))
+
+                var reaction = CellularMaterials.instance.FindReaction(currentCell.material, targetCell.material);
+                var canReact = reaction != null;
+                if (canReact)
+                {
+                    targetPositions.Add(targetPosition);
+                }
+                else if (CanDisplace(currentCell, targetCell))
                 {
                     targetPositions.Add(targetPosition);
                 }
@@ -207,7 +272,17 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         if (targetPositions.Count > 0)
         {
             var randomPosition = targetPositions.PickRandom();
-            SwapCells(currentPosition, randomPosition);
+            var randomCell = GetCell(randomPosition);
+            var reaction = CellularMaterials.instance.FindReaction(currentCell.material, randomCell.material);
+            var canReact = reaction != null;
+            if (canReact)
+            {
+                ReactCells(currentPosition, randomPosition, reaction);
+            }
+            else
+            {
+                SwapCells(currentPosition, randomPosition);
+            }
         }
     }
 
@@ -236,6 +311,20 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         {
             return null;
         }
+    }
+
+    void ReactCells(Vector2Int reactorPositionA, Vector2Int reactorPositionB, CellMaterialReaction reaction)
+    {
+        Debug.Log("Reaction! " + reaction.reactionName);
+        var cellA = GetCell(reactorPositionA);
+        var cellB = GetCell(reactorPositionB);
+        bool reversed = reaction.reactorA == cellB.material && reaction.reactorB == cellA.material;
+
+        var productA = reversed ? reaction.productB : reaction.productA;
+        var productB = reversed ? reaction.productA : reaction.productB;
+        SetCell(reactorPositionA, new Cell(productA));
+        SetCell(reactorPositionB, new Cell(productB));
+        hasChanged = true;
     }
 
     void SwapCells(Vector2Int oldPosition, Vector2Int newPosition)
@@ -348,11 +437,6 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         {
             return (targetCell.movement > originCell.movement);
         }
-    }
-
-    public bool CanInteract(Cell origin, Cell target)
-    {
-        return false;
     }
 }
 
