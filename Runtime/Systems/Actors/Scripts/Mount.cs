@@ -57,7 +57,7 @@ public class Mount : MonoBehaviour
             otherController.OverrideControl(mountCharacter);
             currentRider = otherCharacter;
             currentRider.currentRide = mountCharacter.gameObject;
-            currentRider.rb.simulated = false;
+            currentRider.rb2d.simulated = false;
             if (currentRider.isCameraTarget)
             {
                 currentRider.cameraTarget.enabled = false;
@@ -70,7 +70,7 @@ public class Mount : MonoBehaviour
     {
         currentRider.GetComponent<Controller>().RestoreControl();
         currentRider.currentRide = null;
-        currentRider.rb.simulated = true;
+        currentRider.rb2d.simulated = true;
         if (currentRider.isCameraTarget)
         {
             currentRider.cameraTarget.enabled = true;

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 [RequireComponent(typeof(CircleCollider2D), typeof(Rigidbody2D))]
 public class Actor : MonoBehaviour, IControllable
 {
+    [Label("State")] public StateMachine<ActorStates> stateMachine;
     [Header("Main")]
     public ActorFacing facing;
     public ActorWeights weight = ActorWeights.Medium; public enum ActorWeights { Tiny = 1, Light = 2, Medium = 3, Heavy = 4, Massive = 5 }
@@ -16,24 +17,21 @@ public class Actor : MonoBehaviour, IControllable
     [HideInInspector] public bool wantsToGoDown = false;
     [HideInInspector] public bool wantsToRideDown = false;
     [HideInInspector] public bool wantsToJump = false;
-
     [HideInInspector] public bool isGrounded = false;
     [HideInInspector] public bool isUnstable = false;
     [HideInInspector] public Momentum horizontalMomentum = Momentum.None;
     [HideInInspector] public Momentum verticalMomentum = Momentum.None;
-    [HideInInspector] public Rigidbody2D rb;
+
     [HideInInspector] public bool isCloudWalkAvailable => weight <= ActorWeights.Light;
     [HideInInspector] public bool isJumpAvailable => ((Can(Skill.Jump) && isGrounded && (groundedTimer.elapsed > minGroundTimeBeforeJump)) || Can(Skill.Fly));
-    [HideInInspector] public bool isMovingRight => rb.velocity.x > Global.slowMomentumThreeshold;
-    [HideInInspector] public bool isMovingLeft => rb.velocity.x < -Global.slowMomentumThreeshold;
-    [HideInInspector] public bool isMovingUp => rb.velocity.y > Global.verticalMomentumThreeshold;
-    [HideInInspector] public bool isMovingDown => rb.velocity.y < -Global.verticalMomentumThreeshold;
+    [HideInInspector] public bool isMovingRight => rb2d.velocity.x > Global.slowMomentumThreeshold;
+    [HideInInspector] public bool isMovingLeft => rb2d.velocity.x < -Global.slowMomentumThreeshold;
+    [HideInInspector] public bool isMovingUp => rb2d.velocity.y > Global.verticalMomentumThreeshold;
+    [HideInInspector] public bool isMovingDown => rb2d.velocity.y < -Global.verticalMomentumThreeshold;
 
-    public float horizontalSpeed => Mathf.Abs(rb.velocity.x);
-    public float verticalSpeed => Mathf.Abs(rb.velocity.y);
+    public float horizontalSpeed => Mathf.Abs(rb2d.velocity.x);
+    public float verticalSpeed => Mathf.Abs(rb2d.velocity.y);
     public float radius => pixelSize.PixelsToUnits() + pixelSizeModifier.PixelsToUnits();
-
-    public CircleCollider2D mainCollider { get; private set; }
 
     Controller controller;
 
@@ -50,30 +48,24 @@ public class Actor : MonoBehaviour, IControllable
 
     [HideInInspector] public GameObject currentRide;
 
-    public CameraTarget cameraTarget { get { if (cameraTarget_ == null) { cameraTarget_ = GetComponent<CameraTarget>(); }; return cameraTarget_; } }
-    private CameraTarget cameraTarget_;
-
     public bool isCameraTarget => cameraTarget != null;
 
     public ActorStates currentState => stateMachine.currentStateLabel;
-    public StateMachine<ActorStates> stateMachine;
 
-    Dictionary<Skill, SkillBase> skills = new Dictionary<Skill, SkillBase>();
+    #region CACHED COMPONENTS
+    public Dictionary<Skill, SkillBase> skills { get { if (skills_ == null) { skills_ = new Dictionary<Skill, SkillBase>(); foreach (var skill in GetComponentsInChildren<SkillBase>()) { skills.Add(skill.skillType, skill); }; }; return skills_; } }
+    private Dictionary<Skill, SkillBase> skills_;
+    public Rigidbody2D rb2d { get { if (rb2d_ == null) { rb2d_ = GetComponent<Rigidbody2D>(); }; return rb2d_; } }
+    private Rigidbody2D rb2d_;
+    public CircleCollider2D circleCollider { get { if (circleCollider_ == null) { circleCollider_ = GetComponent<CircleCollider2D>(); }; return circleCollider_; } }
+    private CircleCollider2D circleCollider_;
+    public CameraTarget cameraTarget { get { if (cameraTarget_ == null) { cameraTarget_ = GetComponent<CameraTarget>(); }; return cameraTarget_; } }
+    private CameraTarget cameraTarget_;
+    #endregion
 
     void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-        mainCollider = GetComponent<CircleCollider2D>();
-        RegisterSkills();
         InitStateMachine();
-    }
-
-    private void RegisterSkills()
-    {
-        foreach (var skill in GetComponentsInChildren<SkillBase>())
-        {
-            skills.Add(skill.skillType, skill);
-        }
     }
 
     private void InitStateMachine()
@@ -145,7 +137,7 @@ public class Actor : MonoBehaviour, IControllable
     {
         if (horizontalMomentum >= Momentum.Medium && Can(Skill.Roll))
         {
-            rb.velocity = new Vector2(rb.velocity.x * skills[Skill.Roll].power, rb.velocity.y);
+            rb2d.velocity = new Vector2(rb2d.velocity.x * skills[Skill.Roll].power, rb2d.velocity.y);
             stateMachine.ChangeState(ActorStates.Rolling);
         }
     }
@@ -192,7 +184,7 @@ public class Actor : MonoBehaviour, IControllable
 
         if (horizontalSpeed > maxGroundedSpeed)
         {
-            rb.velocity = new Vector2(Mathf.Sign(rb.velocity.x) * maxGroundedSpeed, rb.velocity.y);
+            rb2d.velocity = new Vector2(Mathf.Sign(rb2d.velocity.x) * maxGroundedSpeed, rb2d.velocity.y);
         }
     }
 
@@ -208,21 +200,21 @@ public class Actor : MonoBehaviour, IControllable
     {
         if (controller != null && controller.horizontalAxis == 0)
         {
-            rb.velocity -= new Vector2(rb.velocity.x * horizontalAirDrag * Time.fixedDeltaTime, 0);
+            rb2d.velocity -= new Vector2(rb2d.velocity.x * horizontalAirDrag * Time.fixedDeltaTime, 0);
         }
     }
 
     private void UpdateAirborneMaterial()
     {
-        rb.sharedMaterial = Global.slipperyMaterial;
-        rb.freezeRotation = false;
+        rb2d.sharedMaterial = Global.slipperyMaterial;
+        rb2d.freezeRotation = false;
     }
 
     private void UpdateRollingMaterial()
     {
-        rb.sharedMaterial = Global.rollMaterial;
-        rb.freezeRotation = true;
-        rb.rotation = 0;
+        rb2d.sharedMaterial = Global.rollMaterial;
+        rb2d.freezeRotation = true;
+        rb2d.rotation = 0;
     }
 
     private void UpdateGroundedMaterial()
@@ -231,14 +223,14 @@ public class Actor : MonoBehaviour, IControllable
         {
             if (controller.horizontalAxis != 0)
             {
-                rb.sharedMaterial = Global.slipperyMaterial;
-                rb.freezeRotation = false;
+                rb2d.sharedMaterial = Global.slipperyMaterial;
+                rb2d.freezeRotation = false;
             }
             else
             {
-                rb.sharedMaterial = isUnstable ? Global.unstableMaterial : Global.stickyMaterial;
-                rb.freezeRotation = true;
-                rb.rotation = 0;
+                rb2d.sharedMaterial = isUnstable ? Global.unstableMaterial : Global.stickyMaterial;
+                rb2d.freezeRotation = true;
+                rb2d.rotation = 0;
             }
         }
     }
@@ -247,9 +239,9 @@ public class Actor : MonoBehaviour, IControllable
     {
         if (controller != null)
         {
-            rb.sharedMaterial = Global.stickyMaterial;
-            rb.freezeRotation = true;
-            rb.rotation = 0;
+            rb2d.sharedMaterial = Global.stickyMaterial;
+            rb2d.freezeRotation = true;
+            rb2d.rotation = 0;
         }
     }
 
@@ -273,7 +265,7 @@ public class Actor : MonoBehaviour, IControllable
         if (controller!= null && controller.horizontalAxis != 0)
         {
             var wantsToGoFast = controller != null && controller.actionHeld;
-            rb.velocity = new Vector2((Vector2.right * (wantsToGoFast ? fastHorizontalSpeed : defaultHorizontalSpeed) * controller.horizontalAxis).x, rb.velocity.y);
+            rb2d.velocity = new Vector2((Vector2.right * (wantsToGoFast ? fastHorizontalSpeed : defaultHorizontalSpeed) * controller.horizontalAxis).x, rb2d.velocity.y);
         }
     }
 
@@ -295,11 +287,7 @@ public class Actor : MonoBehaviour, IControllable
 
     void UpdateCollider()
     {
-        if (mainCollider == null)
-        {
-            mainCollider = GetComponent<CircleCollider2D>();
-        }
-        mainCollider.radius = radius;
+        circleCollider.radius = radius;
         bool hasReducedHitBox = Is(ActorStates.Crawling) || Is(ActorStates.Rolling);
         pixelSizeModifier = hasReducedHitBox ? -0.5f : 0;
     }
@@ -389,7 +377,7 @@ public class Actor : MonoBehaviour, IControllable
         {
             foreach (var cloud in nearbyClouds)
             {
-                Physics2D.IgnoreCollision(mainCollider, cloud, !isCloudWalkAvailable);
+                Physics2D.IgnoreCollision(circleCollider, cloud, !isCloudWalkAvailable);
             }
         }
     }
@@ -408,16 +396,16 @@ public class Actor : MonoBehaviour, IControllable
                 power = skills[Skill.Fly].power;
             }
 
-            if (rb.velocity.y > 0)
+            if (rb2d.velocity.y > 0)
             {
-                rb.velocity += Vector2.up * power;
+                rb2d.velocity += Vector2.up * power;
             }
             else
             {
-                rb.velocity = new Vector2(rb.velocity.x, power);
+                rb2d.velocity = new Vector2(rb2d.velocity.x, power);
             }
-            rb.velocity = new Vector2(rb.velocity.x, Mathf.Min(rb.velocity.y, power));
-            rb.angularVelocity = 0;
+            rb2d.velocity = new Vector2(rb2d.velocity.x, Mathf.Min(rb2d.velocity.y, power));
+            rb2d.angularVelocity = 0;
             wantsToJump = false;
         }
     }
@@ -501,7 +489,7 @@ public class Actor : MonoBehaviour, IControllable
 
             dustParticle.isEthereal = !pushRealParticle;
 
-            dustParticle.speed = Random.insideUnitCircle - rb.velocity.normalized + Vector2.up*3f;
+            dustParticle.speed = Random.insideUnitCircle - rb2d.velocity.normalized + Vector2.up*3f;
         }
     }
 
