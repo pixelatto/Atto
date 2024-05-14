@@ -27,7 +27,6 @@ MonoBehaviour:
     lightEmission: 0
     opacity: 0
     renderLayer: 0
-    meltsTo: 0
   - cellMaterial: 1
     identifierColor:
       serializedVersion: 2
@@ -42,7 +41,6 @@ MonoBehaviour:
     lightEmission: 0
     opacity: 1
     renderLayer: 0
-    meltsTo: 0
   - cellMaterial: 2
     identifierColor:
       serializedVersion: 2
@@ -57,7 +55,6 @@ MonoBehaviour:
     lightEmission: 0
     opacity: 1
     renderLayer: 0
-    meltsTo: 0
   - cellMaterial: 3
     identifierColor:
       serializedVersion: 2
@@ -72,7 +69,6 @@ MonoBehaviour:
     lightEmission: 0
     opacity: 0.5
     renderLayer: 2
-    meltsTo: 0
   - cellMaterial: 4
     identifierColor:
       serializedVersion: 2
@@ -87,7 +83,6 @@ MonoBehaviour:
     lightEmission: 0.5
     opacity: 1
     renderLayer: 2
-    meltsTo: 0
   - cellMaterial: 5
     identifierColor:
       serializedVersion: 2
@@ -102,7 +97,6 @@ MonoBehaviour:
     lightEmission: 0.1
     opacity: 1
     renderLayer: 0
-    meltsTo: 0
   - cellMaterial: 6
     identifierColor:
       serializedVersion: 2
@@ -117,7 +111,6 @@ MonoBehaviour:
     lightEmission: 0
     opacity: 0.5
     renderLayer: 2
-    meltsTo: 0
   - cellMaterial: 7
     identifierColor:
       serializedVersion: 2
@@ -132,7 +125,6 @@ MonoBehaviour:
     lightEmission: 0
     opacity: 1
     renderLayer: 0
-    meltsTo: 0
   - cellMaterial: 8
     identifierColor:
       serializedVersion: 2
@@ -147,7 +139,6 @@ MonoBehaviour:
     lightEmission: 0
     opacity: 1
     renderLayer: 0
-    meltsTo: 0
   - cellMaterial: 9
     identifierColor:
       serializedVersion: 2
@@ -162,7 +153,6 @@ MonoBehaviour:
     lightEmission: 0
     opacity: 1
     renderLayer: 0
-    meltsTo: 0
   - cellMaterial: 10
     identifierColor:
       serializedVersion: 2
@@ -177,7 +167,6 @@ MonoBehaviour:
     lightEmission: 0
     opacity: 0.5
     renderLayer: 2
-    meltsTo: 0
   - cellMaterial: 11
     identifierColor:
       serializedVersion: 2
@@ -192,7 +181,6 @@ MonoBehaviour:
     lightEmission: 0
     opacity: 1
     renderLayer: 0
-    meltsTo: 0
   reactions:
   - reactionName: Wood combustion
     reactorA: 5
@@ -204,7 +192,7 @@ MonoBehaviour:
     reactorA: 3
     reactorB: 5
     productA: 10
-    productB: 10
+    productB: 0
     chance: 1
   - reactionName: Water freeze
     reactorA: 3
@@ -215,6 +203,12 @@ MonoBehaviour:
   - reactionName: Lava solidify
     reactorA: 4
     reactorB: 3
-    productA: 11
-    productB: 11
+    productA: 1
+    productB: 0
+    chance: 1
+  - reactionName: Melt ice
+    reactorA: 11
+    reactorB: 5
+    productA: 3
+    productB: 0
     chance: 1
