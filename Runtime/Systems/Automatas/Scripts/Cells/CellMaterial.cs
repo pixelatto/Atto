@@ -7,6 +7,7 @@
     Fire = 5,
     Acid = 6,
     Snow = 7,
-    Sand = 8
+    Sand = 8,
+    Wood = 9
 }
 

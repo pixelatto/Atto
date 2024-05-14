@@ -116,8 +116,6 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         {
             var leftPosition = new Vector2Int(x - 1, y);
             var rightPosition = new Vector2Int(x + 1, y);
-            //var canFallLeft = CanDisplace(currentPosition, bottomLeftPosition);
-            //var canFallRight = CanDisplace(currentPosition, bottomRightPosition);
             var canSlideLeft = CanDisplace(currentPosition, leftPosition);
             var canSlideRight = CanDisplace(currentPosition, rightPosition);
             if (canSlideLeft || canSlideRight)
@@ -192,10 +190,13 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
             for (int j = -fluidity; j <= fluidity; j++)
             {
                 var targetPosition = new Vector2Int(x+i, y+j + currentCell.gravity);
-                var targetCell = GetCell(targetPosition);
-                if (targetCell.IsEmpty() || targetCell.IsGas())
+                if (CanDisplace(currentPosition, targetPosition))
                 {
-                    targetPositions.Add(targetPosition);
+                    var targetCell = GetCell(targetPosition);
+                    if (targetCell.IsEmpty() || targetCell.IsGas())
+                    {
+                        targetPositions.Add(targetPosition);
+                    }
                 }
             }
         }

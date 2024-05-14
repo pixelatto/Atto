@@ -139,3 +139,17 @@ MonoBehaviour:
     opacity: 1
     startLifetime: -1
     renderLayer: 0
+  - cellMaterial: 9
+    movement: 1
+    gravity: -1
+    fluidity: 0
+    temperature: 20
+    lightRadius: 0
+    lightEmission: 0
+    appearance: {fileID: 21300000, guid: 968823d5fe4c3f64d81cfd9f01c211e0, type: 3}
+    identifierColor:
+      serializedVersion: 2
+      rgba: 4281416038
+    opacity: 1
+    startLifetime: -1
+    renderLayer: 0

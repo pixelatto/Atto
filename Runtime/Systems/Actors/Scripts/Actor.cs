@@ -98,8 +98,10 @@ public class Actor : MonoBehaviour, IControllable
                 SetSpeeds(skills[Skill.Crawl].power);
                 LookTowardsMovement();
                 HorizontalMovement();
+                UpdateCrawlingMaterial();
                 CheckForRolling();
                 CheckForStandUp();
+                LimitGroundSpeed();
                 CheckForAirborne();
             }
         );
@@ -185,6 +187,7 @@ public class Actor : MonoBehaviour, IControllable
         float maxGroundedSpeed = 0;
         if (Can(Skill.Walk))   { maxGroundedSpeed = skills[Skill.Walk]   .power; }
         if (Can(Skill.Run))    { maxGroundedSpeed = skills[Skill.Run]    .power; }
+        if (Is(ActorStates.Crawling)) { maxGroundedSpeed = skills[Skill.Crawl].power; }
 
         if (horizontalSpeed > maxGroundedSpeed)
         {
@@ -239,6 +242,16 @@ public class Actor : MonoBehaviour, IControllable
         }
     }
 
+    private void UpdateCrawlingMaterial()
+    {
+        if (controller != null)
+        {
+            rb.sharedMaterial = Global.stickyMaterial;
+            rb.freezeRotation = true;
+            rb.rotation = 0;
+        }
+    }
+
     void LookTowardsMovement()
     {
         if (controller != null)
@@ -286,7 +299,7 @@ public class Actor : MonoBehaviour, IControllable
             mainCollider = GetComponent<CircleCollider2D>();
         }
         mainCollider.radius = radius;
-        bool hasReducedHitBox = currentState == ActorStates.Crawling || currentState == ActorStates.Rolling;
+        bool hasReducedHitBox = Is(ActorStates.Crawling) || Is(ActorStates.Rolling);
         pixelSizeModifier = hasReducedHitBox ? -0.5f : 0;
     }
 
@@ -428,6 +441,11 @@ public class Actor : MonoBehaviour, IControllable
     private void LookLeft()
     {
         facing = ActorFacing.Left;
+    }
+
+    public bool Is(ActorStates state)
+    {
+        return currentState == state;
     }
 
     public bool Can(Skill skill)
