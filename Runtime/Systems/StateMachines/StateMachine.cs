@@ -5,11 +5,11 @@ using UnityEngine;
 [System.Serializable]
 public class StateMachine<StateLabel>
 {
-    public StateLabel currentStateLabel;
+    [ReadOnly] public StateLabel currentStateLabel;
+
     Dictionary<StateLabel, State> states = new Dictionary<StateLabel, State>();
 
-    public float timeInCurrentState => Time.time - currentStateEnterTime;
-    float currentStateEnterTime = 0;
+    public Timer currentStateTimer;
 
     public void ChangeState(StateLabel newStateLabel)
     {
@@ -18,7 +18,7 @@ public class StateMachine<StateLabel>
             states[currentStateLabel].OnStateExit.InvokeIfNotNull();
             currentStateLabel = newStateLabel;
             states[currentStateLabel].OnStateEnter.InvokeIfNotNull();
-            currentStateEnterTime = Time.time;
+            currentStateTimer.Restart();
         }
     }
 

@@ -22,7 +22,7 @@ public class Cell
     public bool wasUpdatedThisTick => lastUpdateTick == CellularAutomata.currentTick;
 
     public CellRenderLayer renderLayer => materialProperties.renderLayer;
-    public int startLifetime => materialProperties.startLifetime;
+    public int startLifetime => materialProperties.lifespan;
     public int elapsedLifetime = 0;
     public bool lifetimeTimeout => (startLifetime != -1) && (elapsedLifetime >= startLifetime);
 

@@ -8,6 +8,8 @@
     Acid = 6,
     Snow = 7,
     Sand = 8,
-    Wood = 9
+    Wood = 9,
+    Steam = 10,
+    Ice = 11
 }
 

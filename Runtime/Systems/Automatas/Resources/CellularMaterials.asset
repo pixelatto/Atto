@@ -14,142 +14,207 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   materials:
   - cellMaterial: 0
+    identifierColor:
+      serializedVersion: 2
+      rgba: 0
     movement: 0
     gravity: 0
     fluidity: 0
     temperature: 20
-    lightRadius: 0
-    lightEmission: 0
+    lifespan: -1
     appearance: {fileID: 21300000, guid: c411c51088a98e64f8e8efcbffe09e96, type: 3}
-    identifierColor:
-      serializedVersion: 2
-      rgba: 0
-    opacity: 0
-    startLifetime: -1
-    renderLayer: 0
-  - cellMaterial: 1
-    movement: 1
-    gravity: -1
-    fluidity: 1
-    temperature: 0
     lightRadius: 0
     lightEmission: 0
-    appearance: {fileID: 21300000, guid: f842b45f0fc48a24e827a360c99c9d94, type: 3}
+    opacity: 0
+    renderLayer: 0
+    meltsTo: 0
+  - cellMaterial: 1
     identifierColor:
       serializedVersion: 2
       rgba: 4283586137
-    opacity: 1
-    startLifetime: -1
-    renderLayer: 0
-  - cellMaterial: 2
-    movement: 2
-    gravity: -1
+    movement: 1
+    gravity: 1
     fluidity: 1
     temperature: 0
+    lifespan: -1
+    appearance: {fileID: 21300000, guid: f842b45f0fc48a24e827a360c99c9d94, type: 3}
     lightRadius: 0
     lightEmission: 0
-    appearance: {fileID: 21300000, guid: 67cfaa3fb054e744386bcdc980f8c560, type: 3}
+    opacity: 1
+    renderLayer: 0
+    meltsTo: 0
+  - cellMaterial: 2
     identifierColor:
       serializedVersion: 2
       rgba: 4282078863
-    opacity: 1
-    startLifetime: -1
-    renderLayer: 0
-  - cellMaterial: 3
-    movement: 3
-    gravity: -1
-    fluidity: 5
+    movement: 2
+    gravity: 1
+    fluidity: 1
     temperature: 0
+    lifespan: -1
+    appearance: {fileID: 21300000, guid: 67cfaa3fb054e744386bcdc980f8c560, type: 3}
     lightRadius: 0
     lightEmission: 0
-    appearance: {fileID: 21300000, guid: 83aeb07c9de90554b981d23def81bd5d, type: 3}
+    opacity: 1
+    renderLayer: 0
+    meltsTo: 0
+  - cellMaterial: 3
     identifierColor:
       serializedVersion: 2
       rgba: 4292963931
-    opacity: 0.5
-    startLifetime: -1
-    renderLayer: 2
-  - cellMaterial: 4
     movement: 3
-    gravity: -1
-    fluidity: 1
-    temperature: 500
-    lightRadius: 1
-    lightEmission: 0.5
-    appearance: {fileID: 21300000, guid: 7d34c1ece8e53924d83647888f98cbcf, type: 3}
+    gravity: 1
+    fluidity: 5
+    temperature: 0
+    lifespan: -1
+    appearance: {fileID: 21300000, guid: 83aeb07c9de90554b981d23def81bd5d, type: 3}
+    lightRadius: 0
+    lightEmission: 0
+    opacity: 0.5
+    renderLayer: 2
+    meltsTo: 0
+  - cellMaterial: 4
     identifierColor:
       serializedVersion: 2
       rgba: 4282132549
-    opacity: 1
-    startLifetime: -1
-    renderLayer: 2
-  - cellMaterial: 5
-    movement: 4
+    movement: 3
     gravity: 1
     fluidity: 1
-    temperature: 400
-    lightRadius: 10
-    lightEmission: 0.1
-    appearance: {fileID: 21300000, guid: 5812fccd0b6d2664e98d5b52ae5be407, type: 3}
+    temperature: 500
+    lifespan: -1
+    appearance: {fileID: 21300000, guid: 7d34c1ece8e53924d83647888f98cbcf, type: 3}
+    lightRadius: 1
+    lightEmission: 0.5
+    opacity: 1
+    renderLayer: 2
+    meltsTo: 0
+  - cellMaterial: 5
     identifierColor:
       serializedVersion: 2
       rgba: 4280709599
-    opacity: 1
-    startLifetime: 10
-    renderLayer: 0
-  - cellMaterial: 6
-    movement: 3
+    movement: 4
     gravity: -1
-    fluidity: 5
-    temperature: 0
-    lightRadius: 0
-    lightEmission: 0
-    appearance: {fileID: 21300000, guid: c411c51088a98e64f8e8efcbffe09e96, type: 3}
+    fluidity: 1
+    temperature: 400
+    lifespan: 10
+    appearance: {fileID: 21300000, guid: 5812fccd0b6d2664e98d5b52ae5be407, type: 3}
+    lightRadius: 10
+    lightEmission: 0.1
+    opacity: 1
+    renderLayer: 0
+    meltsTo: 0
+  - cellMaterial: 6
     identifierColor:
       serializedVersion: 2
       rgba: 4283491737
-    opacity: 0.5
-    startLifetime: -1
-    renderLayer: 2
-  - cellMaterial: 7
-    movement: 2
-    gravity: -1
-    fluidity: 0
-    temperature: -20
+    movement: 3
+    gravity: 1
+    fluidity: 5
+    temperature: 0
+    lifespan: -1
+    appearance: {fileID: 21300000, guid: c411c51088a98e64f8e8efcbffe09e96, type: 3}
     lightRadius: 0
     lightEmission: 0
-    appearance: {fileID: 21300000, guid: ce47024ab35c4534e9e826e53cbe9c63, type: 3}
+    opacity: 0.5
+    renderLayer: 2
+    meltsTo: 0
+  - cellMaterial: 7
     identifierColor:
       serializedVersion: 2
       rgba: 4294761419
-    opacity: 1
-    startLifetime: -1
-    renderLayer: 0
-  - cellMaterial: 8
     movement: 2
-    gravity: -1
+    gravity: 1
     fluidity: 0
-    temperature: 20
+    temperature: -20
+    lifespan: -1
+    appearance: {fileID: 21300000, guid: ce47024ab35c4534e9e826e53cbe9c63, type: 3}
     lightRadius: 0
     lightEmission: 0
-    appearance: {fileID: 21300000, guid: 968823d5fe4c3f64d81cfd9f01c211e0, type: 3}
+    opacity: 1
+    renderLayer: 0
+    meltsTo: 0
+  - cellMaterial: 8
     identifierColor:
       serializedVersion: 2
       rgba: 4288332782
-    opacity: 1
-    startLifetime: -1
-    renderLayer: 0
-  - cellMaterial: 9
-    movement: 1
-    gravity: -1
+    movement: 2
+    gravity: 1
     fluidity: 0
     temperature: 20
+    lifespan: -1
+    appearance: {fileID: 21300000, guid: 968823d5fe4c3f64d81cfd9f01c211e0, type: 3}
     lightRadius: 0
     lightEmission: 0
-    appearance: {fileID: 21300000, guid: d979957eced5fd74a8cb467c725f9bcb, type: 3}
+    opacity: 1
+    renderLayer: 0
+    meltsTo: 0
+  - cellMaterial: 9
     identifierColor:
       serializedVersion: 2
       rgba: 4281416038
+    movement: 1
+    gravity: 1
+    fluidity: 0
+    temperature: 20
+    lifespan: -1
+    appearance: {fileID: 21300000, guid: d979957eced5fd74a8cb467c725f9bcb, type: 3}
+    lightRadius: 0
+    lightEmission: 0
     opacity: 1
-    startLifetime: -1
     renderLayer: 0
+    meltsTo: 0
+  - cellMaterial: 10
+    identifierColor:
+      serializedVersion: 2
+      rgba: 4290227611
+    movement: 4
+    gravity: -1
+    fluidity: 1
+    temperature: 150
+    lifespan: -1
+    appearance: {fileID: 21300000, guid: bd41bd3aa30dd2e4c8dea9ae9b2374e4, type: 3}
+    lightRadius: 0
+    lightEmission: 0
+    opacity: 0.5
+    renderLayer: 2
+    meltsTo: 0
+  - cellMaterial: 11
+    identifierColor:
+      serializedVersion: 2
+      rgba: 4293184863
+    movement: 1
+    gravity: 1
+    fluidity: 1
+    temperature: -30
+    lifespan: -1
+    appearance: {fileID: 21300000, guid: d75d0bcd58d047b4b96e742aff3ae948, type: 3}
+    lightRadius: 0
+    lightEmission: 0
+    opacity: 1
+    renderLayer: 0
+    meltsTo: 0
+  reactions:
+  - reactionName: Wood combustion
+    reactorA: 5
+    reactorB: 9
+    productA: 5
+    productB: 5
+    chance: 1
+  - reactionName: Water evaporation
+    reactorA: 3
+    reactorB: 5
+    productA: 10
+    productB: 10
+    chance: 1
+  - reactionName: Water freeze
+    reactorA: 3
+    reactorB: 11
+    productA: 11
+    productB: 11
+    chance: 1
+  - reactionName: Lava solidify
+    reactorA: 4
+    reactorB: 3
+    productA: 11
+    productB: 11
+    chance: 1

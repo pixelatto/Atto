@@ -154,22 +154,13 @@ public class CellularChunk : MonoBehaviour
                 }
                 else
                 {
-                    bool found = false;
                     foreach (var material in CellularMaterials.instance.materials)
                     {
                         if (color.r == material.identifierColor.r && color.g == material.identifierColor.g && color.b == material.identifierColor.b)
                         {
                             newCell.material = material.cellMaterial;
-                            found = true;
                         }
                     }
-                    /*
-                    if (!found)
-                    {
-                        Draw.Circle(PixelToWorldPosition(i, j), 0.5f.PixelsToUnits(), Color.magenta);
-                        Debug.Log(name + ": Material color identifier not defined: " + color + " at coordinates (" + i + ", " + j + ")");
-                    }
-                    */
                 }
                 cells[Index(i, j)] = newCell;
             }

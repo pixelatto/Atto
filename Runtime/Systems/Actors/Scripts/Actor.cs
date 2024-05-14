@@ -23,7 +23,7 @@ public class Actor : MonoBehaviour, IControllable
     [HideInInspector] public Momentum verticalMomentum = Momentum.None;
     [HideInInspector] public Rigidbody2D rb;
     [HideInInspector] public bool isCloudWalkAvailable => weight <= ActorWeights.Light;
-    [HideInInspector] public bool isJumpAvailable => ((Can(Skill.Jump) && isGrounded && (timeGrounded > minGroundTimeBeforeJump)) || Can(Skill.Fly));
+    [HideInInspector] public bool isJumpAvailable => ((Can(Skill.Jump) && isGrounded && (groundedTimer.elapsed > minGroundTimeBeforeJump)) || Can(Skill.Fly));
     [HideInInspector] public bool isMovingRight => rb.velocity.x > Global.slowMomentumThreeshold;
     [HideInInspector] public bool isMovingLeft => rb.velocity.x < -Global.slowMomentumThreeshold;
     [HideInInspector] public bool isMovingUp => rb.velocity.y > Global.verticalMomentumThreeshold;
@@ -40,7 +40,8 @@ public class Actor : MonoBehaviour, IControllable
     float defaultHorizontalSpeed = 0;
     float fastHorizontalSpeed = 0;
     float minGroundTimeBeforeJump = 0.05f;
-    float timeGrounded = 0;
+    
+    Timer groundedTimer;
 
     Vector2 standingPoint;
     Vector2 groundNormal;
@@ -159,8 +160,8 @@ public class Actor : MonoBehaviour, IControllable
 
     private void CheckForEndRolling()
     {
-        //HACKVI: Hacky durations
-        if (((stateMachine.timeInCurrentState > skills[Skill.Roll].skillDuration) && (horizontalMomentum == Momentum.None || !isGrounded || !wantsToGoDown)) || stateMachine.timeInCurrentState > skills[Skill.Roll].skillDuration * 2.75f)
+        //HACKVI: Hacky roll end duration
+        if (((stateMachine.currentStateTimer.elapsed > skills[Skill.Roll].skillDuration) && (horizontalMomentum == Momentum.None || !isGrounded || !wantsToGoDown)) || stateMachine.currentStateTimer.elapsed > skills[Skill.Roll].skillDuration * 2.75f)
         {
             stateMachine.ChangeState(ActorStates.Grounded);
         }
@@ -372,12 +373,11 @@ public class Actor : MonoBehaviour, IControllable
 
         if (isGrounded)
         {
-            timeGrounded += Time.fixedDeltaTime;
             groundNormal = (rightHit.point - leftHit.point).LeftPerpendicular().normalized;
         }
         else
         {
-            timeGrounded = 0;
+            groundedTimer.Restart();
         }
     }
 

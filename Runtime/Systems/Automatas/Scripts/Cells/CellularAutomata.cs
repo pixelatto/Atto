@@ -162,7 +162,7 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         var bottomLeftPosition = new Vector2Int(x - 1, y - 1);
         var bottomRightPosition = new Vector2Int(x + 1, y - 1);
         var canFallDown = CanDisplace(currentCell, bottomCell);
-        var canInteractDown = CanInteract(currentCell, bottomCell);
+        var canInteractDown = CanInteract(currentCell, bottomCell); //TODO: interactions
         if (canFallDown)
         {
             SwapCells(currentPosition, bottomPosition);
@@ -196,7 +196,7 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         {
             for (int j = -fluidity; j <= fluidity; j++)
             {
-                var targetPosition = new Vector2Int(x+i, y+j + currentCell.gravity);
+                var targetPosition = new Vector2Int(x+i, y+j - currentCell.gravity);
                 var targetCell = GetCell(targetPosition);
                 if (CanDisplace(currentCell, targetCell))
                 {
