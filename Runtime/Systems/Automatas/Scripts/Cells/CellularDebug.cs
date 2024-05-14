@@ -30,7 +30,7 @@ public class CellularDebug : MonoBehaviour
                 {
                     var globalPixelPosition = pixelPosition + new Vector2Int(Mathf.FloorToInt(i), Mathf.FloorToInt(j));
 
-                    var newCell = CellularAutomata.instance.CreateCell(globalPixelPosition, mouseSpawnMaterial);
+                    var newCell = CellularAutomata.instance.CreateCellIfEmpty(globalPixelPosition, mouseSpawnMaterial);
                     if (spawnAsParticles)
                     {
                         var newParticle = ParticleAutomata.instance.CellToParticle(newCell, globalPixelPosition);

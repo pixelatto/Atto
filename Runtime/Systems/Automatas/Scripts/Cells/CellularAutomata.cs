@@ -105,9 +105,8 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         int x = currentPosition.x;
         int y = currentPosition.y;
         var bottomPosition = new Vector2Int(x, y - 1);
-        var bottomLeftPosition = new Vector2Int(x - 1, y - 1);
-        var bottomRightPosition = new Vector2Int(x + 1, y - 1);
-        var canFallDown = CanDisplace(currentPosition, bottomPosition);
+        var bottomCell = GetCell(bottomPosition);
+        var canFallDown = CanDisplace(currentCell, bottomCell);
         if (canFallDown)
         {
             SwapCells(currentPosition, bottomPosition);
@@ -116,8 +115,10 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         {
             var leftPosition = new Vector2Int(x - 1, y);
             var rightPosition = new Vector2Int(x + 1, y);
-            var canSlideLeft = CanDisplace(currentPosition, leftPosition);
-            var canSlideRight = CanDisplace(currentPosition, rightPosition);
+            var leftCell = GetCell(leftPosition);
+            var rightCell = GetCell(rightPosition);
+            var canSlideLeft = CanDisplace(currentCell, leftCell);
+            var canSlideRight = CanDisplace(currentCell, rightCell);
             if (canSlideLeft || canSlideRight)
             {
                 int direction = (canSlideLeft ? -1 : 0) + (canSlideRight ? 1 : 0);
@@ -132,13 +133,15 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
                 {
                     var spreadPosition = currentPosition + new Vector2Int(spread * direction, 0);
                     var spreadPositionBottom = currentPosition + new Vector2Int(spread * direction, -1);
-                    if (CanDisplace(currentPosition, spreadPositionBottom))
+                    var spreadPositionCell = GetCell(spreadPosition);
+                    var spreadPositionBottomCell = GetCell(spreadPositionBottom);
+                    if (CanDisplace(currentCell, spreadPositionBottomCell))
                     {
                         distance = spread;
                         fall = -1;
                         break;
                     }
-                    else if (!CanDisplace(currentPosition, spreadPosition))
+                    else if (!CanDisplace(currentCell, spreadPositionCell))
                     {
                         distance = spread - 1;
                         break;
@@ -155,17 +158,21 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         int x = currentPosition.x;
         int y = currentPosition.y;
         var bottomPosition = new Vector2Int(x, y - 1);
+        var bottomCell = GetCell(bottomPosition);
         var bottomLeftPosition = new Vector2Int(x - 1, y - 1);
         var bottomRightPosition = new Vector2Int(x + 1, y - 1);
-        var canFallDown = CanDisplace(currentPosition, bottomPosition);
+        var canFallDown = CanDisplace(currentCell, bottomCell);
+        var canInteractDown = CanInteract(currentCell, bottomCell);
         if (canFallDown)
         {
             SwapCells(currentPosition, bottomPosition);
         }
         else
         {
-            var canFallLeft = CanDisplace(currentPosition, bottomLeftPosition);
-            var canFallRight = CanDisplace(currentPosition, bottomRightPosition);
+            var bottomLeftCell = GetCell(bottomLeftPosition);
+            var bottomRightCell = GetCell(bottomRightPosition);
+            var canFallLeft = CanDisplace(currentCell, bottomLeftCell);
+            var canFallRight = CanDisplace(currentCell, bottomRightCell);
             if (canFallLeft || canFallRight)
             {
                 int direction = (canFallLeft ? -1 : 0) + (canFallRight ? 1 : 0);
@@ -190,13 +197,10 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
             for (int j = -fluidity; j <= fluidity; j++)
             {
                 var targetPosition = new Vector2Int(x+i, y+j + currentCell.gravity);
-                if (CanDisplace(currentPosition, targetPosition))
+                var targetCell = GetCell(targetPosition);
+                if (CanDisplace(currentCell, targetCell))
                 {
-                    var targetCell = GetCell(targetPosition);
-                    if (targetCell.IsEmpty() || targetCell.IsGas())
-                    {
-                        targetPositions.Add(targetPosition);
-                    }
+                    targetPositions.Add(targetPosition);
                 }
             }
         }
@@ -330,11 +334,8 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         return new Vector3((globalPixelPosition.x + 0.5f) / Global.pixelsPerUnit, (globalPixelPosition.y + 0.5f) / Global.pixelsPerUnit, 0);
     }
 
-    public bool CanDisplace(Vector2Int origin, Vector2Int target)
+    public bool CanDisplace(Cell originCell, Cell targetCell)
     {
-        var originCell = GetCell(origin);
-        var targetCell = GetCell(target);
-
         if (targetCell == originCell)
         {
             return false;
@@ -345,15 +346,12 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         }
         else
         {
-            if (targetCell.movement == CellMovement.Static)
-            {
-                return false;
-            }
-            else if (originCell.movement == CellMovement.Granular && targetCell.movement == CellMovement.Fluid)
-            {
-                return true;
-            }
+            return (targetCell.movement > originCell.movement);
         }
+    }
+
+    public bool CanInteract(Cell origin, Cell target)
+    {
         return false;
     }
 }

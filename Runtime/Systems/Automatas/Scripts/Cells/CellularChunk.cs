@@ -163,12 +163,13 @@ public class CellularChunk : MonoBehaviour
                             found = true;
                         }
                     }
+                    /*
                     if (!found)
                     {
                         Draw.Circle(PixelToWorldPosition(i, j), 0.5f.PixelsToUnits(), Color.magenta);
                         Debug.Log(name + ": Material color identifier not defined: " + color + " at coordinates (" + i + ", " + j + ")");
-                        Debug.Break();
                     }
+                    */
                 }
                 cells[Index(i, j)] = newCell;
             }

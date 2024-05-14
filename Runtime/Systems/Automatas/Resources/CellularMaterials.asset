@@ -79,7 +79,7 @@ MonoBehaviour:
     appearance: {fileID: 21300000, guid: 7d34c1ece8e53924d83647888f98cbcf, type: 3}
     identifierColor:
       serializedVersion: 2
-      rgba: 4281417126
+      rgba: 4282132549
     opacity: 1
     startLifetime: -1
     renderLayer: 2
@@ -93,7 +93,7 @@ MonoBehaviour:
     appearance: {fileID: 21300000, guid: 5812fccd0b6d2664e98d5b52ae5be407, type: 3}
     identifierColor:
       serializedVersion: 2
-      rgba: 4281694169
+      rgba: 4280709599
     opacity: 1
     startLifetime: 10
     renderLayer: 0
@@ -107,7 +107,7 @@ MonoBehaviour:
     appearance: {fileID: 21300000, guid: c411c51088a98e64f8e8efcbffe09e96, type: 3}
     identifierColor:
       serializedVersion: 2
-      rgba: 4285719207
+      rgba: 4283491737
     opacity: 0.5
     startLifetime: -1
     renderLayer: 2
@@ -146,7 +146,7 @@ MonoBehaviour:
     temperature: 20
     lightRadius: 0
     lightEmission: 0
-    appearance: {fileID: 21300000, guid: 968823d5fe4c3f64d81cfd9f01c211e0, type: 3}
+    appearance: {fileID: 21300000, guid: d979957eced5fd74a8cb467c725f9bcb, type: 3}
     identifierColor:
       serializedVersion: 2
       rgba: 4281416038

@@ -12,11 +12,11 @@ public class Room : MonoBehaviour
 
     RoomPixelCamera cam;
 
-    public Transform mainLayer;
-    public Transform backgroundLayer;
-    public Transform lightsLayer;
-    public Transform blendsLayer;
-    public Transform liquidsLayer;
+    [HideInInspector] public Transform mainLayer;
+    [HideInInspector] public Transform backgroundLayer;
+    [HideInInspector] public Transform lightsLayer;
+    [HideInInspector] public Transform blendsLayer;
+    [HideInInspector] public Transform liquidsLayer;
 
     private void Awake()
     {
