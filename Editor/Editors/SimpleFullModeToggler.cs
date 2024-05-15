@@ -1,6 +1,7 @@
-﻿using UnityEngine;
-using UnityEditor;
+﻿#if UNITY_EDITOR
+using UnityEngine;
 using System.Collections.Generic;
+using UnityEditor;
 
 [InitializeOnLoad]
 public static class SimpleFullModeToggler
@@ -118,3 +119,4 @@ public static class SimpleFullModeToggler
         }
     }
 }
+#endif

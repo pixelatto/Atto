@@ -130,7 +130,7 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
 
             Cell leftSuccess = null;
             Vector2Int leftSuccessPosition = currentPosition;
-            for (int i = fluidity; i >= 1; i--)
+            for (int i = 1; i < fluidity; i++)
             {
                 var leftBelowPosition = currentPosition + new Vector2Int(-i, -1);
                 var leftBelowCell = GetCell(leftBelowPosition, false);
@@ -138,11 +138,12 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
                 {
                     leftSuccess = leftBelowCell;
                     leftSuccessPosition = leftBelowPosition;
+                    break;
                 }
             }
             if (leftSuccess == null)
             {
-                for (int i = fluidity; i >= 1; i--)
+                for (int i = 1; i < fluidity; i++)
                 {
                     var leftPosition = currentPosition + new Vector2Int(-i, 0);
                     var leftCell = GetCell(leftPosition, false);
@@ -150,13 +151,14 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
                     {
                         leftSuccess = leftCell;
                         leftSuccessPosition = leftPosition;
+                        break;
                     }
                 }
             }
 
             Cell rightSuccess = null;
             Vector2Int rightSuccessPosition = currentPosition;
-            for (int i = fluidity; i >= 1; i--)
+            for (int i = 1; i < fluidity; i++)
             {
                 var rightBelowPosition = currentPosition + new Vector2Int(i, -1);
                 var rightBelowCell = GetCell(rightBelowPosition, false);
@@ -164,11 +166,12 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
                 {
                     rightSuccess = rightBelowCell;
                     rightSuccessPosition = rightBelowPosition;
+                    break;
                 }
             }
             if (rightSuccess == null)
             {
-                for (int i = fluidity; i >= 1; i--)
+                for (int i = 1; i < fluidity; i++)
                 {
                     var rightPosition = currentPosition + new Vector2Int(i, 0);
                     var rightCell = GetCell(rightPosition, false);
@@ -176,6 +179,7 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
                     {
                         rightSuccess = rightCell;
                         rightSuccessPosition = rightPosition;
+                        break;
                     }
                 }
             }
@@ -190,12 +194,10 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
                 }
                 if (direction == -1)
                 {
-                    Debug.Log(currentCell.material + "+" + leftSuccess.material);
                     SwapCells(currentPosition, leftSuccessPosition);
                 }
                 else
                 {
-                    Debug.Log(currentCell.material + "+" + rightSuccess.material);
                     SwapCells(currentPosition, rightSuccessPosition);
                 }
             }

@@ -1,4 +1,5 @@
 using UnityEditor;
+#if UNITY_EDITOR
 using UnityEngine;
 
 [CustomPropertyDrawer(typeof(Observable<>), true)]
@@ -12,3 +13,4 @@ public class ObservableDrawer : PropertyDrawer
         EditorGUI.EndProperty();
     }
 }
+#endif
