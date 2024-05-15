@@ -112,13 +112,6 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         var bottomPosition = new Vector2Int(x, y - 1);
         var bottomCell = GetCell(bottomPosition);
 
-        //var downReaction = CellularMaterials.instance.FindReaction(currentCell.material, bottomCell.material);
-        //var canReactDown = downReaction != null;
-
-        /*if (canReactDown)
-        {
-            ReactCells(currentPosition, bottomPosition, downReaction);
-        }*/
         if (CanDisplace(currentCell, bottomCell))
         {
             SwapCells(currentPosition, bottomPosition);
@@ -132,12 +125,24 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
             Vector2Int leftSuccessPosition = currentPosition;
             for (int i = 1; i < fluidity; i++)
             {
+                var leftPosition = currentPosition + new Vector2Int(-i, 0);
+                var leftCell = GetCell(leftPosition, false);
                 var leftBelowPosition = currentPosition + new Vector2Int(-i, -1);
                 var leftBelowCell = GetCell(leftBelowPosition, false);
+
+                if (leftCell.IsSolid())
+                {
+                    break; // Stop if we encounter a solid cell
+                }
+
                 if (CanDisplace(currentCell, leftBelowCell))
                 {
                     leftSuccess = leftBelowCell;
                     leftSuccessPosition = leftBelowPosition;
+                    break;
+                }
+                else if (!CanDisplace(currentCell, leftCell))
+                {
                     break;
                 }
             }
@@ -147,6 +152,11 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
                 {
                     var leftPosition = currentPosition + new Vector2Int(-i, 0);
                     var leftCell = GetCell(leftPosition, false);
+                    if (leftCell.IsSolid())
+                    {
+                        break; // Stop if we encounter a solid cell
+                    }
+
                     if (CanDisplace(currentCell, leftCell))
                     {
                         leftSuccess = leftCell;
@@ -160,8 +170,16 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
             Vector2Int rightSuccessPosition = currentPosition;
             for (int i = 1; i < fluidity; i++)
             {
+                var rightPosition = currentPosition + new Vector2Int(i, 0);
+                var rightCell = GetCell(rightPosition, false);
                 var rightBelowPosition = currentPosition + new Vector2Int(i, -1);
                 var rightBelowCell = GetCell(rightBelowPosition, false);
+
+                if (rightCell.IsSolid())
+                {
+                    break; // Stop if we encounter a solid cell
+                }
+
                 if (CanDisplace(currentCell, rightBelowCell))
                 {
                     rightSuccess = rightBelowCell;
@@ -175,6 +193,11 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
                 {
                     var rightPosition = currentPosition + new Vector2Int(i, 0);
                     var rightCell = GetCell(rightPosition, false);
+                    if (rightCell.IsSolid())
+                    {
+                        break; // Stop if we encounter a solid cell
+                    }
+
                     if (CanDisplace(currentCell, rightCell))
                     {
                         rightSuccess = rightCell;
@@ -183,7 +206,6 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
                     }
                 }
             }
-
 
             if (rightSuccess != null || leftSuccess != null)
             {
