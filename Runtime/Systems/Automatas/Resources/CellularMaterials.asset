@@ -113,7 +113,7 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4280709599
     movement: 4
-    gravity: -1
+    gravity: 0
     fluidity: 1
     lifespan: 10
     appearance: {fileID: 21300000, guid: 5812fccd0b6d2664e98d5b52ae5be407, type: 3}

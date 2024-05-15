@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DebugKeys : MonoBehaviour
 {
@@ -7,6 +8,12 @@ public class DebugKeys : MonoBehaviour
     {
         if (Debug.isDebugBuild)
         {
+            //SCENE CONTROLS
+            if (Input.GetKeyDown(KeyCode.F12))
+            {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            }
+
             //TIMESCALE CONTROLS
             if (Input.GetKeyDown(KeyCode.Home))
             {
