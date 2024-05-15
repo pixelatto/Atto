@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
@@ -231,12 +232,11 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         int x = currentPosition.x;
         int y = currentPosition.y;
         var bottomPosition = new Vector2Int(x, y - 1);
-        var bottomCell = GetCell(bottomPosition);
-        var bottomLeftPosition = new Vector2Int(x - 1, y - 1);
-        var bottomRightPosition = new Vector2Int(x + 1, y - 1);
+        var bottomCell = GetCell(bottomPosition, false);
         var canFallDown = CanDisplace(currentCell, bottomCell);
         var downReaction = CellularMaterials.instance.FindReaction(currentCell.material, bottomCell.material);
         var canReactDown = downReaction != null;
+
         if (canReactDown)
         {
             ReactCells(currentPosition, bottomPosition, downReaction);
@@ -247,35 +247,99 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         }
         else
         {
-            var bottomLeftCell = GetCell(bottomLeftPosition);
-            var bottomRightCell = GetCell(bottomRightPosition);
-            var canFallLeft = CanDisplace(currentCell, bottomLeftCell);
-            var canFallRight = CanDisplace(currentCell, bottomRightCell);
-            var bottomLeftReaction = CellularMaterials.instance.FindReaction(currentCell.material, bottomLeftCell.material);
-            var canReactBottomLeft = bottomLeftReaction != null;
-            var bottomRightReaction = CellularMaterials.instance.FindReaction(currentCell.material, bottomRightCell.material);
-            var canReactBottomRight = bottomRightReaction != null;
+            int fluidity = currentCell.fluidity;
 
-            if (canReactBottomLeft || canReactBottomRight)
+            if (fluidity > 0)
             {
-                int direction = (canFallLeft ? -1 : 0) + (canFallRight ? 1 : 0);
-                if (direction == 0)
-                {
-                    direction = (Random.value > 0.5f) ? 1 : -1;
-                }
-                ReactCells(currentPosition, currentPosition + new Vector2Int(direction, -1), direction == -1 ? bottomLeftReaction : bottomRightReaction);
+                HandlePositiveFluidity(fluidity, x, y);
             }
-            else if (canFallLeft || canFallRight)
+            else if (fluidity == 0)
             {
-                int direction = (canFallLeft ? -1 : 0) + (canFallRight ? 1 : 0);
-                if (direction == 0)
-                {
-                    direction = (Random.value > 0.5f) ? 1 : -1;
-                }
-                SwapCells(currentPosition, currentPosition + new Vector2Int(direction, -1));
+                // No lateral movement, only stack vertically
+                return;
+            }
+            else
+            {
+                HandleNegativeFluidity(-fluidity, x, y);
             }
         }
     }
+
+    private void HandlePositiveFluidity(int fluidity, int x, int y)
+    {
+        var leftPositions = new List<Vector2Int>();
+        var rightPositions = new List<Vector2Int>();
+
+        for (int i = 1; i <= fluidity; i++)
+        {
+            leftPositions.Add(new Vector2Int(x - i, y - 1));
+            rightPositions.Add(new Vector2Int(x + i, y - 1));
+        }
+
+        var canFallLeft = leftPositions.Exists(pos => CanDisplace(currentCell, GetCell(pos, false)));
+        var canFallRight = rightPositions.Exists(pos => CanDisplace(currentCell, GetCell(pos, false)));
+        var leftReaction = leftPositions
+            .Select(pos => CellularMaterials.instance.FindReaction(currentCell.material, GetCell(pos, false).material))
+            .FirstOrDefault(reaction => reaction != null);
+        var rightReaction = rightPositions
+            .Select(pos => CellularMaterials.instance.FindReaction(currentCell.material, GetCell(pos, false).material))
+            .FirstOrDefault(reaction => reaction != null);
+        var canReactLeft = leftReaction != null;
+        var canReactRight = rightReaction != null;
+
+        if (canReactLeft || canReactRight)
+        {
+            int direction = (canReactLeft ? -1 : 0) + (canReactRight ? 1 : 0);
+            if (direction == 0)
+            {
+                direction = (Random.value > 0.5f) ? 1 : -1;
+            }
+            var targetPosition = direction == -1 ? leftPositions.First(pos => CellularMaterials.instance.FindReaction(currentCell.material, GetCell(pos).material) != null)
+                                                 : rightPositions.First(pos => CellularMaterials.instance.FindReaction(currentCell.material, GetCell(pos).material) != null);
+            ReactCells(currentPosition, targetPosition, direction == -1 ? leftReaction : rightReaction);
+        }
+        else if (canFallLeft || canFallRight)
+        {
+            int direction = (canFallLeft ? -1 : 0) + (canFallRight ? 1 : 0);
+            if (direction == 0)
+            {
+                direction = (Random.value > 0.5f) ? 1 : -1;
+            }
+            var targetPosition = direction == -1 ? leftPositions.First(pos => CanDisplace(currentCell, GetCell(pos, false)))
+                                                 : rightPositions.First(pos => CanDisplace(currentCell, GetCell(pos, false)));
+            SwapCells(currentPosition, targetPosition);
+        }
+    }
+
+    private void HandleNegativeFluidity(int absFluidity, int x, int y)
+    {
+        var leftBottomPosition = new Vector2Int(x - 1, y - absFluidity);
+        var rightBottomPosition = new Vector2Int(x + 1, y - absFluidity);
+
+        var leftBottomCell = GetCell(leftBottomPosition, false);
+        var leftBelowLeftBottomCell = GetCell(new Vector2Int(x - 1, y - absFluidity - 1), false);
+
+        var rightBottomCell = GetCell(rightBottomPosition, false);
+        var rightBelowRightBottomCell = GetCell(new Vector2Int(x + 1, y - absFluidity - 1), false);
+
+        bool canMoveLeft = leftBottomCell.material == CellMaterial.None && leftBelowLeftBottomCell.material != CellMaterial.None;
+        bool canMoveRight = rightBottomCell.material == CellMaterial.None && rightBelowRightBottomCell.material != CellMaterial.None;
+
+        if (canMoveLeft && canMoveRight)
+        {
+            var targetPosition = (Random.value > 0.5f) ? leftBottomPosition : rightBottomPosition;
+            SwapCells(currentPosition, targetPosition);
+        }
+        else if (canMoveLeft)
+        {
+            SwapCells(currentPosition, leftBottomPosition);
+        }
+        else if (canMoveRight)
+        {
+            SwapCells(currentPosition, rightBottomPosition);
+        }
+    }
+
 
     private void GasMovement()
     {
