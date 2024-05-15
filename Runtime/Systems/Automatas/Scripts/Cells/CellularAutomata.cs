@@ -14,9 +14,8 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
 
     public bool hasChanged = false;
 
-    bool flip = false;
-
     public static Cell emptyCell = new Cell(CellMaterial.None);
+    public static Cell solidCell = new Cell(CellMaterial.Rock);
 
     public static uint currentTick = 0;
 
@@ -112,107 +111,92 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         int y = currentPosition.y;
         var bottomPosition = new Vector2Int(x, y - 1);
         var bottomCell = GetCell(bottomPosition);
-        var bottomReaction = CellularMaterials.instance.FindReaction(currentCell.material, bottomCell.material);
-        var canReactDown = bottomReaction != null;
-        var canFallDown = CanDisplace(currentCell, bottomCell);
 
-        if (canReactDown)
+        //var downReaction = CellularMaterials.instance.FindReaction(currentCell.material, bottomCell.material);
+        //var canReactDown = downReaction != null;
+
+        /*if (canReactDown)
         {
-            ReactCells(currentPosition, bottomPosition, bottomReaction);
-        }
-        else if (canFallDown)
+            ReactCells(currentPosition, bottomPosition, downReaction);
+        }*/
+        if (CanDisplace(currentCell, bottomCell))
         {
             SwapCells(currentPosition, bottomPosition);
         }
         else
         {
-            var leftPosition = new Vector2Int(x - 1, y);
-            var rightPosition = new Vector2Int(x + 1, y);
-            var leftCell = GetCell(leftPosition);
-            var rightCell = GetCell(rightPosition);
-            var leftReaction = CellularMaterials.instance.FindReaction(currentCell.material, leftCell.material);
-            var rightReaction = CellularMaterials.instance.FindReaction(currentCell.material, rightCell.material);
-            var canReactLeft = leftReaction != null;
-            var canReactRight = rightReaction != null;
-            var canSlideLeft = CanDisplace(currentCell, leftCell);
-            var canSlideRight = CanDisplace(currentCell, rightCell);
+            var fluidity = currentCell.fluidity;
+            if (fluidity < 1) { Debug.LogWarning("Fluidity must be at least 1 for fluids to work properly."); }
 
-            if (canReactLeft || canReactRight)
+            Cell leftSuccess = null;
+            Vector2Int leftSuccessPosition = currentPosition;
+            for (int i = fluidity; i >= 1; i--)
             {
-                int direction = (canReactLeft ? -1 : 0) + (canReactRight ? 1 : 0);
+                var leftBelowPosition = currentPosition + new Vector2Int(-i, -1);
+                var leftBelowCell = GetCell(leftBelowPosition, false);
+                if (CanDisplace(currentCell, leftBelowCell))
+                {
+                    leftSuccess = leftBelowCell;
+                    leftSuccessPosition = leftBelowPosition;
+                }
+            }
+            if (leftSuccess == null)
+            {
+                for (int i = fluidity; i >= 1; i--)
+                {
+                    var leftPosition = currentPosition + new Vector2Int(-i, 0);
+                    var leftCell = GetCell(leftPosition, false);
+                    if (CanDisplace(currentCell, leftCell))
+                    {
+                        leftSuccess = leftCell;
+                        leftSuccessPosition = leftPosition;
+                    }
+                }
+            }
+
+            Cell rightSuccess = null;
+            Vector2Int rightSuccessPosition = currentPosition;
+            for (int i = fluidity; i >= 1; i--)
+            {
+                var rightBelowPosition = currentPosition + new Vector2Int(i, -1);
+                var rightBelowCell = GetCell(rightBelowPosition, false);
+                if (CanDisplace(currentCell, rightBelowCell))
+                {
+                    rightSuccess = rightBelowCell;
+                    rightSuccessPosition = rightBelowPosition;
+                }
+            }
+            if (rightSuccess == null)
+            {
+                for (int i = fluidity; i >= 1; i--)
+                {
+                    var rightPosition = currentPosition + new Vector2Int(i, 0);
+                    var rightCell = GetCell(rightPosition, false);
+                    if (CanDisplace(currentCell, rightCell))
+                    {
+                        rightSuccess = rightCell;
+                        rightSuccessPosition = rightPosition;
+                    }
+                }
+            }
+
+
+            if (rightSuccess != null || leftSuccess != null)
+            {
+                int direction = ((leftSuccess != null) ? -1 : 0) + ((rightSuccess != null) ? 1 : 0);
                 if (direction == 0)
                 {
                     direction = (Random.value > 0.5f) ? 1 : -1;
                 }
-                ReactCells(currentPosition, currentPosition + new Vector2Int(direction, 0), direction == -1 ? leftReaction : rightReaction);
-            }
-            else if (canSlideLeft || canSlideRight)
-            {
-                int direction = (canSlideLeft ? -1 : 0) + (canSlideRight ? 1 : 0);
-                if (direction == 0)
+                if (direction == -1)
                 {
-                    direction = (Random.value > 0.5f) ? 1 : -1;
+                    Debug.Log(currentCell.material + "+" + leftSuccess.material);
+                    SwapCells(currentPosition, leftSuccessPosition);
                 }
-                int distance = 0;
-                int fall = 0;
-                var fluidity = currentCell.fluidity;
-                for (int spread = 1; spread < fluidity; spread++)
+                else
                 {
-                    var spreadPosition = currentPosition + new Vector2Int(spread * direction, 0);
-                    var spreadPositionBottom = currentPosition + new Vector2Int(spread * direction, -1);
-                    var spreadPositionCell = GetCell(spreadPosition);
-                    var spreadPositionBottomCell = GetCell(spreadPositionBottom);
-                    var spreadPositionReaction = CellularMaterials.instance.FindReaction(currentCell.material, spreadPositionCell.material);
-                    var spreadPositionBottomReaction = CellularMaterials.instance.FindReaction(currentCell.material, spreadPositionBottomCell.material);
-                    var canReactSpreadPosition = spreadPositionReaction != null;
-                    var canReactSpreadPositionBottom = spreadPositionBottomReaction != null;
-
-                    if (canReactSpreadPositionBottom)
-                    {
-                        distance = spread;
-                        fall = -1;
-                        ReactCells(currentPosition, spreadPositionBottom, spreadPositionBottomReaction);
-                        break;
-                    }
-                    else if (canReactSpreadPosition)
-                    {
-                        distance = spread;
-                        ReactCells(currentPosition, spreadPosition, spreadPositionReaction);
-                        break;
-                    }
-                    else if (CanDisplace(currentCell, spreadPositionBottomCell))
-                    {
-                        distance = spread;
-                        fall = -1;
-                        break;
-                    }
-                    else if (!CanDisplace(currentCell, spreadPositionCell))
-                    {
-                        distance = spread - 1;
-                        break;
-                    }
-                }
-                distance = Mathf.Max(1, distance);
-                SwapCells(currentPosition, currentPosition + new Vector2Int(direction * distance, fall));
-            }
-            else
-            {
-                // Attempt diagonal movement if horizontal movement is blocked
-                var diagonalLeftPosition = new Vector2Int(x - 1, y - 1);
-                var diagonalRightPosition = new Vector2Int(x + 1, y - 1);
-                var diagonalLeftCell = GetCell(diagonalLeftPosition);
-                var diagonalRightCell = GetCell(diagonalRightPosition);
-                var canFallDiagonalLeft = CanDisplace(currentCell, diagonalLeftCell);
-                var canFallDiagonalRight = CanDisplace(currentCell, diagonalRightCell);
-
-                if (canFallDiagonalLeft || canFallDiagonalRight)
-                {
-                    int direction = (canFallDiagonalLeft ? -1 : 0) + (canFallDiagonalRight ? 1 : 0);
-                    if (direction == 0)
-                    {
-                        direction = (Random.value > 0.5f) ? 1 : -1;
-                    }
-                    SwapCells(currentPosition, currentPosition + new Vector2Int(direction, -1));
+                    Debug.Log(currentCell.material + "+" + rightSuccess.material);
+                    SwapCells(currentPosition, rightSuccessPosition);
                 }
             }
         }
@@ -357,6 +341,13 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         if (oldPosition == newPosition) { return; }
         var cell = GetCell(oldPosition);
         var otherCell = GetCell(newPosition);
+
+        if (cell == null || otherCell == null)
+        {
+            Debug.LogWarning("Attempting to swap null cells.");
+            return;
+        }
+
         SetCell(newPosition, cell);
         SetCell(oldPosition, otherCell);
         hasChanged = true;
@@ -392,13 +383,14 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
 
         if (targetChunk == null)
         {
-            //Debug.Log("Can't find chunk at " + chunkAddress);
+            //Debug.LogWarning($"Chunk not found at {chunkAddress}");
             return null;
         }
 
         var localChunkCoords = GlobalPixelToChunkCoords(globalPixelPosition, targetChunk);
         if (localChunkCoords == null)
         {
+            //Debug.LogWarning($"Invalid local chunk coordinates for position {globalPixelPosition}");
             return null;
         }
         else
@@ -409,19 +401,20 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         }
     }
 
-    public Cell GetCell(Vector2Int globalPixelPosition)
+    public Cell GetCell(Vector2Int globalPixelPosition, bool fallBackToEmpty = true)
     {
         Vector2Int chunkAddress = GetPixelChunkAddress(globalPixelPosition);
         CellularChunk targetChunk = FindChunk(chunkAddress);
 
         if (targetChunk == null)
         {
-            return emptyCell;
+            return fallBackToEmpty ? emptyCell : solidCell;
         }
         else
         {
             Vector2Int localChunkCoords = new Vector2Int(globalPixelPosition.x - targetChunk.pixelPosition.x, globalPixelPosition.y - targetChunk.pixelPosition.y);
-            return targetChunk[localChunkCoords.x, localChunkCoords.y];
+            var cell = targetChunk[localChunkCoords.x, localChunkCoords.y];
+            return cell ?? emptyCell;
         }
     }
 

@@ -76,7 +76,7 @@ MonoBehaviour:
       rgba: 4292963931
     movement: 3
     gravity: 1
-    fluidity: 5
+    fluidity: 20
     lifespan: -1
     appearance: {fileID: 21300000, guid: 83aeb07c9de90554b981d23def81bd5d, type: 3}
     lightRadius: 0

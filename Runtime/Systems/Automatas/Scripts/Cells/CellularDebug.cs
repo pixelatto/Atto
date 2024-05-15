@@ -5,6 +5,7 @@ public class CellularDebug : MonoBehaviour
     [Header("Global")]
     public float brushSize = 3;
     public CellMaterial mouseSpawnMaterial = CellMaterial.Dirt;
+    public bool randomColors = false;
 
     [Header("Particles")]
     public bool spawnAsParticles = false;
@@ -31,6 +32,10 @@ public class CellularDebug : MonoBehaviour
                     var globalPixelPosition = pixelPosition + new Vector2Int(Mathf.FloorToInt(i), Mathf.FloorToInt(j));
 
                     var newCell = CellularAutomata.instance.CreateCellIfEmpty(globalPixelPosition, mouseSpawnMaterial);
+                    if (newCell != null && randomColors)
+                    {
+                        newCell.overrideColor = new Color(Random.value, Random.value, Random.value, 1);
+                    }
                     if (spawnAsParticles)
                     {
                         var newParticle = ParticleAutomata.instance.CellToParticle(newCell, globalPixelPosition);
