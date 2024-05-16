@@ -5,7 +5,7 @@ using UnityEngine.Events;
 
 public class CellularSensor : MonoBehaviour
 {
-    [ReadOnly] public CellMaterial firstCell;
+    public Cell firstCell;
 
     public Vector2Int pixelOffset;
     public Vector2Int pixelSize = new Vector2Int(1, 1);
@@ -61,7 +61,7 @@ public class CellularSensor : MonoBehaviour
             }
         }
 
-        firstCell = sensedCells[0, 0].material;
+        firstCell = sensedCells[0, 0];
     }
 
     public bool ContainsAny(System.Predicate<Cell> CellCondition)

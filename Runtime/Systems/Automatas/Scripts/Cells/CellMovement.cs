@@ -2,6 +2,7 @@
 {
     Undefined,
     Static,
+    Structural,
     Granular,
     Fluid,
     Gas

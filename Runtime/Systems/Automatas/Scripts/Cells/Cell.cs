@@ -26,6 +26,9 @@ public class Cell
     public int elapsedLifetime = 0;
     public bool lifetimeTimeout => (startLifetime != -1) && (elapsedLifetime >= startLifetime);
 
+    public bool isStructurallyConnected = false;
+    public bool needsUpdate = true;
+
     public Cell(CellMaterial material)
     {
         this.material = material;
@@ -60,12 +63,13 @@ public class Cell
 
     public bool IsStatic()
     {
-        return movement == CellMovement.Static;
+        return movement == CellMovement.Static || (movement == CellMovement.Structural && isStructurallyConnected);
     }
 
     public bool IsSolid()
     {
-        return material != CellMaterial.None && (movement == CellMovement.Static || movement == CellMovement.Granular);
+        return material != CellMaterial.None &&
+            (movement == CellMovement.Static || movement == CellMovement.Granular || movement == CellMovement.Structural);
     }
 
     public bool IsGranular()
