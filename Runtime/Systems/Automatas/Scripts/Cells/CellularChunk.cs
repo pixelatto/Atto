@@ -162,6 +162,7 @@ public class CellularChunk : MonoBehaviour
                         }
                     }
                 }
+                newCell.temperature = newCell.startTemperature;
                 cells[Index(i, j)] = newCell;
             }
         }

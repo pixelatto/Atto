@@ -26,7 +26,7 @@ MonoBehaviour:
     lightEmission: 0
     opacity: 1
     renderLayer: 0
-    temperature: 0
+    temperature: 20
     thermalConductivity: 0
     heatPoint: 100
     heatMaterial: 0
@@ -64,10 +64,10 @@ MonoBehaviour:
     lightEmission: 0
     opacity: 1
     renderLayer: 0
-    temperature: 0
+    temperature: 20
     thermalConductivity: 1
-    heatPoint: 100
-    heatMaterial: 0
+    heatPoint: 300
+    heatMaterial: 4
     coldPoint: 0
     coldMaterial: 0
   - cellMaterial: 2
@@ -83,7 +83,7 @@ MonoBehaviour:
     lightEmission: 0
     opacity: 1
     renderLayer: 0
-    temperature: 0
+    temperature: 20
     thermalConductivity: 1
     heatPoint: 100
     heatMaterial: 0
@@ -102,12 +102,12 @@ MonoBehaviour:
     lightEmission: 0
     opacity: 0.5
     renderLayer: 2
-    temperature: 0
+    temperature: 20
     thermalConductivity: 1
     heatPoint: 100
-    heatMaterial: 0
+    heatMaterial: 10
     coldPoint: 0
-    coldMaterial: 0
+    coldMaterial: 11
   - cellMaterial: 4
     identifierColor:
       serializedVersion: 2
@@ -123,10 +123,10 @@ MonoBehaviour:
     renderLayer: 2
     temperature: 500
     thermalConductivity: 1
-    heatPoint: 100
+    heatPoint: 600
     heatMaterial: 0
-    coldPoint: 0
-    coldMaterial: 0
+    coldPoint: 300
+    coldMaterial: 1
   - cellMaterial: 5
     identifierColor:
       serializedVersion: 2
@@ -159,7 +159,7 @@ MonoBehaviour:
     lightEmission: 0
     opacity: 0.5
     renderLayer: 2
-    temperature: 0
+    temperature: 20
     thermalConductivity: 1
     heatPoint: 100
     heatMaterial: 0
@@ -180,10 +180,10 @@ MonoBehaviour:
     renderLayer: 0
     temperature: -20
     thermalConductivity: 1
-    heatPoint: 100
-    heatMaterial: 0
-    coldPoint: 0
-    coldMaterial: 0
+    heatPoint: 0
+    heatMaterial: 3
+    coldPoint: -30
+    coldMaterial: 11
   - cellMaterial: 8
     identifierColor:
       serializedVersion: 2
@@ -218,8 +218,8 @@ MonoBehaviour:
     renderLayer: 0
     temperature: 20
     thermalConductivity: 1
-    heatPoint: 100
-    heatMaterial: 0
+    heatPoint: 350
+    heatMaterial: 5
     coldPoint: 0
     coldMaterial: 0
   - cellMaterial: 10
@@ -239,8 +239,8 @@ MonoBehaviour:
     thermalConductivity: 1
     heatPoint: 100
     heatMaterial: 0
-    coldPoint: 0
-    coldMaterial: 0
+    coldPoint: 100
+    coldMaterial: 3
   - cellMaterial: 11
     identifierColor:
       serializedVersion: 2
@@ -254,10 +254,10 @@ MonoBehaviour:
     lightEmission: 0
     opacity: 1
     renderLayer: 0
-    temperature: -30
+    temperature: -50
     thermalConductivity: 1
-    heatPoint: 100
-    heatMaterial: 0
+    heatPoint: 0
+    heatMaterial: 3
     coldPoint: 0
     coldMaterial: 0
   reactions:

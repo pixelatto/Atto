@@ -155,11 +155,11 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
                 if (currentCell.movement == CellMovement.Structural)
                 {
                     Vector2Int[] neighbors = {
-                    new Vector2Int(current.x + 1, current.y),
-                    new Vector2Int(current.x - 1, current.y),
-                    new Vector2Int(current.x, current.y + 1),
-                    new Vector2Int(current.x, current.y - 1)
-                };
+                        new Vector2Int(current.x + 1, current.y),
+                        new Vector2Int(current.x - 1, current.y),
+                        new Vector2Int(current.x, current.y + 1),
+                        new Vector2Int(current.x, current.y - 1)
+                    };
 
                     foreach (var neighbor in neighbors)
                     {
@@ -312,13 +312,7 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         var bottomPosition = new Vector2Int(x, y - 1);
         var bottomCell = GetCell(bottomPosition, false);
         var canFallDown = CanDisplace(currentCell, bottomCell);
-        var downReaction = CellularMaterials.instance.FindReaction(currentCell.material, bottomCell.material);
-        var canReactDown = downReaction != null;
 
-        if (canReactDown)
-        {
-            ReactCells(currentPosition, bottomPosition, downReaction);
-        }
         if (canFallDown)
         {
             SwapCells(currentPosition, bottomPosition);
@@ -356,27 +350,8 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
 
         var canFallLeft = leftPositions.Exists(pos => CanDisplace(currentCell, GetCell(pos, false)));
         var canFallRight = rightPositions.Exists(pos => CanDisplace(currentCell, GetCell(pos, false)));
-        var leftReaction = leftPositions
-            .Select(pos => CellularMaterials.instance.FindReaction(currentCell.material, GetCell(pos, false).material))
-            .FirstOrDefault(reaction => reaction != null);
-        var rightReaction = rightPositions
-            .Select(pos => CellularMaterials.instance.FindReaction(currentCell.material, GetCell(pos, false).material))
-            .FirstOrDefault(reaction => reaction != null);
-        var canReactLeft = leftReaction != null;
-        var canReactRight = rightReaction != null;
 
-        if (canReactLeft || canReactRight)
-        {
-            int direction = (canReactLeft ? -1 : 0) + (canReactRight ? 1 : 0);
-            if (direction == 0)
-            {
-                direction = (Random.value > 0.5f) ? 1 : -1;
-            }
-            var targetPosition = direction == -1 ? leftPositions.First(pos => CellularMaterials.instance.FindReaction(currentCell.material, GetCell(pos).material) != null)
-                                                 : rightPositions.First(pos => CellularMaterials.instance.FindReaction(currentCell.material, GetCell(pos).material) != null);
-            ReactCells(currentPosition, targetPosition, direction == -1 ? leftReaction : rightReaction);
-        }
-        else if (canFallLeft || canFallRight)
+        if (canFallLeft || canFallRight)
         {
             int direction = (canFallLeft ? -1 : 0) + (canFallRight ? 1 : 0);
             if (direction == 0)
@@ -418,7 +393,6 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         }
     }
 
-
     private void GasMovement()
     {
         int x = currentPosition.x;
@@ -433,13 +407,7 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
                 var targetPosition = new Vector2Int(x + i, y + j - currentCell.gravity);
                 var targetCell = GetCell(targetPosition);
 
-                var reaction = CellularMaterials.instance.FindReaction(currentCell.material, targetCell.material);
-                var canReact = reaction != null;
-                if (canReact)
-                {
-                    targetPositions.Add(targetPosition);
-                }
-                else if (CanDisplace(currentCell, targetCell))
+                if (CanDisplace(currentCell, targetCell))
                 {
                     targetPositions.Add(targetPosition);
                 }
@@ -448,17 +416,7 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         if (targetPositions.Count > 0)
         {
             var randomPosition = targetPositions.PickRandom();
-            var randomCell = GetCell(randomPosition);
-            var reaction = CellularMaterials.instance.FindReaction(currentCell.material, randomCell.material);
-            var canReact = reaction != null;
-            if (canReact)
-            {
-                ReactCells(currentPosition, randomPosition, reaction);
-            }
-            else
-            {
-                SwapCells(currentPosition, randomPosition);
-            }
+            SwapCells(currentPosition, randomPosition);
         }
     }
 
@@ -477,18 +435,6 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         }
     }
 
-    void ReactCells(Vector2Int reactorPositionA, Vector2Int reactorPositionB, CellMaterialReaction reaction)
-    {
-        var cellA = GetCell(reactorPositionA);
-        var cellB = GetCell(reactorPositionB);
-        bool reversed = reaction.reactorA == cellB.material && reaction.reactorB == cellA.material;
-
-        var productA = reversed ? reaction.productB : reaction.productA;
-        var productB = reversed ? reaction.productA : reaction.productB;
-        SetCell(reactorPositionA, new Cell(productA));
-        SetCell(reactorPositionB, new Cell(productB));
-        hasChanged = true;
-    }
     void SwapCells(Vector2Int oldPosition, Vector2Int newPosition)
     {
         if (oldPosition == newPosition) { return; }
@@ -538,11 +484,11 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
     private void PropagateStructuralUpdate(Vector2Int position)
     {
         Vector2Int[] neighbors = {
-        new Vector2Int(position.x + 1, position.y),
-        new Vector2Int(position.x - 1, position.y),
-        new Vector2Int(position.x, position.y + 1),
-        new Vector2Int(position.x, position.y - 1)
-    };
+            new Vector2Int(position.x + 1, position.y),
+            new Vector2Int(position.x - 1, position.y),
+            new Vector2Int(position.x, position.y + 1),
+            new Vector2Int(position.x, position.y - 1)
+        };
 
         foreach (var neighbor in neighbors)
         {
@@ -563,7 +509,6 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
     {
         return new Vector2Int(Mathf.FloorToInt((float)globalPixelPosition.x / Global.roomPixelSize.x), Mathf.FloorToInt((float)globalPixelPosition.y / Global.roomPixelSize.y));
     }
-
 
     public static CellularChunk FindChunk(Vector2Int chunkAddress)
     {
@@ -597,6 +542,11 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         else
         {
             cell.lastUpdateTick = currentTick;
+            // Inicializar la temperatura de la célula al establecerla en el mundo
+            if (cell.elapsedLifetime == 0)
+            {
+                cell.temperature = cell.startTemperature;
+            }
             targetChunk[((Vector2Int)localChunkCoords).x, ((Vector2Int)localChunkCoords).y] = cell;
             return targetChunk[((Vector2Int)localChunkCoords).x, ((Vector2Int)localChunkCoords).y];
         }
