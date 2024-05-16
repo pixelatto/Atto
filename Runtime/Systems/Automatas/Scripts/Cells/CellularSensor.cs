@@ -29,7 +29,7 @@ public class CellularSensor : MonoBehaviour
         {
             for (int j = 0; j < pixelSize.y; j++)
             {
-                sensedCells[i, j] = CellularAutomata.emptyCell;
+                sensedCells[i, j] = new Cell(CellMaterial.Empty);
             }
         }
     }

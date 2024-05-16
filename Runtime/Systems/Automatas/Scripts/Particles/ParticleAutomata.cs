@@ -164,7 +164,7 @@ public class ParticleAutomata : SingletonMonobehaviour<ParticleAutomata>
 
     public Cell ParticleToCell(Particle particle)
     {
-        Cell newCell = CellularAutomata.emptyCell;
+        Cell newCell = new Cell(particle.material);
         Vector2Int? validPosition = null;
         var currentPixelPosition = CellularAutomata.WorldToPixelPosition(particle.position);
         var currentCell = cellularAutomata.GetCell(currentPixelPosition);

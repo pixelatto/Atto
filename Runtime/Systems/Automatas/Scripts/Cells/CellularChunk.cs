@@ -30,7 +30,7 @@ public class CellularChunk : MonoBehaviour
             var index = Index(x, y);
             if (index < 0 || index > cells.Length - 1)
             {
-                return CellularAutomata.emptyCell;
+                return new Cell(CellMaterial.Empty); // Crear una nueva célula vacía en lugar de usar una compartida
             };
             return cells[index];
         }
@@ -203,7 +203,7 @@ public class CellularChunk : MonoBehaviour
         {
             for (int j = 0; j < pixelSize.y; j++)
             {
-                var cell = cells[Index(i,j)];
+                var cell = cells[Index(i, j)];
                 if (cell.IsLiquid())
                 {
                     cell.blocksLight = false;

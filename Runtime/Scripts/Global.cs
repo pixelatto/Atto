@@ -22,11 +22,13 @@ public class Global
     public static PhysicsMaterial2D unstableMaterial = Resources.Load<PhysicsMaterial2D>("PhysicsMaterials2D/Unstable");
     public static PhysicsMaterial2D rollMaterial = Resources.Load<PhysicsMaterial2D>("PhysicsMaterials2D/Rolling");
 
-
     public const float slowMomentumThreeshold = 0.5f;
     public const float mediumMomentumThreeshold = 2.5f;
     public const float fastMomentumThreeshold = 5f;
     public const float verticalMomentumThreeshold = 1f;
+
+    public static float ambientTemperature = 20f; // Temperatura ambiente
+    public static float ambientTemperatureDelta = 3f; // Delta de temperatura para ruido Perlin
 
     public static Momentum ClassifyMomentum(float speed)
     {

@@ -150,7 +150,7 @@ public static class Draw
         Debug.DrawLine(position + Vector2.one.LeftPerpendicular() * size, position - Vector2.one.LeftPerpendicular() * size, (Color)color);
     }
 
-    public static void Pixel(Vector3 position, Color? color = null)
+    public static void PixelPrecise(Vector3 position, Color? color = null)
     {
         if (color == null) { color = Color.white; }
         var pixelPosition = new Vector2(Mathf.Floor(position.x * Global.pixelsPerUnit)/Global.pixelsPerUnit, Mathf.Floor(position.y * Global.pixelsPerUnit) / Global.pixelsPerUnit);
@@ -160,5 +160,21 @@ public static class Draw
         Debug.DrawLine(pixelPosition + Vector2.up    * 1f / Global.pixelsPerUnit, position, (Color)color);
         Debug.DrawLine(pixelPosition + Vector2.right * 1f / Global.pixelsPerUnit, position, (Color)color);
         Debug.DrawLine(pixelPosition + Vector2.one   * 1f / Global.pixelsPerUnit, position, (Color)color);
+    }
+
+    public static void Pixel(Vector3 position, Color? color = null)
+    {
+        if (color == null) { color = Color.white; }
+        var pixelPosition = new Vector2(Mathf.Floor(position.x * Global.pixelsPerUnit) / Global.pixelsPerUnit, Mathf.Floor(position.y * Global.pixelsPerUnit) / Global.pixelsPerUnit);
+        var pixelRect = new Rect(pixelPosition.x, pixelPosition.y, 1f / Global.pixelsPerUnit, 1f / Global.pixelsPerUnit);
+        Rect(pixelRect, color);
+    }
+
+    public static void PixelSmall(Vector3 position, Color? color = null)
+    {
+        if (color == null) { color = Color.white; }
+        var pixelPosition = new Vector2(Mathf.Floor(position.x * Global.pixelsPerUnit) / Global.pixelsPerUnit, Mathf.Floor(position.y * Global.pixelsPerUnit) / Global.pixelsPerUnit);
+        var pixelRect = new Rect(pixelPosition.x, pixelPosition.y, 1f / Global.pixelsPerUnit, 1f / Global.pixelsPerUnit);
+        Rect(pixelRect.Shrink(1f/Global.pixelsPerUnit * 0.1f), color);
     }
 }

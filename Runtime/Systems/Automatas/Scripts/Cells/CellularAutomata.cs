@@ -15,7 +15,6 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
 
     public bool hasChanged = false;
 
-    public static Cell emptyCell = new Cell(CellMaterial.Empty);
     public static Cell solidCell = new Cell(CellMaterial.Stone);
 
     public static uint currentTick = 0;
@@ -559,13 +558,13 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
 
         if (targetChunk == null)
         {
-            return fallBackToEmpty ? emptyCell : solidCell;
+            return fallBackToEmpty ? new Cell(CellMaterial.Empty) : solidCell;
         }
         else
         {
             Vector2Int localChunkCoords = new Vector2Int(globalPixelPosition.x - targetChunk.pixelPosition.x, globalPixelPosition.y - targetChunk.pixelPosition.y);
             var cell = targetChunk[localChunkCoords.x, localChunkCoords.y];
-            return cell ?? emptyCell;
+            return cell ?? new Cell(CellMaterial.Empty);
         }
     }
 
