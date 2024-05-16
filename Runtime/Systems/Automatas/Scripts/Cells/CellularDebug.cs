@@ -95,7 +95,7 @@ public class CellularDebug : MonoBehaviour
     private CellMaterial GetMaterialFromColor(Color color)
     {
         float minDistance = float.MaxValue;
-        CellMaterial closestMaterial = CellMaterial.None;
+        CellMaterial closestMaterial = CellMaterial.Empty;
 
         foreach (var materialProperty in CellularMaterials.instance.materials)
         {

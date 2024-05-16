@@ -3,7 +3,7 @@
 [System.Serializable]
 public class CellMaterialProperties
 {
-    public CellMaterial cellMaterial = CellMaterial.None;
+    public CellMaterial cellMaterial = CellMaterial.Empty;
     public Color32 identifierColor = Color.white;
 
     [Header("Physics")]
@@ -23,9 +23,9 @@ public class CellMaterialProperties
     public float temperature = 20;
     public float thermalConductivity = 1;
     public float heatPoint = 100;
-    public CellMaterial heatMaterial = CellMaterial.None;
+    public CellMaterial heatMaterial = CellMaterial.Empty;
     public float coldPoint = 0;
-    public CellMaterial coldMaterial = CellMaterial.None;
+    public CellMaterial coldMaterial = CellMaterial.Empty;
 
     public Color GetColor()
     {

@@ -85,7 +85,7 @@ public class CellularChunk : MonoBehaviour
         {
             for (int j = 0; j < pixelSize.y; j++)
             {
-                cells[Index(i, j)] = new Cell(CellMaterial.None);
+                cells[Index(i, j)] = new Cell(CellMaterial.Empty);
             }
         }
     }
@@ -147,10 +147,10 @@ public class CellularChunk : MonoBehaviour
             for (int j = 0; j < terrainRaster.height; j++)
             {
                 Color32 color = terrainRaster.GetPixel(i, j);
-                var newCell = new Cell(CellMaterial.None);
+                var newCell = new Cell(CellMaterial.Empty);
                 if (color.r == 0 && color.g == 0 && color.b == 0)
                 {
-                    newCell.material = CellMaterial.None;
+                    newCell.material = CellMaterial.Empty;
                 }
                 else
                 {

@@ -1,6 +1,7 @@
 ﻿public enum CellMaterial {
-    None = 0,
-    Rock = 1,
+    Undestructible = -1,
+    Empty = 0,
+    Stone = 1,
     Dirt = 2,
     Water = 3,
     Lava = 4,
@@ -10,6 +11,6 @@
     Sand = 8,
     Wood = 9,
     Steam = 10,
-    Ice = 11
+    Ice = 11,
 }
 

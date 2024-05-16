@@ -15,8 +15,8 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
 
     public bool hasChanged = false;
 
-    public static Cell emptyCell = new Cell(CellMaterial.None);
-    public static Cell solidCell = new Cell(CellMaterial.Rock);
+    public static Cell emptyCell = new Cell(CellMaterial.Empty);
+    public static Cell solidCell = new Cell(CellMaterial.Stone);
 
     public static uint currentTick = 0;
 
@@ -82,7 +82,7 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
                 }
                 else
                 {
-                    if (currentCell.material != CellMaterial.None && !currentCell.wasUpdatedThisTick)
+                    if (currentCell.material != CellMaterial.Empty && !currentCell.wasUpdatedThisTick)
                     {
                         var movementType = currentCell.movement;
 
@@ -142,7 +142,7 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
                 visited.Add(current);
                 var currentCell = GetCell(current);
 
-                if (currentCell.material == CellMaterial.None)
+                if (currentCell.material == CellMaterial.Empty)
                 {
                     continue; // No consideres células vacías en la lógica de conexión
                 }
@@ -400,8 +400,8 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         var rightBottomCell = GetCell(rightBottomPosition, false);
         var rightBelowRightBottomCell = GetCell(new Vector2Int(x + 1, y - absFluidity - 1), false);
 
-        bool canMoveLeft = leftBottomCell.material == CellMaterial.None && leftBelowLeftBottomCell.material != CellMaterial.None;
-        bool canMoveRight = rightBottomCell.material == CellMaterial.None && rightBelowRightBottomCell.material != CellMaterial.None;
+        bool canMoveLeft = leftBottomCell.material == CellMaterial.Empty && leftBelowLeftBottomCell.material != CellMaterial.Empty;
+        bool canMoveRight = rightBottomCell.material == CellMaterial.Empty && rightBelowRightBottomCell.material != CellMaterial.Empty;
 
         if (canMoveLeft && canMoveRight)
         {
@@ -516,7 +516,7 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
 
     public void DestroyCell(Vector2Int globalPixelPosition)
     {
-        SetCell(globalPixelPosition, new Cell(CellMaterial.None));
+        SetCell(globalPixelPosition, new Cell(CellMaterial.Empty));
         UpdateStructuralConnections(globalPixelPosition);
 
         // Propagar el estado de conexión a las células adyacentes
@@ -648,7 +648,7 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         {
             return false;
         }
-        else if (targetCell.material == CellMaterial.None)
+        else if (targetCell.material == CellMaterial.Empty)
         {
             return true;
         }

@@ -4,11 +4,11 @@ using UnityEngine;
 [System.Serializable]
 public class Cell
 {
-    public CellMaterial material = CellMaterial.None;
+    public CellMaterial material = CellMaterial.Empty;
     public Color overrideColor = Color.clear;
     public bool blocksLight = false;
     
-    public CellMovement movement => material == CellMaterial.None ? CellMovement.Static : materialProperties.movement;
+    public CellMovement movement => material == CellMaterial.Empty ? CellMovement.Static : materialProperties.movement;
     public int fluidity => materialProperties.fluidity;
     public float lightEmission => materialProperties.lightEmission;
     public float lightRadius => materialProperties.lightRadius;
@@ -36,7 +36,7 @@ public class Cell
 
     public Color GetColor()
     {
-        if (material == CellMaterial.None)
+        if (material == CellMaterial.Empty)
         {
             return Color.clear;
         }
@@ -58,7 +58,7 @@ public class Cell
 
     public bool IsEmpty()
     {
-        return material == CellMaterial.None;
+        return material == CellMaterial.Empty;
     }
 
     public bool IsStatic()
@@ -68,7 +68,7 @@ public class Cell
 
     public bool IsSolid()
     {
-        return material != CellMaterial.None &&
+        return material != CellMaterial.Empty &&
             (movement == CellMovement.Static || movement == CellMovement.Granular || movement == CellMovement.Structural);
     }
 
@@ -99,6 +99,6 @@ public class Cell
 
     public void Destroy()
     {
-        material = CellMaterial.None;
+        material = CellMaterial.Empty;
     }
 }
