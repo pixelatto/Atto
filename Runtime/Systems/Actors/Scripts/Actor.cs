@@ -39,7 +39,7 @@ public class Actor : MonoBehaviour, IControllable
     float fastHorizontalSpeed = 0;
     float minGroundTimeBeforeJump = 0.05f;
     
-    Timer groundedTimer;
+    Timer groundedTimer = 0;
 
     Vector2 standingPoint;
     Vector2 groundNormal;

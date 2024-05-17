@@ -9,7 +9,7 @@ public class StateMachine<StateLabel>
 
     Dictionary<StateLabel, State> states = new Dictionary<StateLabel, State>();
 
-    public Timer currentStateTimer;
+    public Timer currentStateTimer = 0;
 
     public void ChangeState(StateLabel newStateLabel)
     {

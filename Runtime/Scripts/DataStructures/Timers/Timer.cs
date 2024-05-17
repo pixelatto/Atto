@@ -14,4 +14,9 @@ public class Timer
     {
         startTime = Time.time;
     }
+
+    public static implicit operator Timer(float startTime)
+    {
+        return new Timer(startTime);
+    }
 }
