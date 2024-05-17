@@ -122,7 +122,7 @@ MonoBehaviour:
     opacity: 1
     renderLayer: 2
     temperature: 800
-    thermalConductivity: 1
+    thermalConductivity: 0.01
     heatPoint: 600
     heatMaterial: 0
     coldPoint: 300

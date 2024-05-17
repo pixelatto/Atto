@@ -8,6 +8,7 @@ public class CellMaterialProperties
 
     [Header("Physics")]
     public CellMovement movement = CellMovement.Undefined;
+    public int density = 1000;
     public int gravity = 1;
     public int fluidity = 1;
     public int lifespan = -1;

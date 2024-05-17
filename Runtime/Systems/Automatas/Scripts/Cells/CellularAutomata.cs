@@ -303,17 +303,19 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
             }
         }
     }
-
     private void GranularMovement()
     {
         int x = currentPosition.x;
         int y = currentPosition.y;
         var bottomPosition = new Vector2Int(x, y - 1);
         var bottomCell = GetCell(bottomPosition, false);
-        var canFallDown = CanDisplace(currentCell, bottomCell);
 
-        if (canFallDown)
+        if (CanDisplace(currentCell, bottomCell))
         {
+            if (bottomCell.IsFluid() || bottomCell.IsGas())
+            {
+                DisplaceFluid(bottomPosition);
+            }
             SwapCells(currentPosition, bottomPosition);
         }
         else
@@ -332,6 +334,42 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
             else
             {
                 HandleNegativeFluidity(-fluidity, x, y);
+            }
+        }
+    }
+
+    private void DisplaceFluid(Vector2Int fluidPosition)
+    {
+        var fluidCell = GetCell(fluidPosition);
+        var directions = new Vector2Int[]
+        {
+        new Vector2Int(1, 0),  // Right
+        new Vector2Int(-1, 0), // Left
+        new Vector2Int(0, 1),  // Up
+        new Vector2Int(1, 1),  // Up-Right
+        new Vector2Int(-1, 1)  // Up-Left
+        };
+
+        foreach (var direction in directions)
+        {
+            var newPosition = fluidPosition + direction;
+            var newCell = GetCell(newPosition);
+            if (newCell.IsEmpty())
+            {
+                SwapCells(fluidPosition, newPosition);
+                return;
+            }
+        }
+
+        // Si no hay posiciones vacías alrededor, tratar de mover lateralmente hacia abajo
+        foreach (var direction in directions)
+        {
+            var newPosition = fluidPosition + new Vector2Int(direction.x, direction.y - 1);
+            var newCell = GetCell(newPosition);
+            if (newCell.IsEmpty())
+            {
+                SwapCells(fluidPosition, newPosition);
+                return;
             }
         }
     }
@@ -396,9 +434,9 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
     {
         int x = currentPosition.x;
         int y = currentPosition.y;
-
-        List<Vector2Int> targetPositions = new List<Vector2Int>();
+        var targetPositions = new List<Vector2Int>();
         var fluidity = currentCell.fluidity;
+
         for (int i = -fluidity; i <= fluidity; i++)
         {
             for (int j = -fluidity; j <= fluidity; j++)
@@ -412,9 +450,15 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
                 }
             }
         }
+
         if (targetPositions.Count > 0)
         {
             var randomPosition = targetPositions.PickRandom();
+            var randomCell = GetCell(randomPosition);
+            if (randomCell.IsFluid() || randomCell.IsGas())
+            {
+                DisplaceFluid(randomPosition);
+            }
             SwapCells(currentPosition, randomPosition);
         }
     }
@@ -601,9 +645,15 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         {
             return true;
         }
+        else if ((targetCell.IsFluid() || targetCell.IsGas()) && originCell.IsSolid())
+        {
+            // Permitir que sólidos desplacen líquidos y gases
+            return true;
+        }
         else
         {
             return (targetCell.movement > originCell.movement);
         }
     }
+
 }

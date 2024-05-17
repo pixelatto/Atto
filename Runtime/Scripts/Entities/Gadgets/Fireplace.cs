@@ -21,7 +21,7 @@ public class Fireplace : Gadget
         remainingFuel -= Time.deltaTime;
         cellularSpawner.gameObject.SetActive(true);
         pixelLight.gameObject.SetActive(true);
-        if (cellularSensor.IsFilledWith((cell => (cell.IsLiquid() || cell.IsSolid()) && !cell.IsHotterThan(300))))
+        if (cellularSensor.IsFilledWith((cell => (cell.IsFluid() || cell.IsSolid()) && !cell.IsHotterThan(300))))
         {
             ChangeState(GadgetState.Off);
         }
