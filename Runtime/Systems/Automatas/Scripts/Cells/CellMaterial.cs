@@ -12,5 +12,7 @@
     Wood = 9,
     Steam = 10,
     Ice = 11,
+    Metal = 12,
+    Smelt = 13
 }
 

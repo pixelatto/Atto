@@ -95,8 +95,8 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
                             case CellMovement.Granular:
                                 GranularMovement();
                                 break;
-                            case CellMovement.Fluid:
-                                FluidMovement();
+                            case CellMovement.Liquid:
+                                LiquidMovement();
                                 break;
                             case CellMovement.Gas:
                                 GasMovement();
@@ -183,7 +183,7 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         }
     }
 
-    private void FluidMovement()
+    private void LiquidMovement()
     {
         int x = currentPosition.x;
         int y = currentPosition.y;
@@ -303,6 +303,7 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
             }
         }
     }
+
     private void GranularMovement()
     {
         int x = currentPosition.x;
@@ -312,7 +313,7 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
 
         if (CanDisplace(currentCell, bottomCell))
         {
-            if (bottomCell.IsFluid() || bottomCell.IsGas())
+            if (bottomCell.IsLiquid() || bottomCell.IsGas())
             {
                 DisplaceFluid(bottomPosition);
             }
@@ -455,7 +456,7 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         {
             var randomPosition = targetPositions.PickRandom();
             var randomCell = GetCell(randomPosition);
-            if (randomCell.IsFluid() || randomCell.IsGas())
+            if (randomCell.IsLiquid() || randomCell.IsGas())
             {
                 DisplaceFluid(randomPosition);
             }
@@ -645,7 +646,7 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
         {
             return true;
         }
-        else if ((targetCell.IsFluid() || targetCell.IsGas()) && originCell.IsSolid())
+        else if ((targetCell.IsLiquid() || targetCell.IsGas()) && originCell.IsSolid())
         {
             // Permitir que sólidos desplacen líquidos y gases
             return true;

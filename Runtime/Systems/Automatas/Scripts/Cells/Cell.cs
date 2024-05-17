@@ -82,9 +82,9 @@ public class Cell
         return movement == CellMovement.Granular;
     }
 
-    public bool IsFluid()
+    public bool IsLiquid()
     {
-        return movement == CellMovement.Fluid;
+        return movement == CellMovement.Liquid;
     }
 
     public bool IsGas()

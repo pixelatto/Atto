@@ -4,7 +4,7 @@
     Static,
     Structural,
     Granular,
-    Fluid,
+    Liquid,
     Gas
 }
 

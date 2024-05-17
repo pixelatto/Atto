@@ -1,27 +1,27 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class CellularThermodynamics : MonoBehaviour
+public class CellularThermodynamics : SingletonMonobehaviour<CellularThermodynamics>
 {
+    [ReadOnly] public CellularChunk currentChunk;
     public float ambientTemperature = 20;
     public float ambientTemperatureDelta = 1;
-    public float ambientConductivity = 0.1f; // Nueva variable para controlar la conductividad de las células ambientes virtuales
-    public float dampingFactor = 0.95f; // Nueva variable para el factor de amortiguación
+    public float ambientConductivity = 0.1f;
+    public float dampingFactor = 0.95f;
     public bool debugTemperatures = false;
-    private Texture2D debugTexture;
-    private SpriteRenderer debugSpriteRenderer;
+    [HideInInspector] public SpriteRenderer debugSpriteRenderer;
 
+    private Texture2D debugTexture;
     private int textureWidth;
     private int textureHeight;
     private ComputeShader computeShader;
 
     CellularAutomata cellularAutomata;
-    CellularChunk[] chunks;
-    TemperatureCellData[] cells; // Renombrado para evitar conflictos
+    TemperatureCellData[] cells;
     RenderTexture currentTemperatureRT;
     RenderTexture nextTemperatureRT;
 
-    struct TemperatureCellData // Renombrado para evitar conflictos
+    struct TemperatureCellData
     {
         public float temperature;
         public float thermalConductivity;
@@ -37,8 +37,9 @@ public class CellularThermodynamics : MonoBehaviour
         InitializeComputeShader();
 
         cellularAutomata = CellularAutomata.instance;
-        chunks = FindObjectsOfType<CellularChunk>();
         cells = new TemperatureCellData[textureWidth * textureHeight];
+
+        UpdateCurrentChunk();
     }
 
     private void InitializeDebugTexture()
@@ -55,7 +56,8 @@ public class CellularThermodynamics : MonoBehaviour
         var pixelCamera = FindObjectOfType<RoomPixelCamera>();
         if (pixelCamera != null)
         {
-            debugSpriteRenderer.transform.position = pixelCamera.transform.position;
+            debugSpriteRenderer.transform.SetParent(pixelCamera.transform);
+            debugSpriteRenderer.transform.position = pixelCamera.transform.position + Vector3.forward;
         }
         debugSpriteRenderer.transform.localScale = Vector3.one;
     }
@@ -75,19 +77,38 @@ public class CellularThermodynamics : MonoBehaviour
 
     private void Update()
     {
+        UpdateCurrentChunk();
         UpdateTemperatures();
         TriggerMaterialChanges();
         if (debugTemperatures)
         {
             UpdateDebugTexture();
+            debugSpriteRenderer.enabled = true;
+        }
+        else
+        {
+            debugSpriteRenderer.enabled = false;
+        }
+    }
+
+    private void UpdateCurrentChunk()
+    {
+        var pixelCamera = FindObjectOfType<RoomPixelCamera>();
+        if (pixelCamera != null)
+        {
+            Vector2Int cameraPosition = CellularAutomata.WorldToPixelPosition(pixelCamera.transform.position);
+            Vector2Int chunkAddress = CellularAutomata.GetPixelChunkAddress(cameraPosition);
+            currentChunk = CellularAutomata.FindChunk(chunkAddress);
         }
     }
 
     private void UpdateTemperatures()
     {
+        if (currentChunk == null) return;
+
         Global.ambientTemperature = ambientTemperature;
         Global.ambientTemperatureDelta = ambientTemperatureDelta;
-        Global.ambientConductivity = ambientConductivity; // Pasar la conductividad ambiental
+        Global.ambientConductivity = ambientConductivity;
 
         // Llenar los datos de las celdas
         FillCellData();
@@ -132,7 +153,7 @@ public class CellularThermodynamics : MonoBehaviour
             for (int x = 0; x < textureWidth; x++)
             {
                 int index = y * textureWidth + x;
-                var cell = cellularAutomata.GetCell(new Vector2Int(x, y));
+                var cell = currentChunk[x, y];
                 if (cell != null)
                 {
                     cell.temperature = resultTemperatures[index];
@@ -145,12 +166,14 @@ public class CellularThermodynamics : MonoBehaviour
 
     private void FillCellData()
     {
+        if (currentChunk == null) return;
+
         for (int y = 0; y < textureHeight; y++)
         {
             for (int x = 0; x < textureWidth; x++)
             {
                 int index = y * textureWidth + x;
-                var cell = cellularAutomata.GetCell(new Vector2Int(x, y));
+                var cell = currentChunk[x, y];
                 if (cell != null)
                 {
                     cells[index] = new TemperatureCellData
@@ -175,11 +198,13 @@ public class CellularThermodynamics : MonoBehaviour
 
     private void UpdateDebugTexture()
     {
+        if (currentChunk == null) return;
+
         for (int y = 0; y < textureHeight; y++)
         {
             for (int x = 0; x < textureWidth; x++)
             {
-                var cell = cellularAutomata.GetCell(new Vector2Int(x, y));
+                var cell = currentChunk[x, y];
                 if (cell != null)
                 {
                     float temperature = cell.temperature;
@@ -227,36 +252,35 @@ public class CellularThermodynamics : MonoBehaviour
 
     private void TriggerMaterialChanges()
     {
-        foreach (var chunk in chunks)
-        {
-            for (int y = 0; y < chunk.pixelSize.y; y++)
-            {
-                for (int x = 0; x < chunk.pixelSize.x; x++)
-                {
-                    Vector2Int globalPixelPosition = new Vector2Int(chunk.pixelPosition.x + x, chunk.pixelPosition.y + y);
-                    var cell = cellularAutomata.GetCell(globalPixelPosition);
+        if (currentChunk == null) return;
 
-                    if (cell.material != CellMaterial.Empty && cell.elapsedLifetime > 1)
-                    {
-                        CheckAndTriggerChange(cell, globalPixelPosition);
-                    }
+        for (int y = 0; y < currentChunk.pixelSize.y; y++)
+        {
+            for (int x = 0; x < currentChunk.pixelSize.x; x++)
+            {
+                var cell = currentChunk[x, y];
+
+                if (cell.material != CellMaterial.Empty && cell.elapsedLifetime > 1)
+                {
+                    var globalPixelPosition = currentChunk.pixelPosition + new Vector2Int(x, y);
+                    CheckAndTriggerChange(cell, globalPixelPosition);
                 }
             }
         }
     }
 
-    private void CheckAndTriggerChange(Cell cell, Vector2Int position)
+    private void CheckAndTriggerChange(Cell cell, Vector2Int globalPixelPosition)
     {
         float temperature = cell.temperature;
         CellMaterialProperties properties = cell.materialProperties;
 
         if (temperature >= properties.heatPoint && properties.heatMaterial != CellMaterial.Empty)
         {
-            cellularAutomata.CreateCell(position, properties.heatMaterial);
+            cellularAutomata.CreateCell(globalPixelPosition, properties.heatMaterial);
         }
         else if (temperature <= properties.coldPoint && properties.coldMaterial != CellMaterial.Empty)
         {
-            cellularAutomata.CreateCell(position, properties.coldMaterial);
+            cellularAutomata.CreateCell(globalPixelPosition, properties.coldMaterial);
         }
     }
 }

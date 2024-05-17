@@ -204,7 +204,7 @@ public class CellularChunk : MonoBehaviour
             for (int j = 0; j < pixelSize.y; j++)
             {
                 var cell = cells[Index(i, j)];
-                if (cell.IsFluid())
+                if (cell.IsLiquid())
                 {
                     cell.blocksLight = false;
                 }

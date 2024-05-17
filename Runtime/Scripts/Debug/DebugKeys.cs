@@ -13,6 +13,10 @@ public class DebugKeys : MonoBehaviour
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             }
+            if (Input.GetKeyDown(KeyCode.Tab))
+            {
+                CellularThermodynamics.instance.debugTemperatures = !CellularThermodynamics.instance.debugTemperatures;
+            }
 
             //TIMESCALE CONTROLS
             if (Input.GetKeyDown(KeyCode.Home))
