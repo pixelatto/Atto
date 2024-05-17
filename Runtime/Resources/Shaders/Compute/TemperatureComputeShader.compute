@@ -7,9 +7,6 @@ Texture2D<float> CurrentTemperatures;
 // Parámetros de entrada
 int width;
 int height;
-float ambientTemperature;
-float ambientTemperatureDelta;
-float ambientConductivity;
 float dampingFactor; // Nueva variable para amortiguación
 
 // Estructura para las propiedades de la celda
@@ -37,7 +34,10 @@ void CSMain(uint3 id : SV_DispatchThreadID)
     int index = y * width + x;
     TemperatureCell cell = cells[index];
 
-    float sumTemperatures = 0.0;
+    // Convertir la temperatura de la celda actual a Kelvin
+    float cellTemperatureKelvin = cell.temperature + 273.15f;
+
+    float sumTemperaturesKelvin = 0.0;
     float sumConductivities = 0.0;
 
     for (int i = 0; i < 4; i++)
@@ -45,29 +45,27 @@ void CSMain(uint3 id : SV_DispatchThreadID)
         int2 neighborPos = int2(x, y) + offsets[i];
         if (neighborPos.x >= 0 && neighborPos.x < width && neighborPos.y >= 0 && neighborPos.y < height)
         {
-            float neighborTemperature = CurrentTemperatures.Load(int3(neighborPos, 0));
+            float neighborTemperatureCelsius = CurrentTemperatures.Load(int3(neighborPos, 0));
+            float neighborTemperatureKelvin = neighborTemperatureCelsius + 273.15f;
             TemperatureCell neighborCell = cells[neighborPos.y * width + neighborPos.x];
 
-            sumTemperatures += neighborTemperature * neighborCell.thermalConductivity;
+            sumTemperaturesKelvin += neighborTemperatureKelvin;
             sumConductivities += neighborCell.thermalConductivity;
         }
     }
 
-    // Añadir contribución de la temperatura ambiente para celdas vacías
-    if (cell.material == 0) // Empty
-    {
-        float perlinNoise = frac(sin(dot(float2(x, y), float2(12.9898, 78.233))) * 43758.5453) * ambientTemperatureDelta;
-        float adjustedAmbientTemperature = ambientTemperature + perlinNoise;
-        sumTemperatures += adjustedAmbientTemperature * ambientConductivity;
-        sumConductivities += ambientConductivity;
-    }
-
     if (sumConductivities > 0)
     {
-        float averageNeighborTemperature = sumTemperatures / sumConductivities;
-        float temperatureChange = (averageNeighborTemperature - cell.temperature) * (cell.thermalConductivity / (cell.thermalConductivity + sumConductivities));
-        temperatureChange *= dampingFactor; // Aplicar factor de amortiguación
-        Result[int2(x, y)] = cell.temperature + temperatureChange;
+        float averageNeighborTemperatureKelvin = sumTemperaturesKelvin / 4.0; // Promedio de los vecinos
+        float laplacian = averageNeighborTemperatureKelvin - cellTemperatureKelvin; // Diferencia de temperatura
+        
+        // Ley de Fourier: Q = -kA(dT/dx)
+        // Aquí, utilizamos una aproximación discreta en lugar de derivadas continuas
+        float temperatureChangeKelvin = laplacian * cell.thermalConductivity;
+        temperatureChangeKelvin *= dampingFactor; // Aplicar factor de amortiguación
+
+        // Convertir de vuelta a Celsius
+        Result[int2(x, y)] = (cellTemperatureKelvin + temperatureChangeKelvin) - 273.15f;
     }
     else
     {
