@@ -103,7 +103,7 @@ MonoBehaviour:
     opacity: 0.5
     renderLayer: 2
     temperature: 20
-    thermalConductivity: 1
+    thermalConductivity: 0.1
     heatPoint: 100
     heatMaterial: 10
     coldPoint: 0
@@ -141,7 +141,7 @@ MonoBehaviour:
     opacity: 1
     renderLayer: 0
     temperature: 1000
-    thermalConductivity: 10
+    thermalConductivity: 1
     heatPoint: 100
     heatMaterial: 0
     coldPoint: 0
@@ -217,7 +217,7 @@ MonoBehaviour:
     opacity: 1
     renderLayer: 0
     temperature: 20
-    thermalConductivity: 0.001
+    thermalConductivity: 1
     heatPoint: 40
     heatMaterial: 5
     coldPoint: 0
@@ -229,14 +229,14 @@ MonoBehaviour:
     movement: 5
     gravity: -1
     fluidity: 1
-    lifespan: 100
+    lifespan: -1
     appearance: {fileID: 21300000, guid: bd41bd3aa30dd2e4c8dea9ae9b2374e4, type: 3}
     lightRadius: 0
     lightEmission: 0
     opacity: 0.5
     renderLayer: 2
     temperature: 150
-    thermalConductivity: 1
+    thermalConductivity: 0.01
     heatPoint: 100
     heatMaterial: 0
     coldPoint: 100
@@ -255,7 +255,7 @@ MonoBehaviour:
     opacity: 1
     renderLayer: 0
     temperature: -50
-    thermalConductivity: 0.02
+    thermalConductivity: 0.01
     heatPoint: 0
     heatMaterial: 3
     coldPoint: 0

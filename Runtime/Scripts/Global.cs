@@ -29,6 +29,7 @@ public class Global
 
     public static float ambientTemperature = 20f; // Temperatura ambiente
     public static float ambientTemperatureDelta = 3f; // Delta de temperatura para ruido Perlin
+    public static float ambientConductivity = 1f; // Temperatura ambiente
 
     public static Momentum ClassifyMomentum(float speed)
     {

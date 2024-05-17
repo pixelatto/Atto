@@ -1,38 +1,48 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using System.Threading.Tasks;
 
 public class CellularThermodynamics : MonoBehaviour
 {
     public float ambientTemperature = 20;
+    public float ambientTemperatureDelta = 1;
+    public float ambientConductivity = 0.1f; // Nueva variable para controlar la conductividad de las células ambientes virtuales
+    public float dampingFactor = 0.95f; // Nueva variable para el factor de amortiguación
     public bool debugTemperatures = false;
     private Texture2D debugTexture;
     private SpriteRenderer debugSpriteRenderer;
 
-    private float[,] temperatures;
     private int textureWidth;
     private int textureHeight;
+    private ComputeShader computeShader;
 
     CellularAutomata cellularAutomata;
     CellularChunk[] chunks;
-    Vector2Int globalSize;
+    TemperatureCellData[] cells; // Renombrado para evitar conflictos
+    RenderTexture currentTemperatureRT;
+    RenderTexture nextTemperatureRT;
 
-    private void Start()
+    struct TemperatureCellData // Renombrado para evitar conflictos
     {
-        globalSize = Global.roomPixelSize;
-        temperatures = new float[globalSize.x, globalSize.y];
-
-        InitializeDebugTexture();
-
-        cellularAutomata = CellularAutomata.instance;
-        chunks = FindObjectsOfType<CellularChunk>();
+        public float temperature;
+        public float thermalConductivity;
+        public int material;
     }
 
-    private void InitializeDebugTexture()
+    private void Start()
     {
         textureWidth = Global.roomPixelSize.x;
         textureHeight = Global.roomPixelSize.y;
 
+        InitializeDebugTexture();
+        InitializeComputeShader();
+
+        cellularAutomata = CellularAutomata.instance;
+        chunks = FindObjectsOfType<CellularChunk>();
+        cells = new TemperatureCellData[textureWidth * textureHeight];
+    }
+
+    private void InitializeDebugTexture()
+    {
         debugTexture = new Texture2D(textureWidth, textureHeight);
         debugTexture.filterMode = FilterMode.Point;
 
@@ -50,6 +60,19 @@ public class CellularThermodynamics : MonoBehaviour
         debugSpriteRenderer.transform.localScale = Vector3.one;
     }
 
+    private void InitializeComputeShader()
+    {
+        computeShader = Resources.Load<ComputeShader>("Shaders/Compute/TemperatureComputeShader");
+
+        currentTemperatureRT = new RenderTexture(textureWidth, textureHeight, 0, RenderTextureFormat.RFloat, RenderTextureReadWrite.Linear);
+        currentTemperatureRT.enableRandomWrite = true;
+        currentTemperatureRT.Create();
+
+        nextTemperatureRT = new RenderTexture(textureWidth, textureHeight, 0, RenderTextureFormat.RFloat, RenderTextureReadWrite.Linear);
+        nextTemperatureRT.enableRandomWrite = true;
+        nextTemperatureRT.Create();
+    }
+
     private void Update()
     {
         UpdateTemperatures();
@@ -63,89 +86,91 @@ public class CellularThermodynamics : MonoBehaviour
     private void UpdateTemperatures()
     {
         Global.ambientTemperature = ambientTemperature;
+        Global.ambientTemperatureDelta = ambientTemperatureDelta;
+        Global.ambientConductivity = ambientConductivity; // Pasar la conductividad ambiental
 
-        Parallel.ForEach(chunks, chunk =>
+        // Llenar los datos de las celdas
+        FillCellData();
+
+        // Configurar el shader y despachar
+        computeShader.SetInt("width", textureWidth);
+        computeShader.SetInt("height", textureHeight);
+        computeShader.SetFloat("ambientTemperature", ambientTemperature);
+        computeShader.SetFloat("ambientTemperatureDelta", ambientTemperatureDelta);
+        computeShader.SetFloat("ambientConductivity", ambientConductivity);
+        computeShader.SetFloat("dampingFactor", dampingFactor);
+
+        // Copiar datos de las celdas a la textura actual
+        ComputeBuffer cellBuffer = new ComputeBuffer(cells.Length, sizeof(float) * 2 + sizeof(int));
+        cellBuffer.SetData(cells);
+        computeShader.SetBuffer(0, "cells", cellBuffer);
+
+        computeShader.SetTexture(0, "CurrentTemperatures", currentTemperatureRT);
+        computeShader.SetTexture(0, "Result", nextTemperatureRT);
+
+        int threadGroupsX = Mathf.CeilToInt(textureWidth / 8f);
+        int threadGroupsY = Mathf.CeilToInt(textureHeight / 8f);
+
+        computeShader.Dispatch(0, threadGroupsX, threadGroupsY, 1);
+
+        // Intercambiar las texturas
+        RenderTexture temp = currentTemperatureRT;
+        currentTemperatureRT = nextTemperatureRT;
+        nextTemperatureRT = temp;
+
+        // Leer los resultados
+        Texture2D resultTexture = new Texture2D(textureWidth, textureHeight, TextureFormat.RFloat, false);
+        RenderTexture.active = currentTemperatureRT;
+        resultTexture.ReadPixels(new Rect(0, 0, textureWidth, textureHeight), 0, 0);
+        resultTexture.Apply();
+        RenderTexture.active = null;
+
+        float[] resultTemperatures = resultTexture.GetRawTextureData<float>().ToArray();
+
+        for (int y = 0; y < textureHeight; y++)
         {
-            for (int y = 0; y < chunk.pixelSize.y; y++)
+            for (int x = 0; x < textureWidth; x++)
             {
-                for (int x = 0; x < chunk.pixelSize.x; x++)
-                {
-                    Vector2Int globalPixelPosition = new Vector2Int(chunk.pixelPosition.x + x, chunk.pixelPosition.y + y);
-                    var cell = cellularAutomata.GetCell(globalPixelPosition);
-
-                    if (cell != null)
-                    {
-                        float newTemperature = CalculateNewTemperature(globalPixelPosition, cell);
-                        temperatures[globalPixelPosition.x, globalPixelPosition.y] = newTemperature;
-                    }
-                }
-            }
-        });
-
-        for (int y = 0; y < globalSize.y; y++)
-        {
-            for (int x = 0; x < globalSize.x; x++)
-            {
+                int index = y * textureWidth + x;
                 var cell = cellularAutomata.GetCell(new Vector2Int(x, y));
                 if (cell != null)
                 {
-                    cell.temperature = temperatures[x, y];
+                    cell.temperature = resultTemperatures[index];
                 }
             }
         }
+
+        cellBuffer.Release();
     }
 
-    private float CalculateNewTemperature(Vector2Int position, Cell cell)
+    private void FillCellData()
     {
-        var neighbors = GetNeighboringCells(position);
-        float sumTemperatures = 0f;
-        float sumConductivities = 0f;
-        float ambientTemperature = Global.ambientTemperature;
-        float emptyCellConductivity = cell.thermalConductivity;
-
-        foreach (var neighborPosition in neighbors)
+        for (int y = 0; y < textureHeight; y++)
         {
-            if (neighborPosition.x >= 0 && neighborPosition.x < globalSize.x && neighborPosition.y >= 0 && neighborPosition.y < globalSize.y)
+            for (int x = 0; x < textureWidth; x++)
             {
-                var neighborCell = cellularAutomata.GetCell(neighborPosition);
-                if (neighborCell != null)
+                int index = y * textureWidth + x;
+                var cell = cellularAutomata.GetCell(new Vector2Int(x, y));
+                if (cell != null)
                 {
-                    float neighborTemperature = temperatures[neighborPosition.x, neighborPosition.y];
-                    sumTemperatures += neighborTemperature * neighborCell.thermalConductivity;
-                    sumConductivities += neighborCell.thermalConductivity;
+                    cells[index] = new TemperatureCellData
+                    {
+                        temperature = cell.temperature,
+                        thermalConductivity = cell.thermalConductivity,
+                        material = (int)cell.material
+                    };
+                }
+                else
+                {
+                    cells[index] = new TemperatureCellData
+                    {
+                        temperature = ambientTemperature,
+                        thermalConductivity = ambientConductivity,
+                        material = (int)CellMaterial.Empty
+                    };
                 }
             }
         }
-
-        if (cell.material == CellMaterial.Empty)
-        {
-            float perlinNoise = Mathf.PerlinNoise(position.x * 0.1f, position.y * 0.1f) * Global.ambientTemperatureDelta;
-            float adjustedAmbientTemperature = ambientTemperature + perlinNoise;
-
-            sumTemperatures += adjustedAmbientTemperature * emptyCellConductivity;
-            sumConductivities += emptyCellConductivity;
-        }
-
-        if (sumConductivities == 0 || cell.thermalConductivity == 0)
-        {
-            return cell.temperature;
-        }
-
-        float averageNeighborTemperature = sumTemperatures / sumConductivities;
-        float temperatureChange = (averageNeighborTemperature - cell.temperature) * (cell.thermalConductivity / (cell.thermalConductivity + sumConductivities));
-
-        return cell.temperature + temperatureChange;
-    }
-
-    private Vector2Int[] GetNeighboringCells(Vector2Int position)
-    {
-        return new Vector2Int[]
-        {
-            new Vector2Int(position.x, position.y + 1),
-            new Vector2Int(position.x, position.y - 1),
-            new Vector2Int(position.x + 1, position.y),
-            new Vector2Int(position.x - 1, position.y)
-        };
     }
 
     private void UpdateDebugTexture()
