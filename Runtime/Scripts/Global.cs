@@ -4,6 +4,7 @@ using UnityEngine;
 public class Global
 {
     public static float pixelsPerUnit = 8;
+    public static float simulationsFPS => 20;
     public static Vector2Int roomPixelSize = new Vector2Int(128, 72);
     public static Vector2Int resolution = new Vector2Int(128, 72);
     public static float aspectRatio => (float)resolution.x / (float)resolution.y;

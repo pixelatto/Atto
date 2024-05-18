@@ -18,7 +18,7 @@ public class CellularChunk : MonoBehaviour
 
     public static Dictionary<int, Dictionary<int, CellularChunk>> chunkDirectory = new Dictionary<int, Dictionary<int, CellularChunk>>();
 
-    bool chunkDirty = true;
+    public bool chunkDirty = true;
 
     CellularChunkCollider[] chunkColliders;
     CellularChunkRenderer[] chunkRenderers;

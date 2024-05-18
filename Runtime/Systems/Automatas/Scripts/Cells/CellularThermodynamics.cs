@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class CellularThermodynamics : SingletonMonobehaviour<CellularThermodynamics>
 {
-    [ReadOnly] public CellularChunk currentChunk;
     public float ambientTemperature = 20;
     public float ambientDissipation = 0.5f;
     public float dampingFactor = 0.95f;
@@ -19,6 +18,10 @@ public class CellularThermodynamics : SingletonMonobehaviour<CellularThermodynam
     TemperatureCellData[] cells;
     RenderTexture currentTemperatureRT;
     RenderTexture nextTemperatureRT;
+    Cycle updateRateCycle;
+    CellularChunk currentChunk => PixelCamera.instance.currentChunk;
+
+    bool isDirty = true;
 
     struct TemperatureCellData
     {
@@ -38,7 +41,8 @@ public class CellularThermodynamics : SingletonMonobehaviour<CellularThermodynam
         cellularAutomata = CellularAutomata.instance;
         cells = new TemperatureCellData[textureWidth * textureHeight];
 
-        UpdateCurrentChunk();
+        updateRateCycle = new Cycle(1f / Global.simulationsFPS, SetDirty);
+        updateRateCycle.Start();
     }
 
     private void InitializeDebugTexture()
@@ -74,9 +78,22 @@ public class CellularThermodynamics : SingletonMonobehaviour<CellularThermodynam
         nextTemperatureRT.Create();
     }
 
+    void SetDirty()
+    {
+        isDirty = true;
+    }
+
     private void Update()
     {
-        UpdateCurrentChunk();
+        if (isDirty)
+        {
+            Step();
+            isDirty = false;
+        }
+    }
+
+    private void Step()
+    {
         UpdateTemperatures();
         TriggerMaterialChanges();
         if (debugTemperatures)
@@ -87,17 +104,6 @@ public class CellularThermodynamics : SingletonMonobehaviour<CellularThermodynam
         else
         {
             debugSpriteRenderer.enabled = false;
-        }
-    }
-
-    private void UpdateCurrentChunk()
-    {
-        var pixelCamera = FindObjectOfType<RoomPixelCamera>();
-        if (pixelCamera != null)
-        {
-            Vector2Int cameraPosition = CellularAutomata.WorldToPixelPosition(pixelCamera.transform.position);
-            Vector2Int chunkAddress = CellularAutomata.GetPixelChunkAddress(cameraPosition);
-            currentChunk = CellularAutomata.FindChunk(chunkAddress);
         }
     }
 

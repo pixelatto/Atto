@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 
-public class PixelCamera : MonoBehaviour
+public class PixelCamera : SingletonMonobehaviour<PixelCamera>
 {
+    [ReadOnly] public CellularChunk currentChunk;
     public float zoom = 1;
     public float baseCameraSize = 4.5f;
     public int basePixelHeight = 72;
@@ -39,5 +40,14 @@ public class PixelCamera : MonoBehaviour
 
         Draw.Rect(worldRect, Color.yellow);
         Draw.Rect(lookAheadWorldRect, Color.cyan);
+        UpdateCurrentChunk();
+    }
+
+    private void UpdateCurrentChunk()
+    {
+        Vector2Int cameraPosition = CellularAutomata.WorldToPixelPosition(transform.position);
+        Vector2Int chunkAddress = CellularAutomata.GetPixelChunkAddress(cameraPosition);
+        currentChunk = CellularAutomata.FindChunk(chunkAddress);
+        currentChunk.chunkDirty = true;
     }
 }

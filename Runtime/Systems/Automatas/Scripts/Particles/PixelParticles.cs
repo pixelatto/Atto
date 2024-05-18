@@ -16,7 +16,6 @@ public class PixelParticles : SingletonMonobehaviour<PixelParticles>
     SpriteRenderer spriteRenderer;
     Texture2D texture;
     Color32[] clearColors;
-    List<Particle> markedToRemove = new List<Particle>();
 
     private void Awake()
     {
@@ -30,7 +29,6 @@ public class PixelParticles : SingletonMonobehaviour<PixelParticles>
         CheckCollisions();
         RasterParticles();
         DrawDebugGizmos();
-        RemoveDeadParticles();
     }
 
     private void CheckTexture()
@@ -52,15 +50,6 @@ public class PixelParticles : SingletonMonobehaviour<PixelParticles>
             texture.Apply();
             spriteRenderer.sprite = Sprite.Create(texture, new Rect(0, 0, pixelSize.x, pixelSize.y), Vector2.one * 0.5f, Global.pixelsPerUnit);
         }
-    }
-
-    private void RemoveDeadParticles()
-    {
-        foreach (var particle in markedToRemove)
-        {
-            particles.Remove(particle);
-        }
-        markedToRemove.Clear();
     }
 
     private void DrawDebugGizmos()
@@ -137,7 +126,8 @@ public class PixelParticles : SingletonMonobehaviour<PixelParticles>
         bool succeded = particle.Destroy();
         if (succeded)
         {
-            markedToRemove.Add(particle);
+            particle.color = Color.clear;
+            particles.Remove(particle);
         }
         return succeded;
     }

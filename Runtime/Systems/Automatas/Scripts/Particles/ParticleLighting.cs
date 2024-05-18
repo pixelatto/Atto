@@ -29,7 +29,7 @@ public class ParticleLighting : MonoBehaviour
             }
         }
 
-        var pixelCamera = CellularAutomata.instance.pixelCamera;
+        var pixelCamera = PixelCamera.instance;
 
         for (int j = pixelCamera.lookAheadPixelRect.y; j <= pixelCamera.lookAheadPixelRect.y + pixelCamera.lookAheadPixelRect.height; j++)
         {
