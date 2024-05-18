@@ -353,6 +353,26 @@ MonoBehaviour:
     heatMaterial: 0
     coldPoint: 1500
     coldMaterial: 14
+  - cellMaterial: 16
+    identifierColor:
+      serializedVersion: 2
+      rgba: 4281606178
+    movement: 4
+    density: 1000
+    gravity: 1
+    fluidity: 2
+    lifespan: -1
+    appearance: {fileID: 21300000, guid: f8273bea598cb1540ab7239d311063df, type: 3}
+    lightRadius: 0
+    lightEmission: 0
+    opacity: 1
+    renderLayer: 2
+    temperature: 20
+    thermalConductivity: 0.1
+    heatPoint: 200
+    heatMaterial: 5
+    coldPoint: 0
+    coldMaterial: 11
   reactions:
   - reactionName: Wood combustion
     reactorA: 5

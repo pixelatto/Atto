@@ -15,6 +15,7 @@
     Metal = 12,
     Lava = 13,
     Glass = 14,
-    Frit = 15
+    Frit = 15,
+    Oil = 16,
 }
 
