@@ -18,9 +18,9 @@ public class ParticleLighting : MonoBehaviour
         List<float> lightRadius = new List<float>();
         List<float> lightEmissions = new List<float>();
 
-        for (int i = 0; i < ParticleAutomata.instance.particles.Count; i++)
+        for (int i = 0; i < PixelParticles.instance.particles.Count; i++)
         {
-            var particle = ParticleAutomata.instance.particles[i];
+            var particle = PixelParticles.instance.particles[i];
             if (particle.lightEmission > 0 && particle.lightRadius > 0)
             {
                 lightPoints.Add(particle.position);

@@ -22,7 +22,7 @@ MonoBehaviour:
     gravity: 0
     fluidity: 0
     lifespan: -1
-    appearance: {fileID: 21300000, guid: f842b45f0fc48a24e827a360c99c9d94, type: 3}
+    appearance: {fileID: 21300000, guid: f7f15682239f2bc4bbaa6b11fcd7d5eb, type: 3}
     lightRadius: 0
     lightEmission: 0
     opacity: 1
@@ -277,7 +277,7 @@ MonoBehaviour:
     identifierColor:
       serializedVersion: 2
       rgba: 4281941042
-    movement: 1
+    movement: 2
     density: 1000
     gravity: 1
     fluidity: 0

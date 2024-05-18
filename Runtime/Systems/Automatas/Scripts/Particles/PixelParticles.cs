@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ParticleAutomata : SingletonMonobehaviour<ParticleAutomata>
+public class PixelParticles : SingletonMonobehaviour<PixelParticles>
 {
     public Vector2Int pixelSize = new Vector2Int(128, 72);
     public Vector2 globalGravity = new Vector2(0, -10);
@@ -38,7 +38,7 @@ public class ParticleAutomata : SingletonMonobehaviour<ParticleAutomata>
         if (spriteRenderer == null)
         {
             var childObject = new GameObject("ParticleRasterizer");
-            childObject.layer = Global.backgroundMask;
+            childObject.layer = Global.backgroundLayer;
             childObject.transform.SetParent(transform);
             childObject.transform.localPosition = Vector3.zero;
             spriteRenderer = childObject.AddComponent<SpriteRenderer>();

@@ -480,11 +480,11 @@ public class Actor : MonoBehaviour, IControllable
             Particle dustParticle;
             if (pushRealParticle)
             {
-                dustParticle = ParticleAutomata.instance.CellToParticle(belowCell, CellularAutomata.WorldToPixelPosition(spawnPoint));
+                dustParticle = PixelParticles.instance.CellToParticle(belowCell, CellularAutomata.WorldToPixelPosition(spawnPoint));
             }
             else
             {
-                dustParticle = ParticleAutomata.instance.CreateParticle(spawnPoint, belowCell.material);
+                dustParticle = PixelParticles.instance.CreateParticle(spawnPoint, belowCell.material);
             }
 
             dustParticle.isEthereal = !pushRealParticle;

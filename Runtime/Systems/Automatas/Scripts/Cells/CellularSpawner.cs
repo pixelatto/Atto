@@ -64,7 +64,7 @@ public class CellularSpawner : MonoBehaviour
                 CellularAutomata.instance.CreateCellIfEmpty(CellularAutomata.WorldToPixelPosition(worldPosition), cellMaterial);
                 break;
             case SpawnType.AsParticle:
-                var newParticle = ParticleAutomata.instance.CreateParticle(worldPosition, cellMaterial);
+                var newParticle = PixelParticles.instance.CreateParticle(worldPosition, cellMaterial);
                 newParticle.isEthereal = Random.value < etherealRate;
                 break;
         }

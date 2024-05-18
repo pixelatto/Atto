@@ -187,7 +187,7 @@ public class CellularDebug : MonoBehaviour
                     }
                     if (spawnAsParticles)
                     {
-                        var newParticle = ParticleAutomata.instance.CellToParticle(newCell, globalPixelPosition);
+                        var newParticle = PixelParticles.instance.CellToParticle(newCell, globalPixelPosition);
                         newParticle.speed = Random.insideUnitCircle * particleSpawnSpeed;
                     }
                 }

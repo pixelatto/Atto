@@ -24,6 +24,8 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
     Vector2Int currentPosition;
     Cell currentCell;
 
+    private GameObject cellularRasterizer;
+
     private void Start()
     {
         currentTick = 0;
@@ -54,6 +56,18 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
                 }
                 break;
         }
+    }
+
+    private bool SomeConditionToCreateRasterizer()
+    {
+        // Define la lógica para determinar cuándo crear el rasterizador
+        return true; // Ejemplo: siempre crear para simplificar
+    }
+
+    private bool SomeConditionToDestroyRasterizer()
+    {
+        // Define la lógica para determinar cuándo destruir el rasterizador
+        return false; // Ejemplo: nunca destruir para simplificar
     }
 
     void Step()
@@ -656,5 +670,4 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
             return (targetCell.movement > originCell.movement);
         }
     }
-
 }

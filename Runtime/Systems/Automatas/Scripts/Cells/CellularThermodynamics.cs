@@ -171,24 +171,12 @@ public class CellularThermodynamics : SingletonMonobehaviour<CellularThermodynam
             {
                 int index = y * textureWidth + x;
                 var cell = currentChunk[x, y];
-                if (cell != null)
+                cells[index] = new TemperatureCellData
                 {
-                    cells[index] = new TemperatureCellData
-                    {
-                        temperature = cell.temperature,
-                        thermalConductivity = cell.thermalConductivity,
-                        material = (int)cell.material
-                    };
-                }
-                else
-                {
-                    cells[index] = new TemperatureCellData
-                    {
-                        temperature = ambientTemperature,
-                        thermalConductivity = ambientConductivity,
-                        material = (int)CellMaterial.Empty
-                    };
-                }
+                    temperature = cell.temperature,
+                    thermalConductivity = cell.thermalConductivity,
+                    material = (int)cell.material
+                };
             }
         }
     }

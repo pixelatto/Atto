@@ -43,7 +43,7 @@ public class Particle
         creationTime = Time.time;
     }
 
-    public void Integrate(ParticleAutomata automata, float deltaTime)
+    public void Integrate(PixelParticles automata, float deltaTime)
     {
         //Start
         previousPosition = position;

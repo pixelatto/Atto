@@ -20,7 +20,7 @@ public class CellularChunkRenderer : MonoBehaviour
     private void InitTexture()
     {
         var childObject = gameObject.FindOrAddChild("ChunkRenderer_" + layer);
-        childObject.layer = CellLayerToLayerMask(layer);
+        childObject.layer = CellLayerToLayer(layer);
         childObject.transform.SetParent(transform);
         childObject.transform.localPosition = new Vector3(chunk.pixelSize.x / Global.pixelsPerUnit / 2f, chunk.pixelSize.y / Global.pixelsPerUnit / 2f, 0);
         spriteRenderer = childObject.GetOrAddComponent<SpriteRenderer>();
@@ -38,13 +38,13 @@ public class CellularChunkRenderer : MonoBehaviour
         Draw();
     }
 
-    int CellLayerToLayerMask(CellRenderLayer cellLayer)
+    int CellLayerToLayer(CellRenderLayer cellLayer)
     {
         switch (cellLayer)
         {
-            case CellRenderLayer.Main:  return Global.terrainMask;
-            case CellRenderLayer.Back:  return Global.backgroundMask;
-            case CellRenderLayer.Front: return Global.foregroundMask;
+            case CellRenderLayer.Main:  return Global.terrainLayer;
+            case CellRenderLayer.Back:  return Global.backgroundLayer;
+            case CellRenderLayer.Front: return Global.foregroundLayer;
             default:                    return 0;
         }
     }
