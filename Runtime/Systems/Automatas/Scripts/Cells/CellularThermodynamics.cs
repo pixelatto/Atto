@@ -5,8 +5,7 @@ public class CellularThermodynamics : SingletonMonobehaviour<CellularThermodynam
 {
     [ReadOnly] public CellularChunk currentChunk;
     public float ambientTemperature = 20;
-    public float ambientTemperatureDelta = 1;
-    public float ambientConductivity = 0.1f;
+    public float ambientDissipation = 0.5f;
     public float dampingFactor = 0.95f;
     public bool debugTemperatures = false;
     [HideInInspector] public SpriteRenderer debugSpriteRenderer;
@@ -107,8 +106,7 @@ public class CellularThermodynamics : SingletonMonobehaviour<CellularThermodynam
         if (currentChunk == null) return;
 
         Global.ambientTemperature = ambientTemperature;
-        Global.ambientTemperatureDelta = ambientTemperatureDelta;
-        Global.ambientConductivity = ambientConductivity;
+        Global.ambientDissipation = ambientDissipation;
 
         // Llenar los datos de las celdas
         FillCellData();
@@ -117,8 +115,7 @@ public class CellularThermodynamics : SingletonMonobehaviour<CellularThermodynam
         computeShader.SetInt("width", textureWidth);
         computeShader.SetInt("height", textureHeight);
         computeShader.SetFloat("ambientTemperature", ambientTemperature);
-        computeShader.SetFloat("ambientTemperatureDelta", ambientTemperatureDelta);
-        computeShader.SetFloat("ambientConductivity", ambientConductivity);
+        computeShader.SetFloat("ambientDissipation", ambientDissipation);
         computeShader.SetFloat("dampingFactor", dampingFactor);
 
         // Copiar datos de las celdas a la textura actual

@@ -68,7 +68,7 @@ MonoBehaviour:
     opacity: 1
     renderLayer: 0
     temperature: 20
-    thermalConductivity: 1
+    thermalConductivity: 0.1
     heatPoint: 1200
     heatMaterial: 4
     coldPoint: 0
@@ -147,8 +147,8 @@ MonoBehaviour:
     lightEmission: 0.1
     opacity: 1
     renderLayer: 0
-    temperature: 1000
-    thermalConductivity: 0.1
+    temperature: 1500
+    thermalConductivity: 0.01
     heatPoint: 100
     heatMaterial: 0
     coldPoint: 0
@@ -307,8 +307,8 @@ MonoBehaviour:
     lightEmission: 0.5
     opacity: 1
     renderLayer: 0
-    temperature: 20
-    thermalConductivity: 0.1
+    temperature: 2000
+    thermalConductivity: 0.01
     heatPoint: 0
     heatMaterial: 0
     coldPoint: 1500

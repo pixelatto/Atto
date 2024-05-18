@@ -8,6 +8,8 @@ Texture2D<float> CurrentTemperatures;
 int width;
 int height;
 float dampingFactor; // Nueva variable para amortiguación
+float ambientTemperature;
+float ambientDissipation;
 
 // Estructura para las propiedades de la celda
 struct TemperatureCell
@@ -70,5 +72,10 @@ void CSMain(uint3 id : SV_DispatchThreadID)
     else
     {
         Result[int2(x, y)] = cell.temperature;
+    }
+
+    if (cell.material == 0)
+    {
+        Result[int2(x, y)] = (Result[int2(x, y)] * (1.0f - ambientDissipation) + ambientTemperature * ambientDissipation);
     }
 }

@@ -27,9 +27,8 @@ public class Global
     public const float fastMomentumThreeshold = 5f;
     public const float verticalMomentumThreeshold = 1f;
 
-    public static float ambientTemperature = 20f; // Temperatura ambiente
-    public static float ambientTemperatureDelta = 3f; // Delta de temperatura para ruido Perlin
-    public static float ambientConductivity = 1f; // Temperatura ambiente
+    public static float ambientTemperature = 20f;
+    public static float ambientDissipation = 3f;
 
     public static Momentum ClassifyMomentum(float speed)
     {
