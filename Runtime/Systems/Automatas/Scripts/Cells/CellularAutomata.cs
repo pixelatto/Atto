@@ -278,7 +278,7 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
 
     public static Vector2Int WorldToPixelPosition(Vector3 worldPosition)
     {
-        return new Vector2Int(Mathf.RoundToInt(worldPosition.x * Global.pixelsPerUnit), Mathf.RoundToInt(worldPosition.y * Global.pixelsPerUnit));
+        return new Vector2Int(Mathf.FloorToInt(worldPosition.x * Global.pixelsPerUnit), Mathf.FloorToInt(worldPosition.y * Global.pixelsPerUnit));
     }
 
     public static Vector3 PixelToWorldPosition(Vector2Int globalPixelPosition)

@@ -13,6 +13,8 @@
     Steam = 10,
     Ice = 11,
     Metal = 12,
-    Lava = 13
+    Lava = 13,
+    Glass = 14,
+    Frit = 15
 }
 
