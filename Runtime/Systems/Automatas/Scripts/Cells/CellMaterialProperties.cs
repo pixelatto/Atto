@@ -14,6 +14,7 @@ public class CellMaterialProperties
     public int lifespan = -1;
 
     [Header("Optics")]
+    public Sprite icon;
     public Sprite appearance;
     public float lightRadius = 0;
     public float lightEmission = 0;

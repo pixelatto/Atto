@@ -22,7 +22,7 @@ public class Particle
 
     public Vector2 previousPosition { get; private set; }
 
-    CellMaterialProperties materialProperties { get { if (_materialProperties == null) { _materialProperties = CellularMaterials.instance.FindMaterial(material); }; return _materialProperties; } }
+    CellMaterialProperties materialProperties { get { if (_materialProperties == null) { _materialProperties = CellularMaterialLibrary.instance.FindMaterial(material); }; return _materialProperties; } }
     CellMaterialProperties _materialProperties;
 
     public Particle(Vector2 worldPosition, CellMaterial cellMaterial)
@@ -30,7 +30,7 @@ public class Particle
         this.material = cellMaterial;
         this.position = worldPosition;
         this.previousPosition = worldPosition;
-        color = CellularMaterials.instance.FindMaterial(material).GetColor();
+        color = CellularMaterialLibrary.instance.FindMaterial(material).GetColor();
         creationTime = Time.time;
     }
 

@@ -22,6 +22,7 @@ MonoBehaviour:
     gravity: 0
     fluidity: 0
     lifespan: -1
+    icon: {fileID: 1767676710, guid: 5da531db992f64241a247c1939559c92, type: 3}
     appearance: {fileID: 21300000, guid: f7f15682239f2bc4bbaa6b11fcd7d5eb, type: 3}
     lightRadius: 0
     lightEmission: 0
@@ -42,6 +43,7 @@ MonoBehaviour:
     gravity: 0
     fluidity: 0
     lifespan: -1
+    icon: {fileID: -1928785067, guid: 5da531db992f64241a247c1939559c92, type: 3}
     appearance: {fileID: 0}
     lightRadius: 0
     lightEmission: 0
@@ -62,13 +64,14 @@ MonoBehaviour:
     gravity: 1
     fluidity: 1
     lifespan: -1
+    icon: {fileID: 61903247, guid: 5da531db992f64241a247c1939559c92, type: 3}
     appearance: {fileID: 21300000, guid: f842b45f0fc48a24e827a360c99c9d94, type: 3}
     lightRadius: 0
     lightEmission: 0
     opacity: 1
     renderLayer: 0
     temperature: 20
-    thermalConductivity: 0.1
+    thermalConductivity: 0.01
     heatPoint: 1200
     heatMaterial: 4
     coldPoint: 0
@@ -82,6 +85,7 @@ MonoBehaviour:
     gravity: 1
     fluidity: 1
     lifespan: -1
+    icon: {fileID: -1602735762, guid: 5da531db992f64241a247c1939559c92, type: 3}
     appearance: {fileID: 21300000, guid: 67cfaa3fb054e744386bcdc980f8c560, type: 3}
     lightRadius: 0
     lightEmission: 0
@@ -102,6 +106,7 @@ MonoBehaviour:
     gravity: 1
     fluidity: 5
     lifespan: -1
+    icon: {fileID: -588481422, guid: 5da531db992f64241a247c1939559c92, type: 3}
     appearance: {fileID: 21300000, guid: 83aeb07c9de90554b981d23def81bd5d, type: 3}
     lightRadius: 0
     lightEmission: 0
@@ -122,6 +127,7 @@ MonoBehaviour:
     gravity: 1
     fluidity: 2
     lifespan: -1
+    icon: {fileID: -1737810776, guid: 5da531db992f64241a247c1939559c92, type: 3}
     appearance: {fileID: 21300000, guid: 7d34c1ece8e53924d83647888f98cbcf, type: 3}
     lightRadius: 1
     lightEmission: 0.5
@@ -142,6 +148,7 @@ MonoBehaviour:
     gravity: 0
     fluidity: 1
     lifespan: 10
+    icon: {fileID: 1792189004, guid: 5da531db992f64241a247c1939559c92, type: 3}
     appearance: {fileID: 21300000, guid: 5812fccd0b6d2664e98d5b52ae5be407, type: 3}
     lightRadius: 10
     lightEmission: 0.1
@@ -162,6 +169,7 @@ MonoBehaviour:
     gravity: 1
     fluidity: 6
     lifespan: -1
+    icon: {fileID: -1951155682, guid: 5da531db992f64241a247c1939559c92, type: 3}
     appearance: {fileID: 21300000, guid: c411c51088a98e64f8e8efcbffe09e96, type: 3}
     lightRadius: 0
     lightEmission: 0
@@ -182,6 +190,7 @@ MonoBehaviour:
     gravity: 1
     fluidity: 1
     lifespan: -1
+    icon: {fileID: -2095786930, guid: 5da531db992f64241a247c1939559c92, type: 3}
     appearance: {fileID: 21300000, guid: ce47024ab35c4534e9e826e53cbe9c63, type: 3}
     lightRadius: 0
     lightEmission: 0
@@ -202,13 +211,14 @@ MonoBehaviour:
     gravity: 1
     fluidity: 2
     lifespan: -1
+    icon: {fileID: 1612869535, guid: 5da531db992f64241a247c1939559c92, type: 3}
     appearance: {fileID: 21300000, guid: 968823d5fe4c3f64d81cfd9f01c211e0, type: 3}
     lightRadius: 0
     lightEmission: 0
     opacity: 1
     renderLayer: 0
     temperature: 20
-    thermalConductivity: 1
+    thermalConductivity: 0.025
     heatPoint: 1500
     heatMaterial: 15
     coldPoint: 0
@@ -222,6 +232,7 @@ MonoBehaviour:
     gravity: 1
     fluidity: 0
     lifespan: -1
+    icon: {fileID: 116448208, guid: 5da531db992f64241a247c1939559c92, type: 3}
     appearance: {fileID: 21300000, guid: d979957eced5fd74a8cb467c725f9bcb, type: 3}
     lightRadius: 0
     lightEmission: 0
@@ -242,6 +253,7 @@ MonoBehaviour:
     gravity: -1
     fluidity: 1
     lifespan: -1
+    icon: {fileID: -1370316945, guid: 5da531db992f64241a247c1939559c92, type: 3}
     appearance: {fileID: 21300000, guid: bd41bd3aa30dd2e4c8dea9ae9b2374e4, type: 3}
     lightRadius: 0
     lightEmission: 0
@@ -262,6 +274,7 @@ MonoBehaviour:
     gravity: 1
     fluidity: -2
     lifespan: -1
+    icon: {fileID: 1709132778, guid: 5da531db992f64241a247c1939559c92, type: 3}
     appearance: {fileID: 21300000, guid: d75d0bcd58d047b4b96e742aff3ae948, type: 3}
     lightRadius: 0
     lightEmission: 0
@@ -282,6 +295,7 @@ MonoBehaviour:
     gravity: 1
     fluidity: 0
     lifespan: -1
+    icon: {fileID: -838365355, guid: 5da531db992f64241a247c1939559c92, type: 3}
     appearance: {fileID: 21300000, guid: e6be77e84b3002a4f821d02fba0fcf08, type: 3}
     lightRadius: 0
     lightEmission: 0
@@ -302,6 +316,7 @@ MonoBehaviour:
     gravity: 1
     fluidity: 2
     lifespan: -1
+    icon: {fileID: 1199093747, guid: 5da531db992f64241a247c1939559c92, type: 3}
     appearance: {fileID: 21300000, guid: ab46e8e46fb87de41ad00ff254e34c0c, type: 3}
     lightRadius: 2
     lightEmission: 0.5
@@ -322,13 +337,14 @@ MonoBehaviour:
     gravity: 1
     fluidity: 2
     lifespan: -1
+    icon: {fileID: -1210853707, guid: 5da531db992f64241a247c1939559c92, type: 3}
     appearance: {fileID: 21300000, guid: 86a701060766bdf4cab40496047ccae4, type: 3}
     lightRadius: 0
     lightEmission: 0
     opacity: 0.25
     renderLayer: 0
     temperature: 20
-    thermalConductivity: 0.1
+    thermalConductivity: 1
     heatPoint: 1500
     heatMaterial: 15
     coldPoint: 0
@@ -342,13 +358,14 @@ MonoBehaviour:
     gravity: 1
     fluidity: 3
     lifespan: -1
+    icon: {fileID: 269064502, guid: 5da531db992f64241a247c1939559c92, type: 3}
     appearance: {fileID: 21300000, guid: 537a30c8e1776da44af3b9229ccb02b1, type: 3}
     lightRadius: 0
     lightEmission: 0
     opacity: 0.25
     renderLayer: 0
     temperature: 1750
-    thermalConductivity: 0.1
+    thermalConductivity: 1
     heatPoint: 0
     heatMaterial: 0
     coldPoint: 1500
@@ -362,6 +379,7 @@ MonoBehaviour:
     gravity: 1
     fluidity: 2
     lifespan: -1
+    icon: {fileID: -845106843, guid: 5da531db992f64241a247c1939559c92, type: 3}
     appearance: {fileID: 21300000, guid: f8273bea598cb1540ab7239d311063df, type: 3}
     lightRadius: 0
     lightEmission: 0
@@ -373,52 +391,3 @@ MonoBehaviour:
     heatMaterial: 5
     coldPoint: 0
     coldMaterial: 11
-  reactions:
-  - reactionName: Wood combustion
-    reactorA: 5
-    reactorB: 9
-    productA: 5
-    productB: 5
-    chance: 1
-  - reactionName: Wood combustion (lava)
-    reactorA: 4
-    reactorB: 9
-    productA: 4
-    productB: 5
-    chance: 1
-  - reactionName: Water evaporation
-    reactorA: 3
-    reactorB: 5
-    productA: 10
-    productB: 0
-    chance: 1
-  - reactionName: Water freeze
-    reactorA: 3
-    reactorB: 11
-    productA: 11
-    productB: 11
-    chance: 1
-  - reactionName: Lava solidify
-    reactorA: 4
-    reactorB: 3
-    productA: 1
-    productB: 10
-    chance: 1
-  - reactionName: Melt ice
-    reactorA: 11
-    reactorB: 5
-    productA: 3
-    productB: 0
-    chance: 1
-  - reactionName: Melt ice (lava)
-    reactorA: 11
-    reactorB: 4
-    productA: 3
-    productB: 4
-    chance: 1
-  - reactionName: Melt snow (lava)
-    reactorA: 7
-    reactorB: 4
-    productA: 3
-    productB: 4
-    chance: 1

@@ -154,7 +154,7 @@ public class CellularChunk : MonoBehaviour
                 }
                 else
                 {
-                    foreach (var material in CellularMaterials.instance.materials)
+                    foreach (var material in CellularMaterialLibrary.instance.materials)
                     {
                         if (color.r == material.identifierColor.r && color.g == material.identifierColor.g && color.b == material.identifierColor.b)
                         {

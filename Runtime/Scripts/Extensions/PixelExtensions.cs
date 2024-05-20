@@ -15,3 +15,13 @@ public static class PixelExtensions
         return number / Global.pixelsPerUnit;
     }
 }
+
+public static class BooleanExtensions
+{
+
+    public static void Toggle(this ref bool boolean)
+    {
+        boolean = !boolean;
+    }
+
+}

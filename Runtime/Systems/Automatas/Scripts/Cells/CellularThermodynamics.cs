@@ -50,11 +50,11 @@ public class CellularThermodynamics : SingletonMonobehaviour<CellularThermodynam
         debugTexture = new Texture2D(textureWidth, textureHeight);
         debugTexture.filterMode = FilterMode.Point;
 
-        var debugGameObject = new GameObject("DebugTexture");
+        var debugGameObject = new GameObject("ThermalTexture");
         debugSpriteRenderer = debugGameObject.AddComponent<SpriteRenderer>();
         debugSpriteRenderer.sprite = Sprite.Create(debugTexture, new Rect(0, 0, textureWidth, textureHeight), Vector2.one * 0.5f, Global.pixelsPerUnit);
         debugSpriteRenderer.color = new Color(1, 1, 1, 0.5f);
-        debugSpriteRenderer.sortingLayerName = "UI";
+        //debugSpriteRenderer.sortingLayerName = "Default";
 
         var pixelCamera = FindObjectOfType<RoomPixelCamera>();
         if (pixelCamera != null)

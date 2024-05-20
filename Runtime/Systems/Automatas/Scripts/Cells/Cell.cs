@@ -17,7 +17,7 @@ public class Cell
     public float temperature { get { return temperature_; } set { temperature_ = value; } }
     [SerializeField] [Label("Temperature")] [ReadOnly] private float temperature_;
 
-    public CellMaterialProperties materialProperties { get { if (_materialProperties == null) { _materialProperties = CellularMaterials.instance.FindMaterial(material); }; return _materialProperties; } }
+    public CellMaterialProperties materialProperties { get { if (_materialProperties == null) { _materialProperties = CellularMaterialLibrary.instance.FindMaterial(material); }; return _materialProperties; } }
     CellMaterialProperties _materialProperties;
 
     public uint lastUpdateTick = 0;
