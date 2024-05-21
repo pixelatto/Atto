@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class CellularUI : MonoBehaviour
 {
     [Header("Global")]
-    public CellMaterial mouseSpawnMaterial = CellMaterial.Dirt;
+    public CellMaterial currentlySelectedMaterial = CellMaterial.Dirt;
     public float brushSize = 3;
     public bool randomColors = false;
 
@@ -16,23 +16,33 @@ public class CellularUI : MonoBehaviour
     private GameObject topButtonPanel;
     private GameObject bottomButtonPanel;
     private Button currentSelectedButton;
+    private Button currentBrushSizeButton;
     private Outline currentOutline;
+    private Outline currentBrushOutline;
 
     public RectTransform topPanel;
     public RectTransform gameArea;
     public RectTransform bottomPanel;
 
     CellularTools currentTool = CellularTools.Draw;
-    public enum CellularTools { Draw, Thermal }
+    public enum CellularTools { Draw, Erase, Small, Medium, Large, Huge, Thermal }
 
     private Dictionary<CellularTools, Button> toolButtons = new Dictionary<CellularTools, Button>();
+    private Dictionary<CellularTools, Button> brushSizeButtons = new Dictionary<CellularTools, Button>();
+
+    // Preview object
+    private GameObject previewObject;
+    private Image previewImage;
 
     private void Start()
     {
         CreateUI();
         GenerateToolButtons();
-        GenerateColorButtons();
-        SelectTool(currentTool);
+        GenerateMaterialButtons();
+        SelectTool(CellularTools.Medium);
+        SelectTool(CellularTools.Draw);
+        SelectDefaultMaterial();
+        CreatePreviewObject();
     }
 
     private void Update()
@@ -49,6 +59,7 @@ public class CellularUI : MonoBehaviour
                 }
             }
         }
+        UpdatePreview();
     }
 
     void SelectTool(CellularTools tool)
@@ -62,21 +73,38 @@ public class CellularUI : MonoBehaviour
 
             if (buttonTool == tool)
             {
-                if (buttonTool == CellularTools.Thermal)
+                switch (tool)
                 {
-                    // Toggle the Thermal tool
-                    CellularThermodynamics.instance.debugTemperatures.Toggle();
-                    bool isOn = CellularThermodynamics.instance.debugTemperatures;
-                    UpdateToggleButtonState(button, isOn);
+                    case CellularTools.Draw:
+                        HighlightButton(button);
+                        bottomButtonPanel.gameObject.SetActive(true);
+                        break;
+                    case CellularTools.Erase:
+                        HighlightButton(button);
+                        bottomButtonPanel.gameObject.SetActive(false);
+                        break;
+                    case CellularTools.Thermal:
+                        CellularThermodynamics.instance.debugTemperatures.Toggle();
+                        bool isOn = CellularThermodynamics.instance.debugTemperatures;
+                        UpdateToggleButtonState(button, isOn);
+                        break;
+                    case CellularTools.Small:
+                        brushSize = 1;
+                        HighlightBrushSizeButton(button);
+                        break;
+                    case CellularTools.Medium:
+                        brushSize = 3;
+                        HighlightBrushSizeButton(button);
+                        break;
+                    case CellularTools.Large:
+                        brushSize = 6;
+                        HighlightBrushSizeButton(button);
+                        break;
+                    case CellularTools.Huge:
+                        brushSize = 12;
+                        HighlightBrushSizeButton(button);
+                        break;
                 }
-                else
-                {
-                    HighlightButton(button);
-                }
-            }
-            else
-            {
-                ResetButton(button);
             }
         }
     }
@@ -97,6 +125,22 @@ public class CellularUI : MonoBehaviour
         currentOutline.effectDistance = new Vector2(8, 8);
     }
 
+    private void HighlightBrushSizeButton(Button button)
+    {
+        if (currentBrushSizeButton != null)
+        {
+            if (currentBrushOutline != null)
+            {
+                Destroy(currentBrushOutline);
+            }
+        }
+
+        currentBrushSizeButton = button;
+        currentBrushOutline = currentBrushSizeButton.gameObject.AddComponent<Outline>();
+        currentBrushOutline.effectColor = Color.green;
+        currentBrushOutline.effectDistance = new Vector2(8, 8);
+    }
+
     private void ResetButton(Button button)
     {
         var outline = button.GetComponent<Outline>();
@@ -115,7 +159,7 @@ public class CellularUI : MonoBehaviour
         }
         else
         {
-            image.color = Color.red;
+            image.color = Color.gray;
         }
     }
 
@@ -151,7 +195,9 @@ public class CellularUI : MonoBehaviour
 
     private void GenerateToolButtons()
     {
-        foreach (CellularTools tool in System.Enum.GetValues(typeof(CellularTools)))
+        // Botones de herramientas
+        AddSeparator(topButtonPanel);
+        foreach (CellularTools tool in new CellularTools[] { CellularTools.Draw, CellularTools.Erase, CellularTools.Thermal })
         {
             GameObject buttonObj = CreateToolButton(tool.ToString(), topButtonPanel);
             Button button = buttonObj.GetComponent<Button>();
@@ -163,6 +209,30 @@ public class CellularUI : MonoBehaviour
                 UpdateToggleButtonState(button, CellularThermodynamics.instance.debugTemperatures);
             }
         }
+
+        // Separador
+        AddSeparator(topButtonPanel);
+
+        // Botones de tamaños de brush
+        foreach (CellularTools tool in new CellularTools[] { CellularTools.Small, CellularTools.Medium, CellularTools.Large, CellularTools.Huge })
+        {
+            GameObject buttonObj = CreateToolButton(tool.ToString(), topButtonPanel);
+            Button button = buttonObj.GetComponent<Button>();
+            button.onClick.AddListener(() => SelectTool(tool));
+            brushSizeButtons[tool] = button;
+        }
+        AddSeparator(topButtonPanel);
+    }
+
+    private void AddSeparator(GameObject parentPanel)
+    {
+        GameObject separator = new GameObject("Separator");
+        separator.transform.SetParent(parentPanel.transform);
+        separator.transform.localScale = Vector3.one;
+        separator.transform.localPosition = Vector3.zero;
+
+        LayoutElement layoutElement = separator.AddComponent<LayoutElement>();
+        layoutElement.minWidth = 20; // Ajusta el tamaño del separador según sea necesario
     }
 
     private GameObject CreateToolButton(string toolName, GameObject parentPanel)
@@ -186,7 +256,7 @@ public class CellularUI : MonoBehaviour
         iconObj.transform.localPosition = Vector3.zero;
 
         RectTransform iconRectTransform = iconObj.AddComponent<RectTransform>();
-        iconRectTransform.sizeDelta = new Vector2(30, 30);
+        iconRectTransform.sizeDelta = new Vector2(20, 20);
         iconRectTransform.anchoredPosition = Vector2.zero;
 
         Image iconImage = iconObj.AddComponent<Image>();
@@ -206,20 +276,31 @@ public class CellularUI : MonoBehaviour
         return buttonObj;
     }
 
-    private void GenerateColorButtons()
+    private void GenerateMaterialButtons()
     {
         Color[] colors = CellularMaterialLibrary.instance.MaterialColors();
-        HashSet<Color> addedColors = new HashSet<Color>();
+        List<Color> addedColors = new List<Color>();
+
+        //Intercambiar empty y undestructible en la lista de botones
+        Color temp = colors[0];
+        colors[0] = colors[1];
+        colors[1] = temp;
 
         foreach (var color in colors)
         {
-            if (color.a > 0 && !addedColors.Contains(color))
+            if (!addedColors.Contains(color))
             {
                 addedColors.Add(color);
                 if (IsColorInMaterials(color, out CellMaterialProperties materialProperty))
                 {
                     GameObject buttonObjBottom = CreateButton(color, materialProperty.icon, bottomButtonPanel);
                     buttonObjBottom.GetComponent<Button>().onClick.AddListener(() => PickMaterial(color, buttonObjBottom.GetComponent<Button>()));
+
+                    // Seleccionar por defecto el material "Dirt"
+                    if (materialProperty.cellMaterial == CellMaterial.Dirt)
+                    {
+                        PickMaterial(color, buttonObjBottom.GetComponent<Button>());
+                    }
                 }
             }
         }
@@ -260,7 +341,7 @@ public class CellularUI : MonoBehaviour
 
     private void PickMaterial(Color color, Button button)
     {
-        mouseSpawnMaterial = GetMaterialFromColor(color);
+        currentlySelectedMaterial = GetMaterialFromColor(color);
 
         if (currentSelectedButton != null)
         {
@@ -318,6 +399,19 @@ public class CellularUI : MonoBehaviour
         return false;
     }
 
+    private void SelectDefaultMaterial()
+    {
+        foreach (Transform child in bottomButtonPanel.transform)
+        {
+            Button button = child.GetComponent<Button>();
+            if (button != null && GetMaterialFromColor(button.GetComponent<Image>().color) == CellMaterial.Dirt)
+            {
+                PickMaterial(button.GetComponent<Image>().color, button);
+                break;
+            }
+        }
+    }
+
     private void DrawMaterial()
     {
         var worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -325,36 +419,69 @@ public class CellularUI : MonoBehaviour
 
         if (Input.GetMouseButton(0))
         {
-            for (float i = -brushSize * 0.5f; i < brushSize * 0.5f; i++)
+            int brushRadius = Mathf.FloorToInt(brushSize * 0.5f);
+            for (int i = -brushRadius; i <= brushRadius; i++)
             {
-                for (float j = -brushSize * 0.5f; j < brushSize * 0.5f; j++)
+                for (int j = -brushRadius; j <= brushRadius; j++)
                 {
-                    var globalPixelPosition = pixelPosition + new Vector2Int(Mathf.FloorToInt(i), Mathf.FloorToInt(j));
+                    // Calcula la distancia desde el centro del pincel
+                    float distance = Mathf.Sqrt(i * i + j * j);
 
-                    var newCell = CellularAutomata.instance.CreateCellIfEmpty(globalPixelPosition, mouseSpawnMaterial);
-                    if (newCell != null && randomColors)
+                    // Si la distancia es menor o igual al radio del pincel, está dentro del círculo
+                    if (distance <= brushRadius)
                     {
-                        newCell.overrideColor = new Color(Random.value, Random.value, Random.value, 1);
-                    }
-                    if (spawnAsParticles)
-                    {
-                        var newParticle = PixelParticles.instance.CellToParticle(newCell, globalPixelPosition);
-                        newParticle.speed = Random.insideUnitCircle * particleSpawnSpeed;
+                        var globalPixelPosition = pixelPosition + new Vector2Int(i, j);
+
+                        Cell newCell;
+                        if (currentTool == CellularTools.Erase)
+                        {
+                            newCell = CellularAutomata.instance.CreateCell(globalPixelPosition, CellMaterial.Empty);
+                        }
+                        else
+                        {
+                            newCell = CellularAutomata.instance.CreateCellIfEmpty(globalPixelPosition, currentlySelectedMaterial);
+                        }
+                        if (newCell != null && randomColors)
+                        {
+                            newCell.overrideColor = new Color(Random.value, Random.value, Random.value, 1);
+                        }
+                        if (spawnAsParticles)
+                        {
+                            var newParticle = PixelParticles.instance.CellToParticle(newCell, globalPixelPosition);
+                            newParticle.speed = Random.insideUnitCircle * particleSpawnSpeed;
+                        }
                     }
                 }
             }
         }
+    }
 
-        if (Input.GetMouseButton(1))
+    private void CreatePreviewObject()
+    {
+        previewObject = new GameObject("PreviewObject");
+        previewObject.transform.SetParent(gameArea);
+        previewObject.transform.localScale = Vector3.one;
+
+        RectTransform rectTransform = previewObject.AddComponent<RectTransform>();
+        rectTransform.sizeDelta = new Vector2(brushSize, brushSize);
+
+        previewImage = previewObject.AddComponent<Image>();
+        previewImage.color = new Color(1, 1, 1, 0.5f); // Color semi-transparente
+    }
+
+    private void UpdatePreview()
+    {
+        Vector2 localMousePosition;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(gameArea, Input.mousePosition, Camera.main, out localMousePosition);
+        if (gameArea.rect.Contains(localMousePosition))
         {
-            for (float i = -brushSize * 0.5f; i < brushSize * 0.5f; i++)
-            {
-                for (float j = -brushSize * 0.5f; j < brushSize * 0.5f; j++)
-                {
-                    var globalPixelPosition = pixelPosition + new Vector2Int(Mathf.FloorToInt(i), Mathf.FloorToInt(j));
-                    CellularAutomata.instance.DestroyCell(globalPixelPosition);
-                }
-            }
+            previewObject.SetActive(true);
+            previewObject.transform.localPosition = localMousePosition;
+            previewObject.GetComponent<RectTransform>().sizeDelta = new Vector2(brushSize, brushSize);
+        }
+        else
+        {
+            previewObject.SetActive(false);
         }
     }
 }
