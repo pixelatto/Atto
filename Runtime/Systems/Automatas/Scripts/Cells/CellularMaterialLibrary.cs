@@ -41,4 +41,22 @@ public class CellularMaterialLibrary : ScriptableObject
         }
         return result.ToArray();
     }
+
+    public CellMaterial GetMaterialFromColor(Color32 color)
+    {
+        foreach (var material in materials)
+        {
+            if (ColorsAreEqual(material.identifierColor, color))
+            {
+                return material.cellMaterial;
+            }
+        }
+        return CellMaterial.Empty;
+    }
+
+    private bool ColorsAreEqual(Color32 color1, Color32 color2)
+    {
+        return color1.r == color2.r && color1.g == color2.g && color1.b == color2.b && color1.a == color2.a;
+    }
+
 }

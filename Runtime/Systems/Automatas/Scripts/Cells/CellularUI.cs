@@ -63,7 +63,7 @@ public class CellularUI : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            CellularThermodynamics.instance.debugTemperatures.Toggle();
+            CellularThermodynamics.instance.debugTemperatures = !CellularThermodynamics.instance.debugTemperatures;
         }
 
         UpdateBrushSizeWithMouseWheel();
@@ -250,7 +250,7 @@ public class CellularUI : MonoBehaviour
         {
             if (tool == CellularTools.Spacer)
             {
-
+                CreateSpacer(topButtonPanel);
             }
             else
             {
@@ -301,6 +301,22 @@ public class CellularUI : MonoBehaviour
         }
 
         return buttonObj;
+    }
+
+    private GameObject CreateSpacer(GameObject parentPanel)
+    {
+        GameObject spacerObj = new GameObject("Spacer");
+        spacerObj.transform.SetParent(parentPanel.transform);
+        spacerObj.transform.localScale = Vector3.one;
+        spacerObj.transform.localPosition = Vector3.zero;
+
+        RectTransform rectTransform = spacerObj.AddComponent<RectTransform>();
+        rectTransform.sizeDelta = new Vector2(100, 50);
+
+        Image image = spacerObj.AddComponent<Image>();
+        image.color = Color.clear;
+
+        return spacerObj;
     }
 
     private void GenerateMaterialButtons()
@@ -429,7 +445,7 @@ public class CellularUI : MonoBehaviour
         foreach (Transform child in bottomButtonPanel.transform)
         {
             Button button = child.GetComponent<Button>();
-            if (button != null && GetMaterialFromColor(button.GetComponent<Image>().color) == CellMaterial.Dirt)
+            if (button != null && GetMaterialFromColor(button.GetComponent<Image>().color) == CellMaterial.Sand)
             {
                 PickMaterial(button.GetComponent<Image>().color, button);
                 break;
@@ -442,7 +458,7 @@ public class CellularUI : MonoBehaviour
         var worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         var pixelPosition = CellularAutomata.WorldToPixelPosition(worldPosition);
 
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
         {
             int brushRadius = Mathf.FloorToInt(brushSize * 0.5f);
             for (int i = -brushRadius; i <= brushRadius; i++)
@@ -464,7 +480,14 @@ public class CellularUI : MonoBehaviour
                         }
                         else
                         {
-                            newCell = CellularAutomata.instance.CreateCellIfEmpty(globalPixelPosition, currentlySelectedMaterial);
+                            if (Input.GetMouseButton(0))
+                            {
+                                newCell = CellularAutomata.instance.CreateCellIfEmpty(globalPixelPosition, currentlySelectedMaterial);
+                            }
+                            else
+                            {
+                                newCell = CellularAutomata.instance.CreateCell(globalPixelPosition, currentlySelectedMaterial);
+                            }
                         }
                         if (newCell != null && randomColors)
                         {
