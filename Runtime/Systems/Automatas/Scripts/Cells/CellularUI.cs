@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
-public class CellularUI : MonoBehaviour
+public class CellularUI__Patched_ : MonoBehaviour
 {
     [Header("Global")]
     public CellMaterial currentlySelectedMaterial = CellMaterial.Dirt;
@@ -16,129 +17,128 @@ public class CellularUI : MonoBehaviour
     private GameObject topButtonPanel;
     private GameObject bottomButtonPanel;
     private Button currentSelectedButton;
-    private Button currentBrushSizeButton;
     private Outline currentOutline;
-    private Outline currentBrushOutline;
 
     public RectTransform topPanel;
     public RectTransform gameArea;
     public RectTransform bottomPanel;
 
     CellularTools currentTool = CellularTools.Draw;
-    public enum CellularTools { Draw, Erase, Small, Medium, Large, Huge, Thermal }
+    public enum CellularTools { Draw, Erase, Thermal }
 
     private Dictionary<CellularTools, Button> toolButtons = new Dictionary<CellularTools, Button>();
-    private Dictionary<CellularTools, Button> brushSizeButtons = new Dictionary<CellularTools, Button>();
 
     // Preview object
-    private GameObject previewObject;
-    private Image previewImage;
+    private GameObject previewContainer;
+    private List<GameObject> previewPixels = new List<GameObject>();
+
+    // Pixel size in world units
+    private const float pixelSize = 0.125f; // 1 unit / 8 pixels per unit
+
+    // Texture for the preview pixel
+    private Sprite pixelSprite;
+
+    private Texture2D defaultCursor;
+    private Texture2D handCursor;
 
     private void Start()
     {
+        CreatePreviewContainer();
+        CreatePixelTexture();
         CreateUI();
         GenerateToolButtons();
         GenerateMaterialButtons();
-        SelectTool(CellularTools.Medium);
         SelectTool(CellularTools.Draw);
         SelectDefaultMaterial();
-        CreatePreviewObject();
+        UpdatePreview();
+        UpdatePreviewPixels();
+        LoadCursors();
     }
 
     private void Update()
     {
-        if (Debug.isDebugBuild)
+        HandleMouseCursor();
+        if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
         {
-            if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
+            Vector2 localMousePosition;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(gameArea, Input.mousePosition, Camera.main, out localMousePosition);
+            if (gameArea.rect.Contains(localMousePosition))
             {
-                Vector2 localMousePosition;
-                RectTransformUtility.ScreenPointToLocalPointInRectangle(gameArea, Input.mousePosition, Camera.main, out localMousePosition);
-                if (gameArea.rect.Contains(localMousePosition))
-                {
-                    DrawMaterial();
-                }
+                DrawMaterial();
             }
         }
+
+        UpdateBrushSizeWithMouseWheel();
         UpdatePreview();
+    }
+
+    private void LoadCursors()
+    {
+        defaultCursor = Resources.Load<Texture2D>("Cursors/Atto");
+        defaultCursor.filterMode = FilterMode.Point;
+        handCursor = Resources.Load<Texture2D>("Cursors/Hand");
+        handCursor.filterMode = FilterMode.Point;
+    }
+
+    private void HandleMouseCursor()
+    {
+        Vector2 localMousePosition;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(gameArea, Input.mousePosition, Camera.main, out localMousePosition);
+        if (gameArea.rect.Contains(localMousePosition))
+        {
+            Cursor.visible = false;
+        }
+        else
+        {
+            Cursor.visible = true;
+        }
     }
 
     void SelectTool(CellularTools tool)
     {
-        currentTool = tool;
-
-        foreach (var buttonPair in toolButtons)
+        if (toolButtons.ContainsKey(tool))
         {
-            var button = buttonPair.Value;
-            var buttonTool = buttonPair.Key;
-
-            if (buttonTool == tool)
+            currentTool = tool;
+            foreach (var buttonPair in toolButtons)
             {
-                switch (tool)
+                var button = buttonPair.Value;
+                ResetButton(button);
+
+                if (buttonPair.Key == tool)
                 {
-                    case CellularTools.Draw:
-                        HighlightButton(button);
-                        bottomButtonPanel.gameObject.SetActive(true);
-                        break;
-                    case CellularTools.Erase:
-                        HighlightButton(button);
-                        bottomButtonPanel.gameObject.SetActive(false);
-                        break;
-                    case CellularTools.Thermal:
-                        CellularThermodynamics.instance.debugTemperatures.Toggle();
-                        bool isOn = CellularThermodynamics.instance.debugTemperatures;
-                        UpdateToggleButtonState(button, isOn);
-                        break;
-                    case CellularTools.Small:
-                        brushSize = 1;
-                        HighlightBrushSizeButton(button);
-                        break;
-                    case CellularTools.Medium:
-                        brushSize = 3;
-                        HighlightBrushSizeButton(button);
-                        break;
-                    case CellularTools.Large:
-                        brushSize = 6;
-                        HighlightBrushSizeButton(button);
-                        break;
-                    case CellularTools.Huge:
-                        brushSize = 12;
-                        HighlightBrushSizeButton(button);
-                        break;
+                    HighlightButton(button);
+                    bottomButtonPanel.gameObject.SetActive(tool == CellularTools.Draw);
                 }
             }
+
+            if (currentTool == CellularTools.Thermal)
+            {
+                CellularThermodynamics.instance.debugTemperatures.Toggle();
+            }
+        }
+    }
+
+    private void UpdateBrushSizeWithMouseWheel()
+    {
+        float scroll = Input.mouseScrollDelta.y;
+        if (scroll != 0)
+        {
+            brushSize = Mathf.Clamp(brushSize + scroll * 2, 1, 12);
+            UpdatePreviewPixels();
         }
     }
 
     private void HighlightButton(Button button)
     {
-        if (currentSelectedButton != null)
+        if (currentSelectedButton != null && currentOutline != null)
         {
-            if (currentOutline != null)
-            {
-                Destroy(currentOutline);
-            }
+            Destroy(currentOutline);
         }
 
         currentSelectedButton = button;
         currentOutline = currentSelectedButton.gameObject.AddComponent<Outline>();
         currentOutline.effectColor = Color.yellow;
         currentOutline.effectDistance = new Vector2(8, 8);
-    }
-
-    private void HighlightBrushSizeButton(Button button)
-    {
-        if (currentBrushSizeButton != null)
-        {
-            if (currentBrushOutline != null)
-            {
-                Destroy(currentBrushOutline);
-            }
-        }
-
-        currentBrushSizeButton = button;
-        currentBrushOutline = currentBrushSizeButton.gameObject.AddComponent<Outline>();
-        currentBrushOutline.effectColor = Color.green;
-        currentBrushOutline.effectDistance = new Vector2(8, 8);
     }
 
     private void ResetButton(Button button)
@@ -153,14 +153,7 @@ public class CellularUI : MonoBehaviour
     private void UpdateToggleButtonState(Button button, bool isOn)
     {
         var image = button.GetComponent<Image>();
-        if (isOn)
-        {
-            image.color = Color.green;
-        }
-        else
-        {
-            image.color = Color.gray;
-        }
+        image.color = isOn ? Color.green : Color.gray;
     }
 
     private void CreateUI()
@@ -195,13 +188,12 @@ public class CellularUI : MonoBehaviour
 
     private void GenerateToolButtons()
     {
-        // Botones de herramientas
-        AddSeparator(topButtonPanel);
         foreach (CellularTools tool in new CellularTools[] { CellularTools.Draw, CellularTools.Erase, CellularTools.Thermal })
         {
             GameObject buttonObj = CreateToolButton(tool.ToString(), topButtonPanel);
             Button button = buttonObj.GetComponent<Button>();
             button.onClick.AddListener(() => SelectTool(tool));
+            AddCursorChangeEvents(button, true);
             toolButtons[tool] = button;
 
             if (tool == CellularTools.Thermal)
@@ -209,30 +201,6 @@ public class CellularUI : MonoBehaviour
                 UpdateToggleButtonState(button, CellularThermodynamics.instance.debugTemperatures);
             }
         }
-
-        // Separador
-        AddSeparator(topButtonPanel);
-
-        // Botones de tamaños de brush
-        foreach (CellularTools tool in new CellularTools[] { CellularTools.Small, CellularTools.Medium, CellularTools.Large, CellularTools.Huge })
-        {
-            GameObject buttonObj = CreateToolButton(tool.ToString(), topButtonPanel);
-            Button button = buttonObj.GetComponent<Button>();
-            button.onClick.AddListener(() => SelectTool(tool));
-            brushSizeButtons[tool] = button;
-        }
-        AddSeparator(topButtonPanel);
-    }
-
-    private void AddSeparator(GameObject parentPanel)
-    {
-        GameObject separator = new GameObject("Separator");
-        separator.transform.SetParent(parentPanel.transform);
-        separator.transform.localScale = Vector3.one;
-        separator.transform.localPosition = Vector3.zero;
-
-        LayoutElement layoutElement = separator.AddComponent<LayoutElement>();
-        layoutElement.minWidth = 20; // Ajusta el tamaño del separador según sea necesario
     }
 
     private GameObject CreateToolButton(string toolName, GameObject parentPanel)
@@ -263,7 +231,6 @@ public class CellularUI : MonoBehaviour
         string iconPath = $"Icons/Tool_{toolName}";
         Sprite icon = Resources.Load<Sprite>(iconPath);
 
-        // Check if the icon was successfully loaded
         if (icon != null)
         {
             iconImage.sprite = icon;
@@ -281,20 +248,21 @@ public class CellularUI : MonoBehaviour
         Color[] colors = CellularMaterialLibrary.instance.MaterialColors();
         List<Color> addedColors = new List<Color>();
 
-        //Intercambiar empty y undestructible en la lista de botones
+        // Intercambiar empty y undestructible en la lista de botones
         Color temp = colors[0];
         colors[0] = colors[1];
         colors[1] = temp;
 
         foreach (var color in colors)
         {
-            if (!addedColors.Contains(color))
+            if (color.a != 0 && !addedColors.Contains(color))
             {
                 addedColors.Add(color);
                 if (IsColorInMaterials(color, out CellMaterialProperties materialProperty))
                 {
                     GameObject buttonObjBottom = CreateButton(color, materialProperty.icon, bottomButtonPanel);
                     buttonObjBottom.GetComponent<Button>().onClick.AddListener(() => PickMaterial(color, buttonObjBottom.GetComponent<Button>()));
+                    AddCursorChangeEvents(buttonObjBottom.GetComponent<Button>(), true);
 
                     // Seleccionar por defecto el material "Dirt"
                     if (materialProperty.cellMaterial == CellMaterial.Dirt)
@@ -343,12 +311,9 @@ public class CellularUI : MonoBehaviour
     {
         currentlySelectedMaterial = GetMaterialFromColor(color);
 
-        if (currentSelectedButton != null)
+        if (currentSelectedButton != null && currentOutline != null)
         {
-            if (currentOutline != null)
-            {
-                Destroy(currentOutline);
-            }
+            Destroy(currentOutline);
         }
 
         // Resaltar el botón seleccionado
@@ -456,32 +421,103 @@ public class CellularUI : MonoBehaviour
         }
     }
 
-    private void CreatePreviewObject()
+    private void CreatePreviewContainer()
     {
-        previewObject = new GameObject("PreviewObject");
-        previewObject.transform.SetParent(gameArea);
-        previewObject.transform.localScale = Vector3.one;
+        previewContainer = new GameObject("PreviewContainer");
+        previewContainer.transform.SetParent(null); // Make it a root object in the scene
+        previewContainer.transform.localScale = Vector3.one;
 
-        RectTransform rectTransform = previewObject.AddComponent<RectTransform>();
-        rectTransform.sizeDelta = new Vector2(brushSize, brushSize);
+        UpdatePreviewPixels();
+    }
 
-        previewImage = previewObject.AddComponent<Image>();
-        previewImage.color = new Color(1, 1, 1, 0.5f); // Color semi-transparente
+    private void UpdatePreviewPixels()
+    {
+        // Clear previous pixels
+        foreach (var pixel in previewPixels)
+        {
+            Destroy(pixel);
+        }
+        previewPixels.Clear();
+
+        // Create new pixels based on brush size
+        int brushRadius = Mathf.FloorToInt(brushSize * 0.5f);
+        for (int i = -brushRadius; i <= brushRadius; i++)
+        {
+            for (int j = -brushRadius; j <= brushRadius; j++)
+            {
+                float distance = Mathf.Sqrt(i * i + j * j);
+                if (distance <= brushRadius)
+                {
+                    GameObject pixel = CreatePreviewPixel();
+                    previewPixels.Add(pixel);
+                }
+            }
+        }
+    }
+
+    private GameObject CreatePreviewPixel()
+    {
+        GameObject pixel = new GameObject("PreviewPixel");
+        pixel.transform.SetParent(previewContainer.transform);
+        pixel.transform.localScale = Vector3.one;
+
+        SpriteRenderer spriteRenderer = pixel.AddComponent<SpriteRenderer>();
+        spriteRenderer.sprite = pixelSprite;
+        spriteRenderer.color = new Color(0, 0, 0, 0.5f);
+
+        return pixel;
+    }
+
+    private void CreatePixelTexture()
+    {
+        Texture2D texture = new Texture2D(1, 1);
+        texture.SetPixel(0, 0, Color.white);
+        texture.Apply();
+
+        pixelSprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), Global.pixelsPerUnit);
     }
 
     private void UpdatePreview()
     {
-        Vector2 localMousePosition;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(gameArea, Input.mousePosition, Camera.main, out localMousePosition);
-        if (gameArea.rect.Contains(localMousePosition))
+        Vector3 worldMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        worldMousePosition.z = 0;
+
+        previewContainer.SetActive(true);
+        previewContainer.transform.position = SnapToPixelGrid(worldMousePosition) + new Vector3(0.5f, 0.5f) / Global.pixelsPerUnit;
+
+        // Update positions of preview pixels
+        int index = 0;
+        int brushRadius = Mathf.FloorToInt(brushSize * 0.5f);
+        for (int i = -brushRadius; i <= brushRadius; i++)
         {
-            previewObject.SetActive(true);
-            previewObject.transform.localPosition = localMousePosition;
-            previewObject.GetComponent<RectTransform>().sizeDelta = new Vector2(brushSize, brushSize);
+            for (int j = -brushRadius; j <= brushRadius; j++)
+            {
+                float distance = Mathf.Sqrt(i * i + j * j);
+                if (distance <= brushRadius && index < previewPixels.Count)
+                {
+                    previewPixels[index].transform.localPosition = new Vector2(i * pixelSize, j * pixelSize);
+                    index++;
+                }
+            }
         }
-        else
-        {
-            previewObject.SetActive(false);
-        }
+    }
+
+    private Vector3 SnapToPixelGrid(Vector3 position)
+    {
+        position.x = Mathf.Floor(position.x / pixelSize) * pixelSize;
+        position.y = Mathf.Floor(position.y / pixelSize) * pixelSize;
+        return position;
+    }
+
+    private void AddCursorChangeEvents(Button button, bool isHandCursor)
+    {
+        EventTrigger trigger = button.gameObject.AddComponent<EventTrigger>();
+        var pointerEnter = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
+        pointerEnter.callback.AddListener((data) => { Cursor.SetCursor(isHandCursor ? handCursor : defaultCursor, isHandCursor ? new Vector2(16f, 0) : Vector2.zero, CursorMode.Auto); });
+        trigger.triggers.Add(pointerEnter);
+
+        var pointerExit = new EventTrigger.Entry { eventID = EventTriggerType.PointerExit };
+        pointerExit.callback.AddListener((data) => { Cursor.SetCursor(defaultCursor, Vector2.zero, CursorMode.Auto); });
+        trigger.triggers.Add(pointerExit);
     }
 }
