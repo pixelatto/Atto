@@ -285,4 +285,28 @@ public class CellularChunk : MonoBehaviour
         return result;
     }
 
+    public Color32[] ChunkToColorIdArray(CellRenderLayer renderLayer)
+    {
+        Color32[] result = new Color32[pixelSize.x * pixelSize.y];
+
+        for (int i = 0; i < pixelSize.x; i++)
+        {
+            for (int j = 0; j < pixelSize.y; j++)
+            {
+                int index = j * pixelSize.x + i;
+                var currentCell = cells[Index(i, j)];
+                if (currentCell.renderLayer == renderLayer)
+                {
+                    result[index] = currentCell.GetColorId();
+                }
+                else
+                {
+                    result[index] = Color.clear;
+                }
+            }
+        }
+
+        return result;
+    }
+
 }

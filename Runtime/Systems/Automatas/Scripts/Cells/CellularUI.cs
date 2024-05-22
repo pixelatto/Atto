@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
-public class CellularUI__Patched_ : MonoBehaviour
+public class CellularUI : MonoBehaviour
 {
     [Header("Global")]
     public CellMaterial currentlySelectedMaterial = CellMaterial.Dirt;
@@ -24,18 +24,12 @@ public class CellularUI__Patched_ : MonoBehaviour
     public RectTransform bottomPanel;
 
     CellularTools currentTool = CellularTools.Draw;
-    public enum CellularTools { Draw, Erase, Thermal }
+    public enum CellularTools { Spacer, Draw, Erase, Save }
 
     private Dictionary<CellularTools, Button> toolButtons = new Dictionary<CellularTools, Button>();
-
-    // Preview object
     private GameObject previewContainer;
     private List<GameObject> previewPixels = new List<GameObject>();
-
-    // Pixel size in world units
-    private const float pixelSize = 0.125f; // 1 unit / 8 pixels per unit
-
-    // Texture for the preview pixel
+    private const float pixelSize = 0.125f;
     private Sprite pixelSprite;
 
     private Texture2D defaultCursor;
@@ -67,6 +61,10 @@ public class CellularUI__Patched_ : MonoBehaviour
                 DrawMaterial();
             }
         }
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            CellularThermodynamics.instance.debugTemperatures.Toggle();
+        }
 
         UpdateBrushSizeWithMouseWheel();
         UpdatePreview();
@@ -94,6 +92,7 @@ public class CellularUI__Patched_ : MonoBehaviour
         }
     }
 
+
     void SelectTool(CellularTools tool)
     {
         if (toolButtons.ContainsKey(tool))
@@ -111,11 +110,70 @@ public class CellularUI__Patched_ : MonoBehaviour
                 }
             }
 
-            if (currentTool == CellularTools.Thermal)
+            if (currentTool == CellularTools.Save)
             {
-                CellularThermodynamics.instance.debugTemperatures.Toggle();
+                SaveChunkAsImage();
             }
         }
+    }
+
+
+    private void SaveChunkAsImage()
+    {
+        CellularChunk currentChunk = PixelCamera.instance.currentChunk;
+        if (currentChunk == null) return;
+
+        Color32[] pixelColors = currentChunk.ChunkToColorIdArray(CellRenderLayer.Main);
+        Texture2D texture = new Texture2D(currentChunk.pixelSize.x, currentChunk.pixelSize.y);
+
+        texture.SetPixels32(pixelColors);
+        texture.Apply();
+
+        byte[] bytes = texture.EncodeToPNG();
+
+        int id = GetNextAvailableId();
+        string directoryPath = Application.dataPath + "/StreamingAssets/Saved/";
+        string path = directoryPath + "Playground_" + id + ".png";
+
+        System.IO.File.WriteAllBytes(path, bytes);
+
+        Debug.Log($"Chunk saved as image at: {path}");
+        OpenFolderInExplorer(directoryPath);
+    }
+
+    private int GetNextAvailableId()
+    {
+        string directoryPath = Application.dataPath + "/StreamingAssets/Saved/";
+        if (!System.IO.Directory.Exists(directoryPath))
+        {
+            System.IO.Directory.CreateDirectory(directoryPath);
+        }
+
+        string[] files = System.IO.Directory.GetFiles(directoryPath, "Playground_*.png");
+        int maxId = 0;
+
+        foreach (string file in files)
+        {
+            string fileName = System.IO.Path.GetFileNameWithoutExtension(file);
+            string idStr = fileName.Replace("Playground_", "");
+
+            if (int.TryParse(idStr, out int id))
+            {
+                if (id > maxId)
+                {
+                    maxId = id;
+                }
+            }
+        }
+
+        return maxId + 1;
+    }
+
+    private void OpenFolderInExplorer(string folderPath)
+    {
+#if UNITY_EDITOR
+        System.Diagnostics.Process.Start("explorer.exe", folderPath.Replace('/', '\\'));
+#endif
     }
 
     private void UpdateBrushSizeWithMouseWheel()
@@ -188,17 +246,19 @@ public class CellularUI__Patched_ : MonoBehaviour
 
     private void GenerateToolButtons()
     {
-        foreach (CellularTools tool in new CellularTools[] { CellularTools.Draw, CellularTools.Erase, CellularTools.Thermal })
+        foreach (CellularTools tool in new CellularTools[] { CellularTools.Spacer, CellularTools.Draw, CellularTools.Erase, CellularTools.Spacer, CellularTools.Save, CellularTools.Spacer })
         {
-            GameObject buttonObj = CreateToolButton(tool.ToString(), topButtonPanel);
-            Button button = buttonObj.GetComponent<Button>();
-            button.onClick.AddListener(() => SelectTool(tool));
-            AddCursorChangeEvents(button, true);
-            toolButtons[tool] = button;
-
-            if (tool == CellularTools.Thermal)
+            if (tool == CellularTools.Spacer)
             {
-                UpdateToggleButtonState(button, CellularThermodynamics.instance.debugTemperatures);
+
+            }
+            else
+            {
+                GameObject buttonObj = CreateToolButton(tool.ToString(), topButtonPanel);
+                Button button = buttonObj.GetComponent<Button>();
+                button.onClick.AddListener(() => SelectTool(tool));
+                AddCursorChangeEvents(button, true);
+                toolButtons[tool] = button;
             }
         }
     }
@@ -520,4 +580,5 @@ public class CellularUI__Patched_ : MonoBehaviour
         pointerExit.callback.AddListener((data) => { Cursor.SetCursor(defaultCursor, Vector2.zero, CursorMode.Auto); });
         trigger.triggers.Add(pointerExit);
     }
+
 }

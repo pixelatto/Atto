@@ -61,6 +61,11 @@ public class Cell
         }
     }
 
+    public Color GetColorId()
+    {
+        return materialProperties.identifierColor;
+    }
+
     public bool IsEmpty()
     {
         return material == CellMaterial.Empty;
