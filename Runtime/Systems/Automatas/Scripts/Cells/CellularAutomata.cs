@@ -18,6 +18,7 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
     private Dictionary<CellMovement, MovementHandler> movementHandlers;
 
     bool isDirty = false;
+    bool paused = false;
 
     Cycle updateRateCycle;
 
@@ -61,34 +62,37 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
 
     void Step()
     {
-        currentTick++;
-
-        for (int j = PixelCamera.instance.lookAheadPixelRect.y; j <= PixelCamera.instance.lookAheadPixelRect.y + PixelCamera.instance.lookAheadPixelRect.height; j++)
+        if (!paused)
         {
-            List<int> xIndices = new List<int>();
-            for (int i = PixelCamera.instance.lookAheadPixelRect.x; i <= PixelCamera.instance.lookAheadPixelRect.x + PixelCamera.instance.lookAheadPixelRect.width; i++)
-            {
-                xIndices.Add(i);
-            }
-            xIndices.Shuffle();
+            currentTick++;
 
-            foreach (int x in xIndices)
+            for (int j = PixelCamera.instance.lookAheadPixelRect.y; j <= PixelCamera.instance.lookAheadPixelRect.y + PixelCamera.instance.lookAheadPixelRect.height; j++)
             {
-                int y = j;
-                currentPosition = new Vector2Int(x, y);
-                currentCell = GetCell(currentPosition);
-                currentCell.elapsedLifetime++;
-                if (currentCell != null && currentCell.lifetimeTimeout)
+                List<int> xIndices = new List<int>();
+                for (int i = PixelCamera.instance.lookAheadPixelRect.x; i <= PixelCamera.instance.lookAheadPixelRect.x + PixelCamera.instance.lookAheadPixelRect.width; i++)
                 {
-                    currentCell.Destroy();
+                    xIndices.Add(i);
                 }
-                else
+                xIndices.Shuffle();
+
+                foreach (int x in xIndices)
                 {
-                    if (currentCell.material != CellMaterial.Empty && !currentCell.wasUpdatedThisTick)
+                    int y = j;
+                    currentPosition = new Vector2Int(x, y);
+                    currentCell = GetCell(currentPosition);
+                    currentCell.elapsedLifetime++;
+                    if (currentCell != null && currentCell.lifetimeTimeout)
                     {
-                        var movementType = currentCell.movement;
-                        movementHandlers[movementType].SetCurrentState(currentPosition, currentCell);
-                        movementHandlers[movementType].Move();
+                        currentCell.Destroy();
+                    }
+                    else
+                    {
+                        if (currentCell.material != CellMaterial.Empty && !currentCell.wasUpdatedThisTick)
+                        {
+                            var movementType = currentCell.movement;
+                            movementHandlers[movementType].SetCurrentState(currentPosition, currentCell);
+                            movementHandlers[movementType].Move();
+                        }
                     }
                 }
             }
@@ -130,6 +134,11 @@ public class CellularAutomata : SingletonMonobehaviour<CellularAutomata>
 
         PropagateStructuralUpdate(oldPosition);
         PropagateStructuralUpdate(newPosition);
+    }
+
+    public void TogglePause()
+    {
+        paused = !paused;
     }
 
     public void DestroyCell(Vector2Int globalPixelPosition)

@@ -24,7 +24,7 @@ public class CellularUI : MonoBehaviour
     public RectTransform bottomPanel;
 
     CellularTools currentTool = CellularTools.Draw;
-    public enum CellularTools { Spacer, Draw, Erase, Save }
+    public enum CellularTools { Spacer, Draw, Erase, Pause, Reset, Save, Exit }
 
     private Dictionary<CellularTools, Button> toolButtons = new Dictionary<CellularTools, Button>();
     private GameObject previewContainer;
@@ -61,13 +61,23 @@ public class CellularUI : MonoBehaviour
                 DrawMaterial();
             }
         }
+
+        Shortcuts();
+        UpdateBrushSizeWithMouseWheel();
+        UpdatePreview();
+    }
+
+    private void Shortcuts()
+    {
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             CellularThermodynamics.instance.debugTemperatures = !CellularThermodynamics.instance.debugTemperatures;
         }
 
-        UpdateBrushSizeWithMouseWheel();
-        UpdatePreview();
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+        }
     }
 
     private void LoadCursors()
@@ -92,7 +102,6 @@ public class CellularUI : MonoBehaviour
         }
     }
 
-
     void SelectTool(CellularTools tool)
     {
         if (toolButtons.ContainsKey(tool))
@@ -103,7 +112,7 @@ public class CellularUI : MonoBehaviour
                 var button = buttonPair.Value;
                 ResetButton(button);
 
-                if (buttonPair.Key == tool)
+                if (buttonPair.Key == tool && buttonPair.Key != CellularTools.Save && buttonPair.Key != CellularTools.Reset && buttonPair.Key != CellularTools.Exit)
                 {
                     HighlightButton(button);
                     bottomButtonPanel.gameObject.SetActive(tool == CellularTools.Draw);
@@ -114,9 +123,23 @@ public class CellularUI : MonoBehaviour
             {
                 SaveChunkAsImage();
             }
+
+            if (currentTool == CellularTools.Pause)
+            {
+                CellularAutomata.instance.TogglePause();
+            }
+
+            if (currentTool == CellularTools.Reset)
+            {
+                UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+            }
+
+            if (currentTool == CellularTools.Exit)
+            {
+                Application.Quit();
+            }
         }
     }
-
 
     private void SaveChunkAsImage()
     {
@@ -132,8 +155,13 @@ public class CellularUI : MonoBehaviour
         byte[] bytes = texture.EncodeToPNG();
 
         int id = GetNextAvailableId();
-        string directoryPath = Application.dataPath + "/StreamingAssets/Saved/";
+        string directoryPath = Application.persistentDataPath + "/Saved/";
         string path = directoryPath + "Playground_" + id + ".png";
+
+        if (!System.IO.Directory.Exists(directoryPath))
+        {
+            System.IO.Directory.CreateDirectory(directoryPath);
+        }
 
         System.IO.File.WriteAllBytes(path, bytes);
 
@@ -141,9 +169,10 @@ public class CellularUI : MonoBehaviour
         OpenFolderInExplorer(directoryPath);
     }
 
+
     private int GetNextAvailableId()
     {
-        string directoryPath = Application.dataPath + "/StreamingAssets/Saved/";
+        string directoryPath = Application.persistentDataPath + "/Saved/";
         if (!System.IO.Directory.Exists(directoryPath))
         {
             System.IO.Directory.CreateDirectory(directoryPath);
@@ -173,6 +202,14 @@ public class CellularUI : MonoBehaviour
     {
 #if UNITY_EDITOR
         System.Diagnostics.Process.Start("explorer.exe", folderPath.Replace('/', '\\'));
+#elif UNITY_STANDALONE_WIN
+    System.Diagnostics.Process.Start("explorer.exe", folderPath.Replace('/', '\\'));
+#elif UNITY_STANDALONE_OSX
+    System.Diagnostics.Process.Start("open", folderPath);
+#elif UNITY_STANDALONE_LINUX
+    System.Diagnostics.Process.Start("xdg-open", folderPath);
+#else
+    Debug.Log("Open folder not supported on this platform.");
 #endif
     }
 
@@ -240,13 +277,12 @@ public class CellularUI : MonoBehaviour
         layoutGroup.childForceExpandHeight = true;
         layoutGroup.spacing = 8;
         layoutGroup.padding = new RectOffset(8, 8, 8, 8);
-
         return buttonPanel;
     }
 
     private void GenerateToolButtons()
     {
-        foreach (CellularTools tool in new CellularTools[] { CellularTools.Spacer, CellularTools.Draw, CellularTools.Erase, CellularTools.Spacer, CellularTools.Save, CellularTools.Spacer })
+        foreach (CellularTools tool in new CellularTools[] { CellularTools.Draw, CellularTools.Erase, CellularTools.Spacer, CellularTools.Pause, CellularTools.Spacer, CellularTools.Save, CellularTools.Spacer, CellularTools.Reset, CellularTools.Spacer, CellularTools.Exit })
         {
             if (tool == CellularTools.Spacer)
             {
@@ -604,4 +640,17 @@ public class CellularUI : MonoBehaviour
         trigger.triggers.Add(pointerExit);
     }
 
+    private void ResetChunk()
+    {
+        CellularChunk currentChunk = PixelCamera.instance.currentChunk;
+        if (currentChunk == null) return;
+
+        for (int x = 0; x < currentChunk.pixelSize.x; x++)
+        {
+            for (int y = 0; y < currentChunk.pixelSize.y; y++)
+            {
+                currentChunk[x, y] = new Cell(CellMaterial.Empty);
+            }
+        }
+    }
 }
