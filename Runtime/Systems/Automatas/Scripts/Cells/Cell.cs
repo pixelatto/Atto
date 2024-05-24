@@ -109,6 +109,8 @@ public class Cell
 
     public void Destroy()
     {
+        _materialProperties = null;
         material = CellMaterial.Empty;
+        overrideColor = Color.clear;
     }
 }
