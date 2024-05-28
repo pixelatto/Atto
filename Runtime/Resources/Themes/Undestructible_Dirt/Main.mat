@@ -55,6 +55,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: 6849bbb4091ef2b449bb0210b32b7220, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _VariantsThird:
+        m_Texture: {fileID: 2800000, guid: 110524c79aef28d46b1b3f105febf809, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _NumTiles: 2
