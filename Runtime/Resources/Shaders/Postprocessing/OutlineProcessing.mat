@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: OutlinePostprocessing
-  m_Shader: {fileID: 4800000, guid: 3fd3e8c665b037642bfba44384b61f3d, type: 3}
+  m_Name: OutlineProcessing
+  m_Shader: {fileID: 4800000, guid: 94ccf26ab86d90f4092599f70903bed0, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -16,27 +16,21 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 3000
   stringTagMap: {}
   disabledShaderPasses: []
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _LuminosityTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _OutlineTex:
-        m_Texture: {fileID: 8400000, guid: 0a71e02e04db7d942885f27c797987fc, type: 2}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Gamma: 1
-    m_Colors: []
+    - _Offset: 1
+    m_Colors:
+    - _OutlineColor: {r: 0.13333334, g: 0.1254902, b: 0.20392159, a: 1}
+    - _SilhouetteColor: {r: 0.9245283, g: 0.39684942, b: 0.39684942, a: 1}
   m_BuildTextureStacks: []

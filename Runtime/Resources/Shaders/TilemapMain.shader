@@ -4,8 +4,9 @@ Shader "Atto/TilemapMain"
     {
         _OutlineColor("Outline Color", Color) = (0,0,0,1)
         _MainTex("Main Texture", 2D) = "white" {}
-        _VariantsMain("Variants Main", 2D) = "white" {}
-        _VariantsSec("Variants Sec", 2D) = "white" {}
+        _VariantsMain("Green Channel", 2D) = "white" {}
+        _VariantsSec("Blue Channel", 2D) = "white" {}
+        _VariantsThird("Red Channel", 2D) = "white" {}
         _NoiseTex("Noise Texture", 2D) = "white" {}
     }
         SubShader
@@ -40,6 +41,7 @@ Shader "Atto/TilemapMain"
             sampler2D _MainTex;
             sampler2D _VariantsMain;
             sampler2D _VariantsSec;
+            sampler2D _VariantsThird;
             sampler2D _NoiseTex;
             float4 _OutlineColor;
 
@@ -65,10 +67,11 @@ Shader "Atto/TilemapMain"
 
                 fixed4 texMain = tex2D(_VariantsMain, spriteUV / 4);
                 fixed4 texSec = tex2D(_VariantsSec, spriteUV / 4);
+                fixed4 texThird = tex2D(_VariantsThird, spriteUV / 4);
 
                 fixed4 result;
 
-                result.rgb = col.r * _OutlineColor.rgb + col.b * texSec.rgb + col.g * texMain.rgb;
+                result.rgb = col.g * texMain.rgb + col.b * texSec.rgb + col.r * texThird.rgb;
                 result.a = col.a;
 
                 return result;

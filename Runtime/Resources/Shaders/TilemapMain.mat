@@ -48,10 +48,14 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _VariantsMain:
-        m_Texture: {fileID: 2800000, guid: f842b45f0fc48a24e827a360c99c9d94, type: 3}
+        m_Texture: {fileID: 2800000, guid: f7f15682239f2bc4bbaa6b11fcd7d5eb, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _VariantsSec:
+        m_Texture: {fileID: 2800000, guid: 67cfaa3fb054e744386bcdc980f8c560, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _VariantsThird:
         m_Texture: {fileID: 2800000, guid: f842b45f0fc48a24e827a360c99c9d94, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}

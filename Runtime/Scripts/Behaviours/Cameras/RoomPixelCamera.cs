@@ -42,13 +42,11 @@ public class RoomPixelCamera : PixelCamera
 
         var targetPosition = new Vector3(currentRoom.roomRect.center.x, currentRoom.roomRect.center.y, cam.transform.position.z);
 
-        sequence.AppendCallback(() => Fader.instance.FadeOut());
-        sequence.AppendInterval(Fader.instance.duration);
-        sequence.AppendInterval(0.2f);
-        //sequence.AppendCallback(() => transform.DOMove(targetPosition, transitionTime).SetEase(transition));
-        sequence.AppendCallback(() => { transform.position = targetPosition; });
-        sequence.AppendCallback(() => Fader.instance.FadeIn());
-
-
+        //sequence.AppendCallback(() => Fader.instance.FadeOut());
+        //sequence.AppendInterval(Fader.instance.duration);
+        //sequence.AppendInterval(0.2f);
+        sequence.AppendCallback(() => transform.DOMove(targetPosition, transitionTime).SetEase(transition));
+        //sequence.AppendCallback(() => { transform.position = targetPosition; });
+        //sequence.AppendCallback(() => Fader.instance.FadeIn());
     }
 }

@@ -52,11 +52,22 @@ public class CellularUI : MonoBehaviour
     private void Update()
     {
         HandleMouseCursor();
-        if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
+
+        if (gameArea != null)
         {
-            Vector2 localMousePosition;
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(gameArea, Input.mousePosition, Camera.main, out localMousePosition);
-            if (gameArea.rect.Contains(localMousePosition))
+            if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
+            {
+                Vector2 localMousePosition;
+                RectTransformUtility.ScreenPointToLocalPointInRectangle(gameArea, Input.mousePosition, Camera.main, out localMousePosition);
+                if (gameArea.rect.Contains(localMousePosition))
+                {
+                    DrawMaterial();
+                }
+            }
+        }
+        else if (Debug.isDebugBuild)
+        {
+            if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
             {
                 DrawMaterial();
             }
@@ -90,15 +101,18 @@ public class CellularUI : MonoBehaviour
 
     private void HandleMouseCursor()
     {
-        Vector2 localMousePosition;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(gameArea, Input.mousePosition, Camera.main, out localMousePosition);
-        if (gameArea.rect.Contains(localMousePosition))
+        if (gameArea != null)
         {
-            Cursor.visible = false;
-        }
-        else
-        {
-            Cursor.visible = true;
+            Vector2 localMousePosition;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(gameArea, Input.mousePosition, Camera.main, out localMousePosition);
+            if (gameArea.rect.Contains(localMousePosition))
+            {
+                Cursor.visible = false;
+            }
+            else
+            {
+                Cursor.visible = true;
+            }
         }
     }
 
