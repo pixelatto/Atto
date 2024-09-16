@@ -1,6 +1,7 @@
-
-using UnityEditor;
 using UnityEngine;
+
+#if UNITY_EDITOR
+using UnityEditor;
 
 public class MenuItems
 {
@@ -12,3 +13,4 @@ public class MenuItems
         Debug.Log("PlayerPrefs cleared.");
     }
 }
+#endif
