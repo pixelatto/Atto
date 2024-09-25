@@ -24,13 +24,13 @@ public class Actor : MonoBehaviour, IControllable
 
     [HideInInspector] public bool isCloudWalkAvailable => weight <= ActorWeights.Light;
     [HideInInspector] public bool isJumpAvailable => ((Can(Skill.Jump) && isGrounded && (groundedTimer.elapsed > minGroundTimeBeforeJump)) || Can(Skill.Fly));
-    [HideInInspector] public bool isMovingRight => rb2d.velocity.x > Global.slowMomentumThreeshold;
-    [HideInInspector] public bool isMovingLeft => rb2d.velocity.x < -Global.slowMomentumThreeshold;
-    [HideInInspector] public bool isMovingUp => rb2d.velocity.y > Global.verticalMomentumThreeshold;
-    [HideInInspector] public bool isMovingDown => rb2d.velocity.y < -Global.verticalMomentumThreeshold;
+    [HideInInspector] public bool isMovingRight => rb2d.linearVelocity.x > Global.slowMomentumThreeshold;
+    [HideInInspector] public bool isMovingLeft => rb2d.linearVelocity.x < -Global.slowMomentumThreeshold;
+    [HideInInspector] public bool isMovingUp => rb2d.linearVelocity.y > Global.verticalMomentumThreeshold;
+    [HideInInspector] public bool isMovingDown => rb2d.linearVelocity.y < -Global.verticalMomentumThreeshold;
 
-    public float horizontalSpeed => Mathf.Abs(rb2d.velocity.x);
-    public float verticalSpeed => Mathf.Abs(rb2d.velocity.y);
+    public float horizontalSpeed => Mathf.Abs(rb2d.linearVelocity.x);
+    public float verticalSpeed => Mathf.Abs(rb2d.linearVelocity.y);
     public float radius => pixelSize.PixelsToUnits() + pixelSizeModifier.PixelsToUnits();
 
     Controller controller;
@@ -137,7 +137,7 @@ public class Actor : MonoBehaviour, IControllable
     {
         if (horizontalMomentum >= Momentum.Medium && Can(Skill.Roll))
         {
-            rb2d.velocity = new Vector2(rb2d.velocity.x * skills[Skill.Roll].power, rb2d.velocity.y);
+            rb2d.linearVelocity = new Vector2(rb2d.linearVelocity.x * skills[Skill.Roll].power, rb2d.linearVelocity.y);
             stateMachine.ChangeState(ActorStates.Rolling);
         }
     }
@@ -184,7 +184,7 @@ public class Actor : MonoBehaviour, IControllable
 
         if (horizontalSpeed > maxGroundedSpeed)
         {
-            rb2d.velocity = new Vector2(Mathf.Sign(rb2d.velocity.x) * maxGroundedSpeed, rb2d.velocity.y);
+            rb2d.linearVelocity = new Vector2(Mathf.Sign(rb2d.linearVelocity.x) * maxGroundedSpeed, rb2d.linearVelocity.y);
         }
     }
 
@@ -200,7 +200,7 @@ public class Actor : MonoBehaviour, IControllable
     {
         if (controller != null && controller.horizontalAxis == 0)
         {
-            rb2d.velocity -= new Vector2(rb2d.velocity.x * horizontalAirDrag * Time.fixedDeltaTime, 0);
+            rb2d.linearVelocity -= new Vector2(rb2d.linearVelocity.x * horizontalAirDrag * Time.fixedDeltaTime, 0);
         }
     }
 
@@ -265,7 +265,7 @@ public class Actor : MonoBehaviour, IControllable
         if (controller!= null && controller.horizontalAxis != 0)
         {
             var wantsToGoFast = controller != null && controller.actionHeld;
-            rb2d.velocity = new Vector2((Vector2.right * (wantsToGoFast ? fastHorizontalSpeed : defaultHorizontalSpeed) * controller.horizontalAxis).x, rb2d.velocity.y);
+            rb2d.linearVelocity = new Vector2((Vector2.right * (wantsToGoFast ? fastHorizontalSpeed : defaultHorizontalSpeed) * controller.horizontalAxis).x, rb2d.linearVelocity.y);
         }
     }
 
@@ -396,15 +396,15 @@ public class Actor : MonoBehaviour, IControllable
                 power = skills[Skill.Fly].power;
             }
 
-            if (rb2d.velocity.y > 0)
+            if (rb2d.linearVelocity.y > 0)
             {
-                rb2d.velocity += Vector2.up * power;
+                rb2d.linearVelocity += Vector2.up * power;
             }
             else
             {
-                rb2d.velocity = new Vector2(rb2d.velocity.x, power);
+                rb2d.linearVelocity = new Vector2(rb2d.linearVelocity.x, power);
             }
-            rb2d.velocity = new Vector2(rb2d.velocity.x, Mathf.Min(rb2d.velocity.y, power));
+            rb2d.linearVelocity = new Vector2(rb2d.linearVelocity.x, Mathf.Min(rb2d.linearVelocity.y, power));
             rb2d.angularVelocity = 0;
             wantsToJump = false;
         }
@@ -489,7 +489,7 @@ public class Actor : MonoBehaviour, IControllable
 
             dustParticle.isEthereal = !pushRealParticle;
 
-            dustParticle.speed = Random.insideUnitCircle - rb2d.velocity.normalized + Vector2.up*3f;
+            dustParticle.speed = Random.insideUnitCircle - rb2d.linearVelocity.normalized + Vector2.up*3f;
         }
     }
 
