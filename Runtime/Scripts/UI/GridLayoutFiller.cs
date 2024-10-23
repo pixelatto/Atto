@@ -17,7 +17,7 @@ public class GridLayoutFiller : MonoBehaviour
         var height = rt.rect.height;
         var width = rt.rect.width;
         int horizontalCount = gridLayout.constraintCount;
-        int verticalCount = Mathf.CeilToInt(rt.childCount / gridLayout.constraintCount);
+        int verticalCount = Mathf.CeilToInt((float)rt.childCount / (float)gridLayout.constraintCount);
 
         gridLayout.cellSize = new Vector2(width / horizontalCount, height / verticalCount);
     }
