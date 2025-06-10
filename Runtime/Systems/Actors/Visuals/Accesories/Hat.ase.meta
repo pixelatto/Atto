@@ -8,6 +8,7 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 62a9f0aa5b59740cfbadc7e5f9823bb0, type: 3}
+  importerVersion: 2
   textureImporterSettings:
     alphaSource: 1
     mipMapMode: 0
@@ -83,6 +84,8 @@ ScriptedImporter:
     generateAnimationClips: 1
     addSortingGroup: 1
     addShadowCasters: 0
+    generateIndividualEvents: 1
+    generateSpriteAtlas: 1
   asepriteImporterSettings:
     fileImportMode: 1
     importHiddenLayers: 1
@@ -96,6 +99,8 @@ ScriptedImporter:
     generateAnimationClips: 1
     addSortingGroup: 1
     addShadowCasters: 0
+    generateIndividualEvents: 1
+    generateSpriteAtlas: 1
   importFileNodeState: 1
   platformSettingsDirtyTick: 638490554601950323
   textureAssetName: 
@@ -291,9 +296,15 @@ ScriptedImporter:
     tessellationDetail: 0
     uvTransform: {x: 18, y: 26}
   spriteSheetImportData: []
+  tileSetImportData: []
   asepriteLayers:
   - layerIndex: 0
-    guid: -1532549349
+    uuid:
+      value0: 3566263623
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: -728703673
     name: Default
     layerFlags: 3
     layerType: 0
@@ -372,7 +383,10 @@ ScriptedImporter:
         height: 3
       spriteId: 3ff8874f6295d5d44be88fcf68a5537b
     linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
     parentIndex: -1
+  tileSets: []
   platformSettings:
   - name: DefaultTexturePlatform
     overridden: 0
@@ -402,3 +416,4 @@ ScriptedImporter:
   secondarySpriteTextures: []
   spritePackingTag: 
   canvasSize: {x: 12, y: 12}
+  previousTextureSize: {x: 32, y: 64}

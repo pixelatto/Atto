@@ -38,6 +38,7 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 62a9f0aa5b59740cfbadc7e5f9823bb0, type: 3}
+  importerVersion: 2
   textureImporterSettings:
     alphaSource: 1
     mipMapMode: 0
@@ -113,6 +114,8 @@ ScriptedImporter:
     generateAnimationClips: 1
     addSortingGroup: 1
     addShadowCasters: 0
+    generateIndividualEvents: 1
+    generateSpriteAtlas: 1
   asepriteImporterSettings:
     fileImportMode: 1
     importHiddenLayers: 1
@@ -126,6 +129,8 @@ ScriptedImporter:
     generateAnimationClips: 1
     addSortingGroup: 1
     addShadowCasters: 0
+    generateIndividualEvents: 1
+    generateSpriteAtlas: 1
   importFileNodeState: 1
   platformSettingsDirtyTick: 638511965749938771
   textureAssetName: 
@@ -10485,9 +10490,15 @@ ScriptedImporter:
     tessellationDetail: 0
     uvTransform: {x: 181, y: 404}
   spriteSheetImportData: []
+  tileSetImportData: []
   asepriteLayers:
   - layerIndex: 1
-    guid: 626662027
+    uuid:
+      value0: 856244530
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: 856244530
     name: Hair
     layerFlags: 2
     layerType: 0
@@ -10836,9 +10847,16 @@ ScriptedImporter:
         height: 8
       spriteId: 413802d5f2431b7448f3b584b5530b69
     linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
     parentIndex: -1
   - layerIndex: 0
-    guid: 464274923
+    uuid:
+      value0: 920746839
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: 920746839
     name: Events
     layerFlags: 2
     layerType: 0
@@ -11187,9 +11205,16 @@ ScriptedImporter:
         height: 32
       spriteId: 732c3c29794ca584cac96590c2124511
     linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
     parentIndex: -1
   - layerIndex: 2
-    guid: -1481541417
+    uuid:
+      value0: 82816617
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: 82816617
     name: Torso
     layerFlags: 2
     layerType: 0
@@ -11538,9 +11563,16 @@ ScriptedImporter:
         height: 9
       spriteId: 0dc1e98d53db4fe48b2546413d153d0b
     linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
     parentIndex: -1
   - layerIndex: 3
-    guid: -2003518377
+    uuid:
+      value0: 4181735076
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: -113232220
     name: Abdomen
     layerFlags: 2
     layerType: 0
@@ -11889,9 +11921,16 @@ ScriptedImporter:
         height: 3
       spriteId: 807a9343f3742f24abcaf98cf789c264
     linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
     parentIndex: -1
   - layerIndex: 4
-    guid: -1236070355
+    uuid:
+      value0: 1857678349
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: 1857678349
     name: Legs
     layerFlags: 2
     layerType: 0
@@ -12240,9 +12279,16 @@ ScriptedImporter:
         height: 2
       spriteId: 8e562c2df7a2f3e45985a6f64b125f41
     linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
     parentIndex: -1
   - layerIndex: 5
-    guid: 1403077925
+    uuid:
+      value0: 4136223136
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: -158744160
     name: Head
     layerFlags: 2
     layerType: 0
@@ -12591,9 +12637,16 @@ ScriptedImporter:
         height: 6
       spriteId: 6551dd6e8b3d2b840b2dc566c653c80c
     linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
     parentIndex: -1
   - layerIndex: 6
-    guid: 378118886
+    uuid:
+      value0: 2251212384
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: -2043754912
     name: RightFoot
     layerFlags: 2
     layerType: 0
@@ -12942,9 +12995,16 @@ ScriptedImporter:
         height: 1
       spriteId: 6f733f70920d2b34fae6e562578f920a
     linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
     parentIndex: -1
   - layerIndex: 7
-    guid: 1034476730
+    uuid:
+      value0: 2912797681
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: -1382169615
     name: LeftFoot
     layerFlags: 2
     layerType: 0
@@ -13275,9 +13335,16 @@ ScriptedImporter:
         height: 1
       spriteId: 05cbf93af79704b43ba8d0eefef8f8c1
     linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
     parentIndex: -1
   - layerIndex: 8
-    guid: 1776533621
+    uuid:
+      value0: 1475798705
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: 1475798705
     name: RightEye
     layerFlags: 2
     layerType: 0
@@ -13626,9 +13693,16 @@ ScriptedImporter:
         height: 1
       spriteId: 0075646a43f8cc54285239c26ad3a41e
     linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
     parentIndex: -1
   - layerIndex: 9
-    guid: -1109514663
+    uuid:
+      value0: 3707970448
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: -586996848
     name: LeftEye
     layerFlags: 2
     layerType: 0
@@ -13977,9 +14051,16 @@ ScriptedImporter:
         height: 1
       spriteId: cc527f564ee22da41925c9bd53ce2a12
     linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
     parentIndex: -1
   - layerIndex: 10
-    guid: 2033605861
+    uuid:
+      value0: 2244563819
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: -2050403477
     name: RightHand
     layerFlags: 2
     layerType: 0
@@ -14328,9 +14409,16 @@ ScriptedImporter:
         height: 1
       spriteId: bdc12209abfd041459a50f5f4d1cd18b
     linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
     parentIndex: -1
   - layerIndex: 11
-    guid: -569277011
+    uuid:
+      value0: 3114310590
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: -1180656706
     name: LeftHand
     layerFlags: 2
     layerType: 0
@@ -14679,9 +14767,16 @@ ScriptedImporter:
         height: 1
       spriteId: f967ee50fc2f71246b3d2413a555c683
     linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
     parentIndex: -1
   - layerIndex: 12
-    guid: 1255833856
+    uuid:
+      value0: 479179836
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: 479179836
     name: Beard
     layerFlags: 2
     layerType: 0
@@ -15030,7 +15125,10 @@ ScriptedImporter:
         height: 3
       spriteId: 0b18fc5521e40b04790af61afed3da3a
     linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
     parentIndex: -1
+  tileSets: []
   platformSettings:
   - name: DefaultTexturePlatform
     overridden: 0
@@ -15060,3 +15158,4 @@ ScriptedImporter:
   secondarySpriteTextures: []
   spritePackingTag: 
   canvasSize: {x: 32, y: 32}
+  previousTextureSize: {x: 256, y: 512}
